@@ -1,0 +1,1 @@
+{"name":"SPECIFIC TIME","description":"THURSDAY"}
