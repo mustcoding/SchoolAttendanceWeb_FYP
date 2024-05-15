@@ -243,36 +243,12 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Record Student Attendance</h1>
+      <h1>List Attendance For</h1>
     </div><!-- End Page Title -->
 
-    <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
-      Attendance has successfully being saved.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="alert alert-danger alert-dismissible fade show" role="alert2" style="display: none;">
-      Houston....Attendance Already Exist.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="alert alert-danger alert-dismissible fade show" role="alertRFID" style="display: none;">
-      Houston....RFID Number Not Exist.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="alert alert-danger alert-dismissible fade show" role="alertNoClass" style="display: none;">
-      Houston....Student Not Belongs To Any Class.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="alert alert-danger alert-dismissible fade show" role="alertNoTime" style="display: none;">
-      Houston....Attendance Cannot Being Recorded At This Time.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="alert alert-danger alert-dismissible fade show" role="alertDailyStudent" style="display: none;">
-      Houston....Only School Attendance Can Be Recorded For Daily Student.
+  
+    <div class="alert alert-danger alert-dismissible fade show" role="alert1" style="display: none;">
+      Houston....No Attendance Being Recorded.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
@@ -322,8 +298,10 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Name</th>
+                    <th scope="col">Parent Name</th>
+                    <th scope="col">Time Attend</th>
                     <th scope="col">Class</th>
-                    <th scope="col">Action</th>
+                    
                   </tr>
                 </thead>
                 <tbody>
@@ -380,16 +358,45 @@
 
   
     // Function to fetch data from the server
-    function fetchData() {
-      fetch('http://127.0.0.1:8000/Student/all-data')
-        .then(response => response.json())
-        .then(data => {
-          // Call a function to update the table with the fetched data
+    function fetchData(schoolSession_id, classroom_id, attendanceTimetable_id, attendanceDate) {
+
+      const data = {
+        schoolSession_id : schoolSession_id,
+        classroom_id : classroom_id,
+        attendanceTimetable_id : attendanceTimetable_id,
+        attendanceDate: attendanceDate
+      };
+
+      fetch('http://127.0.0.1:8000/Attendance/list-attend',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Response:', data);
+
+        // Check if the response contains any student_id
+        const containsStudentId = data.some(item => item.student_id !== undefined);
+
+      
+        if (data.length==0)
+        {
+          document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert1"]').style.display = "block";
+      
+          console.log("here")
           updateTable(data);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
+        }
+       
+        updateTable(data);
+        
+      })
+      .catch(error => {
+        console.error('Error during fetch:', error);
+      });
+
     }
 
     function fetchUser(staffId)
@@ -433,46 +440,44 @@
 
     function updateUserData()
     {
-        // Retrieve the JSON string from sessionStorage
-        var storedStaffProfile = JSON.parse(sessionStorage.getItem('staff'));
-        console.log('User Profile: ', storedStaffProfile);
+      // Retrieve the JSON string from sessionStorage
+      var storedStaffProfile = JSON.parse(sessionStorage.getItem('staff'));
+      console.log('User Profile: ', storedStaffProfile);
 
-        // Update user nickname in the profile dropdown
-        var profileDropdownHeader = document.querySelector('.dropdown-header h6');
-        if (profileDropdownHeader) 
+      // Update user nickname in the profile dropdown
+      var profileDropdownHeader = document.querySelector('.dropdown-header h6');
+      if (profileDropdownHeader) 
+      {
+        console.log('Updating user nickname.');
+        profileDropdownHeader.textContent = storedStaffProfile.staffName ;
+
+      } 
+      else 
+      {
+        console.log('Profile dropdown header not found.');
+      }
+
+      var profileDropdownLink = document.querySelector('.nav-link.nav-profile');
+      if (profileDropdownLink) {
+
+        var profileNameSpan = profileDropdownLink.querySelector('.dropdown-toggle');
+
+        console.log('Updating user profile information.');
+
+        // Update profile name
+        if (profileNameSpan) 
         {
-          console.log('Updating user nickname.');
-          profileDropdownHeader.textContent = storedStaffProfile.staffName ;
-
-        } 
-        else 
-        {
-          console.log('Profile dropdown header not found.');
-        }
-
-        var profileDropdownLink = document.querySelector('.nav-link.nav-profile');
-        if (profileDropdownLink) {
-          var profileNameSpan = profileDropdownLink.querySelector('.dropdown-toggle');
-
-          console.log('Updating user profile information.');
-
-          // Update profile name
-          if (profileNameSpan) 
-          {
           profileNameSpan.textContent = storedStaffProfile.nickname;
-          }
+        }
                 
         } else {
           console.log('Profile dropdown link not found.');
         }
-    }
+      }
 
-    // Function to update the table with data
+      // Function to update the table with data
     function updateTable(data) {
       const tbody = document.querySelector('table tbody');
-      const attend = 1;
-      const absent = 0;
-      const AbsentWithReason = 2;
 
       // Clear existing rows
       tbody.innerHTML = '';
@@ -485,18 +490,15 @@
         const row = `<tr>
                         <td>${index + 1}</td>
                         <td>${item.name}</td>
-                        <td>${item.form_number} ${item.class_name}</td>
-                        <td>
-                            <div class="button-row">
-                                <button type="button" class="btn btn-success" onclick="getRFIDid('${item.card_rfid}','attend')">Attend</button>
-                                <button type="button" class="btn btn-danger" onclick="getRFIDid('${item.card_rfid}', 'absent')">Absent</button>
-                                <button type="button" class="btn btn-primary" onclick="getRFIDid('${item.card_rfid}', 'excuse')">Excuse</button>
-                            </div>
-                        </td>
-                    </tr>`;
+                        <td>${item.parent_name}</td>
+                        <td>${item.date_time_in}</td>
+                        <td>${item.form_number} ${item.class_name}</td> 
+                      </tr>`;
         // Append the row to the tbody
         tbody.innerHTML += row;
       });
+
+
     }
 
     // Wait for the DOM to be fully loaded
@@ -508,7 +510,19 @@
         var token = storedToken;
         console.log("Staff Token: ",token);
 
-        fetchData();
+        var storedListAttend = JSON.parse(sessionStorage.getItem('ListAttend'));
+        var schoolSession_id = storedListAttend.schoolSessionId;
+        var classroom_id = storedListAttend.classroomId;
+        var attendanceTimetable_id = storedListAttend.attendanceTimetableId;
+        var TimetableName = storedListAttend.selectedTimetable;
+        var attendanceDate = storedListAttend.date;
+
+        console.log("DFGF: ", storedListAttend);
+
+        // Update the card title with the classroom name
+        document.querySelector('div.pagetitle h1').textContent = `LIST ATTENDANCE FOR - ${TimetableName}`;
+
+        fetchData(schoolSession_id, classroom_id, attendanceTimetable_id, attendanceDate );
         fetchUser(staffId);
     });
 
@@ -550,277 +564,7 @@
 
   </script>
 
-    <script>
-        function getRFIDid(rfidNumber, status) {
-
-            var attendanceStatus=0;
-
-            if (status == 'attend'){
-                attendanceStatus = 1;
-            }
-            else if (status == 'absent'){
-                attendanceStatus = 0;
-            }
-            else if (status == 'excuse'){
-                attendanceStatus = 2;
-            }
-
-            const data = {
-                number: rfidNumber
-            };
-
-            fetch('http://127.0.0.1:8000/rfids/retrieve-rfid-id', {
-                method: 'POST', // Use the POST method
-                headers: {
-                    'Content-Type': 'application/json' // Set the content type to JSON
-                },
-                body: JSON.stringify(data) // Convert the data object to a JSON string
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
-                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
-                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'block';
-                    setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                    }, 2000);
-                }
-            })
-            .then(data => {
-
-                console.log("rfid: ", data.rfid[0].id);
-                retriveStudent(data.rfid[0].id, attendanceStatus );
-
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-            
-        }
-    </script>
   
-    <script>
-        function retriveStudent(rfid_id,attendanceStatus)
-        {
-            
-            const is_Delete=0;
-
-            data={
-            rfidNumber: rfid_id,
-            };
-            
-            fetch('http://127.0.0.1:8000/student-data/searchByRfid', 
-            {
-            method: 'POST', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-            })
-                .then(response => 
-                {
-                if (response.ok){
-                    return response.json();
-                }
-                else{
-                    document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
-                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
-                    setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                    }, 2000);
-                }
-                })
-                .then(data => {
-
-                    getStudentStudySessionId(data.students[0].id, attendanceStatus);
-
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        
-        }
-    </script>
-
-    <script>
-        function getStudentStudySessionId(student_id, attendanceStatus)
-        {
-            
-            const is_Delete=0;
-
-            data={
-            student_id: student_id,
-            };
-            
-            fetch('http://127.0.0.1:8000/StudentStudySession/get-id-by-studentId', 
-            {
-            method: 'POST', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-            })
-                .then(response => 
-                {
-                if (response.ok){
-                    return response.json();
-                }
-                else{
-                    document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
-                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
-                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoClass"]').style.display = 'block';
-                    
-                    setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                    }, 2000);
-                }
-                })
-                .then(data => {
-
-                  checkAttendanceTimeTable(data.study[0].id, attendanceStatus,student_id);
-                    
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        
-        }
-    </script>
-
-    <script>
-        function checkAttendanceTimeTable(studentStudySession_id, attendanceStatus,student_id) {
-            const is_Delete = 0;
-
-            fetch('http://127.0.0.1:8000/AttendanceTimetable/checkAttendance-by-time', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
-                        document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
-                        document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoTime"]').style.display = 'block';
-                        setTimeout(function() {
-                            window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                        }, 2000);
-                    }
-                })
-                .then(data => {
-                    const checkpoint = 1;
-                    console.log("helllo");
-                    const attendance_timetable_id = data.timetable.id;
-
-                    saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, attendanceStatus, student_id);
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        }
-    </script>
-
-    <script>
-        function saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, attendanceStatus, student_id)
-        {
-        const is_Delete = 0;
-            
-        // Get current date and time
-        const currentDate = new Date();
-
-        // Extract individual components
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Adding 1 because months are zero-based
-        const day = String(currentDate.getDate()).padStart(2, '0');
-        const year = String(currentDate.getFullYear()).slice(-2); // Using slice to get last two digits of the year
-        const hour = String(currentDate.getHours()).padStart(2, '0');
-        const minute = String(currentDate.getMinutes()).padStart(2, '0');
-        const second = String(currentDate.getSeconds()).padStart(2, '0');
-
-        // Construct the desired string format
-        const formattedDateTime = `${month}/${day}/${year} ${hour}:${minute}:${second}`;
-        var dateTimeOut = '';
-
-        console.log(formattedDateTime);
-
-        console.log("att: ",attendance_timetable_id);
-        console.log("sss: ",studentStudySession_id);
-
-        proceedAttendanceSave(formattedDateTime, dateTimeOut, attendanceStatus, checkpoint, attendance_timetable_id, studentStudySession_id, student_id);
-        
-        }
-
-        function proceedAttendanceSave(formattedDateTime, dateTimeOut, attendanceStatus, checkpoint, attendance_timetable_id, studentStudySession_id, student_id)
-        {
-
-        console.log("jigh");
-        data={
-            student_id: student_id,
-            date_time_in: formattedDateTime,
-            date_time_out: dateTimeOut,
-            is_attend: attendanceStatus,
-            checkpoint_id: checkpoint,
-            attendance_timetable_id: attendance_timetable_id,
-            student_study_session_id: studentStudySession_id
-            };
-            
-            fetch('http://127.0.0.1:8000/Attendance/recordAttendance', 
-            {
-            method: 'POST', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status === 404) {
-                    document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
-                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
-                    setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                    }, 2000);
-                }else if (response.status === 400) {
-                    
-                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertDailyStudent"]').style.display = 'block';
-                    setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                    }, 2000);
-                }
-            })
-            .then(data => {
-
-            if(data.error){
-                document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
-                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
-                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
-                setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                }, 2000);
-            }
-            else{
-                // Handle successful response here
-                document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'block';
-                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
-                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
-                setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
-                }, 2000);
-            }
-                
-            })
-            .catch(error => {
-                // Handle other errors
-                console.error('Error fetching data:', error);
-            });
-        }
-    </script>
-
-
     <script>
 
         function signOut()

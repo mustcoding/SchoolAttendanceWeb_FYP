@@ -218,6 +218,16 @@
             <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
         </a>
     </li>
+    <li>
+          <a href="{{route('attend-to-school')}}">
+            <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://127.0.0.1:8000/List-Absent">
+            <i class="bi bi-circle"></i><span>LIST ABSENT</span>
+          </a>
+        </li>
   </ul>
 </li><!-- End Components Nav -->
 </ul>
@@ -250,7 +260,7 @@
                 <!-- Custom Styled Validation -->
                 <form id="OccurrencesForm" class="row g-3 needs-validation" novalidate>
                     <div class="col-12">
-                      <label for="className" class="form-label">Name</label>
+                      <label for="className" class="form-label">Name <span style="color: red;"> *</label>
                       <input type="text" class="form-control" id="occurrenceName" required>
                       <div class="valid-feedback">
                         Looks good!
@@ -260,14 +270,24 @@
                       </div>
                     </div>
                     <div class="col-12">
-                        <label for="className" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" required>
+                        <label for="validationDefault04" class="form-label">Day To Record<span style="color: red;"> *</label>
+                        <select class="form-select" id="description" required>
+                          <option selected value="SUNDAY">SUNDAY</option>
+                          <option value="MONDAY">MONDAY</option>
+                          <option value="TUESDAY">TUESDAY</option>
+                          <option value="WEDNESDAY">WEDNESDAY</option>
+                          <option value="THURSDAY">THURSDAY</option>
+                          <option value="FRIDAY">FRIDAY</option>
+                          <option value="SATURDAY">SATURDAY</option>
+                          <option value="FRIDAY TO SATURDAY">FRIDAY TO SATURDAY</option>
+                          <option value="SUNDAY TO THURSDAY">SUNDAY TO THURSDAY</option>
+                        </select>
                         <div class="valid-feedback">
-                          Looks good!
-                        </div>
+                            Looks good!
+                          </div>
                         <div class="invalid-feedback">
-                          Please enter Description!
-                        </div>
+                            Please select your position!
+                          </div>
                     </div>
                     <div class="text-center">
                         <button type="button" class="btn btn-primary" onclick="saveOccurrence(value)">Save</button>

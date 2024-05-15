@@ -220,6 +220,16 @@
         <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
       </a>
     </li>
+    <li>
+          <a href="{{route('attend-to-school')}}">
+            <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://127.0.0.1:8000/List-Absent">
+            <i class="bi bi-circle"></i><span>LIST ABSENT</span>
+          </a>
+        </li>
   </ul>
 </li><!-- End Components Nav -->
 
@@ -475,7 +485,7 @@
               })
               .then(data => {
 
-                checkAttendanceTimeTable(data.study[0].id);
+                checkAttendanceTimeTable(data.study[0].id, student_id);
                 
               })
               .catch(error => {
@@ -486,7 +496,7 @@
   </script>
 
   <script>
-    function checkAttendanceTimeTable(studentStudySession_id) {
+    function checkAttendanceTimeTable(studentStudySession_id, student_id) {
         const is_Delete = 0;
 
         fetch('http://127.0.0.1:8000/AttendanceTimetable/checkAttendance-by-time', {
@@ -511,7 +521,7 @@
                 const checkpoint = 1;
                 console.log("helllo");
                 const attendance_timetable_id = data.timetable.id;
-                saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint);
+                saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, student_id);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -520,7 +530,7 @@
   </script>
 
   <script>
-    function saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint)
+    function saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, student_id)
     {
       const is_Delete = 0;
         
@@ -545,15 +555,16 @@
       console.log("att: ",attendance_timetable_id);
       console.log("sss: ",studentStudySession_id);
 
-      proceedAttendanceSave(formattedDateTime, dateTimeOut, is_attend, checkpoint, attendance_timetable_id, studentStudySession_id);
+      proceedAttendanceSave(formattedDateTime, dateTimeOut, is_attend, checkpoint, attendance_timetable_id, studentStudySession_id, student_id);
       
     }
 
-    function proceedAttendanceSave(formattedDateTime, dateTimeOut, is_attend, checkpoint, attendance_timetable_id, studentStudySession_id)
+    function proceedAttendanceSave(formattedDateTime, dateTimeOut, is_attend, checkpoint, attendance_timetable_id, studentStudySession_id, student_id)
     {
 
       console.log("jigh");
       data={
+          student_id: student_id,
           date_time_in: formattedDateTime,
           date_time_out: dateTimeOut,
           is_attend: is_attend,

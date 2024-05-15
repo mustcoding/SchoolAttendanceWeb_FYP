@@ -15,4 +15,9 @@ class SchoolSession extends Model
         'year',
         'is_Delete',
     ];
+
+    public function schoolSessionClass()
+    {
+        return $this->hasMany(SchoolSessionClass::class);
+    }
 }

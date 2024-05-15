@@ -18,6 +18,7 @@ class Student extends Model
         'card_rfid',
         'tag_rfid',
         'is_Delete',
+        'type_student',
     ];
 
     public function cardRfid()

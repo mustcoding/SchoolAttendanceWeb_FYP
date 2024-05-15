@@ -15,11 +15,23 @@ class SchoolSessionClassController extends Controller
      */
     public function registerSchoolSessionClass(Request $request)
     {
-
         try {
-            // Your existing validation and user creation code
-    
-             // If validation passes, create user
+            // Check if a record with the same school_session_id, class_id, and staff_id exists
+            $existingRecord = SchoolSessionClass::where([
+                'school_session_id' => $request->input('school_session_id'),
+                'class_id' => $request->input('class_id'),
+                'staff_id' => $request->input('staff_id'),
+            ])->first();
+
+            // If the record already exists, return a response indicating the conflict
+            if ($existingRecord) {
+                return response()->json([
+                    'message' => 'Record already exists',
+                    'attendance' => $existingRecord,
+                ], 200); // 409 Conflict status code
+            }
+
+            // If the record doesn't exist, create a new one
             $schoolSessionClass = SchoolSessionClass::create([
                 'school_session_id' => $request->input('school_session_id'),
                 'class_id' => $request->input('class_id'),
@@ -32,8 +44,7 @@ class SchoolSessionClassController extends Controller
                 'message' => 'School Session Class registered successfully',
                 'attendance' => $schoolSessionClass
             ], 200);
-    
-          
+
         } catch (QueryException $exception) {
             // Handle database exceptions (e.g., unique constraint violation)
             return response()->json([

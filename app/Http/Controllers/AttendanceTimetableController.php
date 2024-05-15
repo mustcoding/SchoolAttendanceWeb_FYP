@@ -86,7 +86,7 @@ class AttendanceTimetableController extends Controller
     {
         // Get current time and day
         $currentTime = now()->format('H:i');
-        $currentDay = strtoupper(now()->format('l'));
+        
     
         // Find timetable entries where current time falls between start_time and end_time
         $timetable = AttendanceTimetable::where('start_time', '<=', $currentTime)
@@ -113,20 +113,47 @@ class AttendanceTimetableController extends Controller
             ], 404);
         }
     
-        // Check if the current day matches any description in the occurrence type
-        if (strpos($occurrenceType->description, $currentDay) !== false) {
-            return response()->json([
-                'message' => 'Attendance can be recorded for the current day and time.',
-                'timetable' => $timetable,
-                'occurrence_type' => $occurrenceType
-            ], 200);
+        // Get the current day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+        $currentDayOfWeek = date('w');
+
+        // Convert the day of the week to a textual representation
+        $daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        $currentDay = $daysOfWeek[$currentDayOfWeek];
+
+        // Parse the occurrence type description to extract the range
+        $descriptionParts = explode(' TO ', $occurrenceType->description);
+
+        // Check if the array has at least two elements
+        if (count($descriptionParts) >= 2) {
+            $startDay = trim($descriptionParts[0]);
+            $endDay = trim($descriptionParts[1]);
+
+            // Check if the current day falls within the range
+            if ($currentDayOfWeek >= array_search($startDay, $daysOfWeek) && $currentDayOfWeek <= array_search($endDay, $daysOfWeek)) {
+                return response()->json([
+                    'message' => 'Attendance can be recorded for the current day and time.',
+                    'timetable' => $timetable,
+                    'occurrence_type' => $occurrenceType
+                ], 200);
+            }
         } else {
-            return response()->json([
-                'message' => 'Attendance cannot be recorded for the current day and time.',
-                'error' => 'Day does not match occurrence type description.',
-                'DAY' => $currentDay,
-            ], 404);
+            // Check if the occurrence type description matches the current day
+            if ($currentDay === $descriptionParts[0]) {
+                return response()->json([
+                    'message' => 'Attendance can be recorded for the current day and time.',
+                    'timetable' => $timetable,
+                    'occurrence_type' => $occurrenceType
+                ], 200);
+            }
         }
+
+        // If the current day does not match the occurrence type description, return a 404 response
+        return response()->json([
+            'message' => 'Attendance cannot be recorded for the current day and time.',
+            'error' => 'Day does not match occurrence type description.',
+            'DAY' => $currentDay,
+        ], 404);
+
     }
 
     /**

@@ -220,6 +220,16 @@
             <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
         </a>
     </li>
+    <li>
+          <a href="{{route('attend-to-school')}}">
+            <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://127.0.0.1:8000/List-Absent">
+            <i class="bi bi-circle"></i><span>LIST ABSENT</span>
+          </a>
+        </li>
   </ul>
 </li><!-- End Components Nav -->
 </ul>
@@ -290,7 +300,7 @@
                             Please select a start date.
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-6">
                         <label for="startDate" class="form-label">Date Of Birth<span style="color: red;"> *</label>
                         <input type="date" class="form-control" id="dateOfBirth" required>
                         <div class="valid-feedback">
@@ -301,7 +311,20 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="form" class="form-label">RFID CARD Number</label>
+                        <label for="validationDefault04" class="form-label">Type Of Student<span style="color: red;"> *</label>
+                        <select class="form-select" id="typeStudent" required>
+                          <option selected value="DAILY STUDENT">DAILY STUDENT</option>
+                        <option value="BOARDING STUDENT">BOARDING STUDENT</option>
+                        </select>
+                        <div class="valid-feedback">
+                            Looks good!
+                          </div>
+                        <div class="invalid-feedback">
+                            Please select your position!
+                          </div>
+                      </div>
+                    <div class="col-md-6">
+                        <label for="form" class="form-label">RFID CARD Number<span style="color: red;"> *</label>
                         <select class="form-select" id="rfidNumber" required>
                             <option selected disabled hidden></option>
                      
@@ -314,7 +337,7 @@
                           </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="form" class="form-label">RFID TAG Number</label>
+                        <label for="form" class="form-label">RFID TAG Number<span style="color: red;"> *</label>
                         <select class="form-select" id="rfidTag" required>
                             <option selected disabled hidden></option>
                      
@@ -427,11 +450,13 @@
       var phoneNumber = document.getElementById('phoneNumber').value;
       var address = document.getElementById('address').value;
       var rfid_tag = document.getElementById('rfidTag').value;
+      var type_student = document.getElementById('typeStudent').value;
 
 
 
       if (studentName === '' || dateOfBirth === '' || rfidId=== ''
-       || parentGuardianName === '' || nickname === '' || phoneNumber=== ''||address === ''||rfid_tag === '')
+       || parentGuardianName === '' || nickname === '' || phoneNumber=== ''
+       ||address === ''||rfid_tag === ''||type_student === '')
       {
         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert3"]').style.display = 'block';
         return;
@@ -454,7 +479,8 @@
             parent_guardian_id: parentGuardianId,
             card_rfid: rfidId,
             tag_rfid: rfid_tag,
-            is_Delete:is_Delete
+            is_Delete:is_Delete,
+            type_student: type_student
           };
 
           // Remove properties with null or undefined values

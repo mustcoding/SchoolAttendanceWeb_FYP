@@ -155,7 +155,14 @@ Route::get('/attendance-in-classroom', function () {
     return view('SMAJU.AttendanceForTeacherUsed');
 })->name('attendance-in-classroom');
 
+Route::get('/attend-to-school', function () {
+    return view('SMAJU.searchAttendForAdmin');
+})->name('attend-to-school');
 
+
+Route::get('/list-attend-to-school', function () {
+    return view('SMAJU.listAttendForAdmin');
+})->name('list-attend-to-school');
 
 
 //parent
@@ -275,6 +282,7 @@ Route::prefix('AttendanceTimetable')->middleware(['auth:staff'])->group(function
     Route::get('all-timetable-data', [AttendanceTimetableController::class, 'getAllAttendanceTimetable']);
     Route::put('delete/{id}',[AttendanceTimetableController::class,'DeleteAttendanceTimetable']);
     Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'checkAttendanceTimeTable']);
+    
 
 });
 
@@ -305,6 +313,7 @@ Route::prefix('student-data')->middleware(['auth:staff'])->group(function() {
     Route::get('all-data', [StudentController::class, 'getAllStudentsManagement']);
     Route::post('total-students-in-classroom', [StudentController::class, 'getTotalStudentInClassroom']);
     Route::post('list-students-in-classroom', [StudentController::class, 'getListStudentInClassroom']);
+    
 
 });
 
@@ -333,5 +342,6 @@ Route::prefix('StudentStudySession')->middleware(['auth:staff'])->group(function
 Route::prefix('Attendance')->middleware(['auth:staff'])->group(function() {
 
     Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry']);
+    Route::post('list-attend', [AttendanceController::class, 'getListAttend']);
 
 });

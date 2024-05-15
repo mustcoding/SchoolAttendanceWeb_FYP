@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('card_rfid');
             $table->unsignedBigInteger('tag_rfid');
             $table->integer('is_Delete');
+            $table->string('type_student');
             $table->timestamps();
 
             $table->foreign('parent_guardian_id')

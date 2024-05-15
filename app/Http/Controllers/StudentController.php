@@ -25,6 +25,7 @@ class StudentController extends Controller
             'card_rfid' => 'required|integer',
             'tag_rfid' => 'required|integer',
             'is_Delete' => 'required|integer',
+            'type_student' => 'required|string',
             
         ]);
 
@@ -36,6 +37,7 @@ class StudentController extends Controller
             'card_rfid' => $attrs['card_rfid'],
             'tag_rfid' => $attrs['tag_rfid'],
             'is_Delete' => $attrs['is_Delete'],
+            'type_student' => $attrs['type_student'],
         ]);
 
         // Return user & token in response
@@ -392,6 +394,8 @@ class StudentController extends Controller
 
         return response()->json($formattedData);
     }
+
+    
     
     /**
      * Show the form for creating a new resource.

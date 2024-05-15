@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Student;
+use App\Models\SchoolSession;
+use App\Models\StudentStudySession;
+use App\Models\AttendanceTimetable;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Http\Request;
@@ -15,9 +19,62 @@ class AttendanceController extends Controller
         try {
             // Your existing validation and user creation code
 
+            // Retrieve the student's type from the database
+            $studentType = Student::where('id', $request->input('student_id'))->value('type_student');
+
+            // Check if the student's type is DAILY STUDENT
+            if ($studentType === 'DAILY STUDENT') {
+                // Retrieve the attendance timetable associated with the given attendance_timetable_id
+                $attendanceTimetable = AttendanceTimetable::find($request->input('attendance_timetable_id'));
+
+                // Check if the occurrence type of the attendance timetable is 'SUNDAY TO THURSDAY'
+                if ($attendanceTimetable && $attendanceTimetable->occurrence->description === 'SUNDAY TO THURSDAY') {
+                    // Extract the date part from the date_time_in
+                    $date = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'));
+                    $datePart = $date->format('m/d/y');
+
+                    // Check if the current time is within the range of start_time and end_time
+                    $startTime = strtotime($attendanceTimetable->start_time);
+                    $endTime = strtotime($attendanceTimetable->end_time);
+                    $currentTime = strtotime($date->format('H:i'));
+                    // Convert Unix timestamp to a readable time format (HH:MM)
+                    $currentTimeFormatted = date('H:i', $currentTime);
+                    $startTimeFormatted = date('H:i', $currentTime);
+                    $endTimeFormatted = date('H:i', $currentTime);
+
+                    
+                    // If the current time is not within the range, return an error response
+                    if ($currentTimeFormatted < $startTimeFormatted || $currentTimeFormatted > $endTimeFormatted) {
+                        return response()->json([
+                            'error' => 'Attendance can only be recorded during specified time ranges for DAILY STUDENT',
+                            'time' => $currentTimeFormatted,
+                        ], 400);
+                    }
+                } else {
+
+                    // Extract the date part from the date_time_in
+                    $date = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'));
+                    $datePart = $date->format('m/d/y');
+
+                    // Check if the current time is within the range of start_time and end_time
+                    $startTime = strtotime($attendanceTimetable->start_time);
+                    $endTime = strtotime($attendanceTimetable->end_time);
+                    $currentTime = strtotime($date->format('H:i'));
+                    // Convert Unix timestamp to a readable time format (HH:MM)
+                    $currentTimeFormatted = date('H:i', $currentTime);
+
+                    
+                    // If the occurrence type is not 'SUNDAY TO THURSDAY', return an error response
+                    return response()->json([
+                        'error' => 'Attendance can only be recorded during specified time ranges for DAILY STUDENT',
+                        'time' => $currentTimeFormatted,
+                    ], 400);
+                }
+            }
+
             // Extract the date part from the date_time_in
             $date = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'));
-            $datePart = $date->format('m/d/y');;
+            $datePart = $date->format('m/d/y');
 
             // Check if an attendance record already exists for the given session, timetable, and date
             $existingAttendance = Attendance::where('student_study_session_id', $request->input('student_study_session_id'))
@@ -32,34 +89,84 @@ class AttendanceController extends Controller
                 ], 404);
             }
 
-            else{
-                // If validation passes and no existing attendance record is found, create a new attendance record
-                $attendance = Attendance::create([
-                    'date_time_in' => $request->input('date_time_in'),
-                    'date_time_out'=> $request->input('date_time_out'),
-                    'is_attend' => $request->input('is_attend'),
-                    'checkpoint_id' => $request->input('checkpoint_id'),
-                    'attendance_timetable_id' => $request->input('attendance_timetable_id'),
-                    'student_study_session_id' => $request->input('student_study_session_id'),
-                ]);
+            // If the student is not a DAILY STUDENT or if the occurrence type is not 'SUNDAY TO THURSDAY', proceed to record the attendance
+            $attendance = Attendance::create([
+                'date_time_in' => $request->input('date_time_in'),
+                'date_time_out' => $request->input('date_time_out'),
+                'is_attend' => $request->input('is_attend'),
+                'checkpoint_id' => $request->input('checkpoint_id'),
+                'attendance_timetable_id' => $request->input('attendance_timetable_id'),
+                'student_study_session_id' => $request->input('student_study_session_id'),
+            ]);
 
-                // Return success response with 200 status code
-                return response()->json([
-                    'message' => 'Attendance Recorded Successfully',
-                    'attendance' => $attendance
-                ], 200);
-            }
+            // Return success response with 200 status code
+            return response()->json([
+                'message' => 'Attendance Recorded Successfully',
+                'attendance' => $attendance
+            ], 200);
 
-            
-        
         } catch (QueryException $exception) {
             // Handle database exceptions (e.g., unique constraint violation)
             return response()->json([
                 'message' => 'Information needed missed',
                 'error' => $exception->getMessage()
             ], 404);
-
         }
+    }
+
+    public function getListAttend(Request $request)
+    {
+        $schoolSessionId = $request->input('schoolSession_id');
+        $classroomId = $request->input('classroom_id');
+        $attendanceTimetableId = $request->input('attendanceTimetable_id');
+        $dateTimeIn = $request->input('attendanceDate');
+
+        // Retrieve the current school session
+        $currentSession = SchoolSession::find($schoolSessionId);
+
+        if (!$currentSession) {
+            // If there is no current session, return an empty array or appropriate response
+            return response()->json([]);
+        }
+
+        // Retrieve all attendances for the specified parameters
+        $attendances = Attendance::with(['studentStudySession.student', 'checkpoint', 'attendanceTimetable'])
+            ->whereHas('studentStudySession', function ($query) use ($classroomId, $currentSession) {
+                $query->whereHas('schoolSessionClass', function ($subQuery) use ($classroomId, $currentSession) {
+                    $subQuery->where('class_id', $classroomId)
+                            ->where('school_session_id', $currentSession->id);
+                });
+            })
+            ->where('attendance_timetable_id', $attendanceTimetableId)
+            ->where('is_attend', 1)
+            ->where('date_time_in', 'like', "%$dateTimeIn%")
+            ->get();
+
+        // Transform the data as needed, for example, extract required fields
+        $formattedData = $attendances->map(function ($attendance) {
+
+            $student = $attendance->studentStudySession->student;
+            $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
+            $cardRfid = $student->cardRfid ? $student->cardRfid->number : "null";
+            $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
+            $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
+            $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
+
+            return [
+                'student_id' => $student->id,
+                'name' => $student->name,
+                'date_of_birth' => $student->date_of_birth,
+                'parent_name' => $parentName,
+                'card_rfid' => $cardRfid,
+                'tag_rfid' => $tagRfid,
+                'class_name' => $className,
+                'form_number' => $formNumber,
+                'date_time_in' => $attendance->date_time_in,
+            ];
+            
+        });
+
+        return response()->json($formattedData);
     }
 
     /**

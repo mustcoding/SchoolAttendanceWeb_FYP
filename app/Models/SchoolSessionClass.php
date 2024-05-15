@@ -15,4 +15,14 @@ class SchoolSessionClass extends Model
         'staff_id',
         'is_Delete',
     ];
+
+    public function attendanceTimetable()
+    {
+        return $this->belongsTo(AttendanceTimetable::class);
+    }
+
+    public function schoolSession()
+    {
+        return $this->belongsTo(SchoolSession::class);
+    }
 }

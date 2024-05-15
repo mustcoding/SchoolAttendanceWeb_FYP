@@ -15,4 +15,13 @@ class StudentStudySession extends Model
         'is_Delete',
     ];
 
+    public function schoolSessionClass()
+    {
+        return $this->belongsTo(SchoolSessionClass::class, 'ssc_id');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }
