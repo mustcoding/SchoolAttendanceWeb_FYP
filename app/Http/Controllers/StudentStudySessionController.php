@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\StudentStudySession;
+use App\Models\SchoolSessionClass;
+use App\Models\SchoolSession;
 use App\Http\Requests\StoreStudentStudySessionRequest;
 use App\Http\Requests\UpdateStudentStudySessionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class StudentStudySessionController extends Controller
 {
@@ -112,6 +115,50 @@ class StudentStudySessionController extends Controller
         // Return a success response
         return response()->json(['message' => 'Student deleted from class successfully']);
     }
+
+    public function deleteStudent(Request $request)
+    {
+       
+        // Retrieve student_id and currentYear from the request
+        $student_id = $request->input('student_id');
+        // Get the current year
+        $currentYear = Carbon::now()->year; // Dynamically retrieve the current year
+
+        // Get all school_session_ids for the given year
+        $schoolSessions = SchoolSession::where('year', $currentYear)->get();
+
+        if ($schoolSessions->isEmpty()) {
+            return response()->json(['message' => 'No school sessions found for the given year'], 404);
+        }
+
+        $schoolSessionIds = $schoolSessions->pluck('id');
+
+        // Get all ssc_ids for the given school_session_ids
+        $sscIds = SchoolSessionClass::whereIn('school_session_id', $schoolSessionIds)->pluck('id');
+
+        if ($sscIds->isEmpty()) {
+            return response()->json(['message' => 'No school session classes found for the given year'], 404);
+        }
+
+        // Find the student_study_session entry
+        $studentStudySessions = StudentStudySession::where('student_id', $student_id)
+                                ->where('ssc_id', $sscIds)
+                                ->get();
+
+        if ($studentStudySessions->isEmpty()) {
+            return response()->json(['message' => 'Student study session not found'], 404);
+        }
+
+        // Update the is_Delete field to mark the student as deleted
+        foreach ($studentStudySessions as $studentStudySession) {
+            $studentStudySession->is_Delete = 1;
+            $studentStudySession->save();
+        }
+
+        // Return a success response
+        return response()->json(['message' => 'Student deleted from class successfully']);
+    }
+
 
 
     /**

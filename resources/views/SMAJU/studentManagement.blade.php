@@ -227,11 +227,7 @@
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
-        <li>
-          <a href="http://127.0.0.1:8000/List-Absent">
-            <i class="bi bi-circle"></i><span>LIST ABSENT</span>
-          </a>
-        </li>
+        
       </ul>
     </li><!-- End Components Nav -->
     </ul>
@@ -250,6 +246,11 @@
 
     <div class="alert alert-danger alert-dismissible fade show" role="alert2" style="display: none;">
       Houston... we can't find the student you search.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="alert alert-success alert-dismissible fade show" role="delete" style="display: none;">
+      Student Successfully Being Deleted.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
@@ -549,6 +550,7 @@
             console.log("Student Successfully deleted ", data);
             deleteCardRFID(data);
             deleteTagRFID(data);
+            deleteStudentStudySession(data);
             
         })
       .catch(error => {
@@ -557,6 +559,14 @@
         
     }
     
+  </script>
+  <script>
+    function toggleAlert(role, shouldDisplay) {
+      var alertElement = document.querySelector(`.alert[role="${role}"]`);
+      if (alertElement) {
+        alertElement.style.display = shouldDisplay ? 'block' : 'none';
+      }
+    }
   </script>
 
   <script>
@@ -570,25 +580,25 @@
       };
 
       fetch('http://127.0.0.1:8000/rfid/delete/'+studentdata.student.card_rfid, {
-              method: 'PUT', // Use the POST method
-              headers: {
-              'Content-Type': 'application/json' // Set the content type to JSON
-              },
-              body: JSON.stringify(data) // Convert the data object to a JSON string
+        method: 'PUT', // Use the POST method
+        headers: {
+          'Content-Type': 'application/json' // Set the content type to JSON
+        },
+        body: JSON.stringify(data) // Convert the data object to a JSON string
       })
-        .then(response => response.json())
-        .then(data => {
-              // Handle the response from the server
-              console.log("RFID Successfully deleted ", data);
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log("RFID Successfully deleted ", data);
               
-          })
-        .catch(error => {
-              console.error('Error fetching data:', error);
-        });
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
           
-      }
+    }
 
-      function deleteTagRFID(studentdata)
+    function deleteTagRFID(studentdata)
     {
       var is_Delete=1;
       //Create an object to hold the data you want to send
@@ -604,18 +614,54 @@
               },
               body: JSON.stringify(data) // Convert the data object to a JSON string
       })
-        .then(response => response.json())
-        .then(data => {
-              // Handle the response from the server
-              console.log("RFID Successfully deleted ", data);
-              window.location.href = "http://127.0.0.1:8000/studentManagement";
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log("RFID Successfully deleted ", data);
+        
               
-          })
-        .catch(error => {
-              console.error('Error fetching data:', error);
-        });
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
           
-      }
+    }
+
+    function deleteStudentStudySession(studentdata)
+    {
+
+      var is_Delete=1;
+      //Create an object to hold the data you want to send
+      const data = {
+        student_id : studentdata.student.id,
+        is_Delete:is_Delete,
+      };
+
+      fetch('http://127.0.0.1:8000/StudentStudySession/delete', {
+        method: 'PUT', // Use the POST method
+        headers: {
+          'Content-Type': 'application/json' // Set the content type to JSON
+        },
+        body: JSON.stringify(data) // Convert the data object to a JSON string
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log("Student Seccessfully Being Deleted ", data);
+
+        toggleAlert('delete', true);
+
+        setTimeout(function() {
+          window.location.href = "http://127.0.0.1:8000/studentManagement";
+        }, 2000);
+        
+              
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+          
+    }
     
   </script>
 

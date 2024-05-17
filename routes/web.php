@@ -336,7 +336,7 @@ Route::prefix('StudentStudySession')->middleware(['auth:staff'])->group(function
     Route::post('add', [StudentStudySessionController::class, 'registerStudentStudySession']);
     Route::post('get-id-by-studentId',[StudentStudySessionController::class,'getIdByStudentId']);
     Route::put('delete-student',[StudentStudySessionController::class,'deleteStudentFromClass']);
-
+    Route::put('delete',[StudentStudySessionController::class,'deleteStudent']);
 });
 
 Route::prefix('Attendance')->middleware(['auth:staff'])->group(function() {

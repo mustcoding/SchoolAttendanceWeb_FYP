@@ -221,11 +221,7 @@
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
-        <li>
-          <a href="http://127.0.0.1:8000/List-Absent">
-            <i class="bi bi-circle"></i><span>LIST ABSENT</span>
-          </a>
-        </li>
+        
       </ul>
     </li><!-- End Components Nav -->
     

@@ -32,5 +32,5 @@ class Attendance extends Model
     {
         return $this->belongsTo(AttendanceTimetable::class, 'attendance_timetable_id');
     }
-
+  
 }

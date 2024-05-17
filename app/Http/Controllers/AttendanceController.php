@@ -120,15 +120,15 @@ class AttendanceController extends Controller
         $classroomId = $request->input('classroom_id');
         $attendanceTimetableId = $request->input('attendanceTimetable_id');
         $dateTimeIn = $request->input('attendanceDate');
-
+    
         // Retrieve the current school session
         $currentSession = SchoolSession::find($schoolSessionId);
-
+    
         if (!$currentSession) {
             // If there is no current session, return an empty array or appropriate response
             return response()->json([]);
         }
-
+    
         // Retrieve all attendances for the specified parameters
         $attendances = Attendance::with(['studentStudySession.student', 'checkpoint', 'attendanceTimetable'])
             ->whereHas('studentStudySession', function ($query) use ($classroomId, $currentSession) {
@@ -138,20 +138,36 @@ class AttendanceController extends Controller
                 });
             })
             ->where('attendance_timetable_id', $attendanceTimetableId)
-            ->where('is_attend', 1)
+            ->whereIn('is_attend', [0, 1, 2])
             ->where('date_time_in', 'like', "%$dateTimeIn%")
             ->get();
-
-        // Transform the data as needed, for example, extract required fields
-        $formattedData = $attendances->map(function ($attendance) {
-
+    
+        // Extract student IDs who have attendance for that day
+        $attendedStudentIds = $attendances->pluck('studentStudySession.student_id');
+    
+        // Retrieve students related to the classroom and school session who do not have attendance data for that day
+        $studentsWithoutAttendance = Student::whereHas('studentStudySessions', function ($query) use ($classroomId, $currentSession) {
+                $query->whereHas('schoolSessionClass', function ($subQuery) use ($classroomId, $currentSession) {
+                    $subQuery->where('class_id', $classroomId)
+                            ->where('school_session_id', $currentSession->id);
+                });
+            })
+            ->whereDoesntHave('studentStudySessions.attendances', function ($query) use ($attendanceTimetableId, $dateTimeIn) {
+                $query->where('attendance_timetable_id', $attendanceTimetableId)
+                      ->where('date_time_in', 'like', "%$dateTimeIn%");
+            })
+            ->get();
+    
+        // Merge attendances and students without attendance
+        $allStudents = $attendances->map(function ($attendance) use ($dateTimeIn) {
             $student = $attendance->studentStudySession->student;
             $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
             $cardRfid = $student->cardRfid ? $student->cardRfid->number : "null";
             $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
             $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
             $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
-
+            $attendanceDateTime = $attendance->is_attend == 2 ? "EXCUSED" :($attendance->is_attend == 0 ? "ABSENT" : $attendance->date_time_in);
+    
             return [
                 'student_id' => $student->id,
                 'name' => $student->name,
@@ -161,14 +177,32 @@ class AttendanceController extends Controller
                 'tag_rfid' => $tagRfid,
                 'class_name' => $className,
                 'form_number' => $formNumber,
-                'date_time_in' => $attendance->date_time_in,
+                'date_time_in' => $attendanceDateTime,
             ];
-            
         });
-
-        return response()->json($formattedData);
+    
+        $studentsWithoutAttendance->each(function ($student) use ($allStudents) {
+            $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
+            $cardRfid = $student->cardRfid ? $student->cardRfid->number : "null";
+            $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
+            $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
+            $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
+    
+            $allStudents->push([
+                'student_id' => $student->id,
+                'name' => $student->name,
+                'date_of_birth' => $student->date_of_birth,
+                'parent_name' => $parentName,
+                'card_rfid' => $cardRfid,
+                'tag_rfid' => $tagRfid,
+                'class_name' => $className,
+                'form_number' => $formNumber,
+                'date_time_in' => "ABSENT", // No attendance record
+            ]);
+        });
+    
+        return response()->json($allStudents);
     }
-
     /**
      * Show the form for creating a new resource.
      */

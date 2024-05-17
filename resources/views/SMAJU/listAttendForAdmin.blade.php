@@ -229,11 +229,7 @@
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
-        <li>
-          <a href="http://127.0.0.1:8000/List-Absent">
-            <i class="bi bi-circle"></i><span>LIST ABSENT</span>
-          </a>
-        </li>
+     
   </ul>
 </li><!-- End Components Nav -->
 
@@ -290,6 +286,8 @@
             <div class="card-body">
               <h5 class="card-title">
                 List of Student
+
+                <button class="btn btn-primary float-end" onclick="printData()">Print</button>
               </h5>
 
               <!-- Default Table -->
@@ -352,11 +350,10 @@
 
   <script>
 
-    function displayAddServicesPage(){
-      window.open('tourismserviceadd.html','_self');
+    function printData() {
+      // You can add additional styling or logic here if needed
+      window.print();
     }
-
-  
     // Function to fetch data from the server
     function fetchData(schoolSession_id, classroom_id, attendanceTimetable_id, attendanceDate) {
 
