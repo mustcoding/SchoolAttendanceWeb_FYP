@@ -79,7 +79,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="adminProfile.html" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="{{route('teacherProfile')}}" id="userProfileLink">
 
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
@@ -124,6 +124,11 @@
               <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
             </a>
           </li>
+          <li>
+          <a href="{{route('attendance-to-school')}}">
+            <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
+          </a>
+        </li>
         </ul>
       </li><!-- End Components Nav -->
     
@@ -252,7 +257,7 @@
       // Update the href attribute with the appUserId
       var userProfileLink = document.getElementById('userProfileLink');
       if (userProfileLink) {
-        userProfileLink.href = "http://127.0.0.1:8000/adminProfile";
+        userProfileLink.href = "{{route('teacherProfile')}}";
       } else {
         console.error('User profile link not found.');
       }
@@ -343,11 +348,57 @@
 
             sessionStorage.setItem('staff', JSON.stringify(EditStaffProfile));
             console.log('HERE HOI: ', sessionStorage);
+
+            // Retrieve the current year
+            var currentYear = new Date().getFullYear();
+            console.log("Current Year: " + currentYear); // For debugging purposes
+
+            getClassId(data.staff.id, currentYear);
+          
+        })
+        .catch(error => {
+            console.error('Error during fetch:', error);
+        });
+
+    }
+
+    function getClassId(staff_id, year)
+    {
+      const data={
+        staff_id: staff_id,
+        year : year
+      };
+
+      fetch('http://127.0.0.1:8000/StudentStudySession/findClass', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            console.log('Response:', data);
+
+            var ClassProfile = 
+            {
+              ssc_id: data.school_session_class_id,
+              class_id: data.class_id,
+              class_name: data.class_name,
+              form_number: data.form_number,
+              school_session: data.school_session
+            };
+
+            sessionStorage.setItem('ClassProfile', JSON.stringify(ClassProfile));
+            console.log('HERE HOI: ', sessionStorage);
+           
             updateUserData();
         })
         .catch(error => {
             console.error('Error during fetch:', error);
         });
+
 
     }
 

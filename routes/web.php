@@ -32,6 +32,10 @@ Route::get('/adminProfile', function () {
     return view('SMAJU.adminProfile');
 });
 
+Route::get('/teacherProfile', function () {
+    return view('SMAJU.teacherProfile');
+})-> name('teacherProfile');
+
 Route::get('/indexAdmin', function () {
     return view('SMAJU.indexAdmin');
 })->name('indexAdmin');
@@ -164,6 +168,15 @@ Route::get('/list-attend-to-school', function () {
     return view('SMAJU.listAttendForAdmin');
 })->name('list-attend-to-school');
 
+Route::get('/attendance-to-school', function () {
+    return view('SMAJU.searchAttendForTeacher');
+})->name('attendance-to-school');
+
+Route::get('/list-attendance-to-school', function () {
+    return view('SMAJU.listAttendanceForTeacher');
+})->name('list-attendance-to-school');
+
+
 
 //parent
 
@@ -210,6 +223,9 @@ Route::prefix('staff')->middleware(['auth:staff'])->group(function() {
     Route::get('all-staff-data', [StaffController::class, 'getAllStaffs']);
     Route::put('delete/{id}',[StaffController::class,'DeleteStaff']);
     Route::put('update/{id}',[StaffController::class,'updateStaffs']);
+    Route::put('findClass',[StaffController::class,'findClass']);
+    Route::post('/check-password', [StaffController::class, 'verifyPassword']);
+    Route::put('/change-password', [StaffController::class, 'updatePassword']);
 
 });
 
@@ -337,6 +353,7 @@ Route::prefix('StudentStudySession')->middleware(['auth:staff'])->group(function
     Route::post('get-id-by-studentId',[StudentStudySessionController::class,'getIdByStudentId']);
     Route::put('delete-student',[StudentStudySessionController::class,'deleteStudentFromClass']);
     Route::put('delete',[StudentStudySessionController::class,'deleteStudent']);
+    Route::post('findClass',[StudentStudySessionController::class,'findClass']);
 });
 
 Route::prefix('Attendance')->middleware(['auth:staff'])->group(function() {

@@ -50,7 +50,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="http://127.0.0.1:8000/indexTeacher" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -85,14 +85,14 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>Hi, User!</h6>
-              <span>SCHOOL ADMINISTRATOR</span>
+              <span>CLASSROOM TEACHER</span>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="adminProfile.html" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="{{route('teacherProfile')}}" id="userProfileLink">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -121,119 +121,29 @@
 <ul class="sidebar-nav" id="sidebar-nav">
 
   <li class="nav-item">
-    <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+    <a class="nav-link " href="{{route('indexTeacher')}}">
       <i class="bi bi-grid"></i>
       <span>DASHBOARD</span>
     </a>
   </li><!-- End Dashboard Nav -->
   <li class="nav-item">
-    <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="rewards.html">
-      <i class="bi bi-ticket-detailed"></i><span>REGISTRATION</span><i class="bi bi-chevron-down ms-auto"></i>
+    <a class="nav-link collapsed" data-bs-target="#Attendance" data-bs-toggle="collapse" href="rewards.html">
+      <i class="bi bi-newspaper"></i><span>ATTENDANCE</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
-    <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+    <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
-        <a href="http://127.0.0.1:8000/add-student">
-          <i class="bi bi-circle"></i><span>STUDENT</span>
+        <a href="{{route('attendance-in-classroom')}}">
+          <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
         </a>
       </li>
       <li>
-        <a href="http://127.0.0.1:8000/add-staff">
-          <i class="bi bi-circle"></i><span>STAFF</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-class">
-          <i class="bi bi-circle"></i><span>CLASS</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-RFID">
-          <i class="bi bi-circle"></i><span>RFID</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-attendance-timetable">
-          <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-classroom-by-session">
-          <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-school-session">
-          <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-activity-occurrences">
-         <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
-       </a>
-     </li>
-    </ul>
-</li><!-- End Components Nav -->
-
-<li class="nav-item">
-  <a class="nav-link collapsed" data-bs-target="#tourismServicesList" data-bs-toggle="collapse" href="rewards.html">
-    <i class="bi bi-ticket-detailed"></i><span>MANAGEMENT</span><i class="bi bi-chevron-down ms-auto"></i>
-  </a>
-  <ul id="tourismServicesList" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-    <li>
-      <a href="http://127.0.0.1:8000/studentManagement">
-        <i class="bi bi-circle"></i><span>STUDENT</span>
+      <a href="{{route('attendance-to-school')}}">
+        <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
       </a>
     </li>
-    <li>
-        <a href="http://127.0.0.1:8000/staffManagement">
-          <i class="bi bi-circle"></i><span>STAFF</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/classroomManagement">
-          <i class="bi bi-circle"></i><span>CLASS</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
-          <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{route('Student-In-Class')}}">
-          <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/schoolSessionManagement">
-          <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
-        </a>
-      </li>
-      <li>
-         <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
-          <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
-        </a>
-      </li>
-  </ul>
-</li><!-- End Components Nav -->
-<li class="nav-item">
-  <a class="nav-link collapsed" data-bs-target="#Attendance" data-bs-toggle="collapse" href="rewards.html">
-    <i class="bi bi-newspaper"></i><span>ATTENDANCE</span><i class="bi bi-chevron-down ms-auto"></i>
-  </a>
-  <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-    <li>
-        <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
-            <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
-        </a>
-    </li>
-    <li>
-          <a href="{{route('attend-to-school')}}">
-            <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
-          </a>
-        </li>
-       
-  </ul>
-</li><!-- End Components Nav -->
+    </ul>
+  </li><!-- End Components Nav -->
+
 </ul>
 </aside><!-- End Sidebar-->
 
@@ -258,7 +168,7 @@
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
               <h2 id="userName"></h2>
-              <h3>SCHOOL ADMINISTRATOR</h3>
+              <h3>CLASSROOM TEACHER</h3>
             </div>
           </div>
 
@@ -307,7 +217,7 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Role</div>
-                    <div class="col-lg-9 col-md-8">SCHOOL ADMINISTRATOR</div>
+                    <div class="col-lg-9 col-md-8">CLASSROOM TEACHER</div>
                   </div>
 
                 </div>
@@ -545,7 +455,7 @@
     // Update the href attribute with the appUserId
     var userProfileLink = document.getElementById('userProfileLink');
     if (userProfileLink) {
-      userProfileLink.href = "http://127.0.0.1:8000/adminProfile";
+      userProfileLink.href = "{{route('teacherProfile')}}";
     } else {
       console.error('User profile link not found.');
     }
@@ -626,6 +536,7 @@
         return false;
     }
   </script>
+
   <script>
 
     // Function to fetch data from the server
@@ -795,7 +706,6 @@
         return false;
     }
 </script>
-
 
 <script>
 

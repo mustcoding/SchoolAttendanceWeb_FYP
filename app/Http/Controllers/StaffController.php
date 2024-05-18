@@ -8,6 +8,8 @@ use App\Models\Staff;
 use App\Http\Requests\StoreStaffRequest;
 use App\Http\Requests\UpdateStaffRequest;
 use Illuminate\Support\Facades\Auth; // Import the Auth facade
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
 {
@@ -248,6 +250,66 @@ class StaffController extends Controller
         // Return a success response
         return response()->json(['message' => 'User updated successfully', 'staff' => $staff]);
     }
+
+    public function verifyPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'staffId' => 'required|integer',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Invalid JSON format. staffId and password are required.'], 400);
+        }
+
+        $staff = Staff::where('id', $request->staffId)->first();
+
+        if ($staff) {
+            // Check if the provided password matches the encrypted password in the database
+            if (Hash::check($request->password, $staff->password)) {
+                return response()->json([
+                    'staffId' => $staff->id,
+                    'staffName' => $staff->name,
+                    'nickName' => $staff->nickname,
+                    'username' => $staff->username,
+                    'password' => $staff->password,
+                    'image' => $staff->image,
+                    'position' => $staff->position,
+                ], 200);
+            } else {
+                return response()->json(['error' => 'Incorrect password.'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'User not exist.'], 400);
+        }
+    }
+
+    public function updatePassword(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'staffId' => 'required|integer',
+        'password' => 'required|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => 'Invalid JSON format. staffId and password are required.'], 400);
+    }
+
+    try {
+        $staff = Staff::find($request->staffId);
+
+        if ($staff) {
+            // Encrypt the password before saving
+            $staff->password = Hash::make($request->password);
+            $staff->save();
+            return response()->json(['success' => 'Password updated successfully.'], 200);
+        } else {
+            return response()->json(['error' => 'Failed to update profile.'], 400);
+        }
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error occurred ' . $e->getMessage()], 500);
+    }
+}
 
     /**
      * Display the specified resource.

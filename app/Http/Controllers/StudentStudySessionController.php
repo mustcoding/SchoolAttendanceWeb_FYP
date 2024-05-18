@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StudentStudySession;
 use App\Models\SchoolSessionClass;
 use App\Models\SchoolSession;
+use App\Models\Classroom;
 use App\Http\Requests\StoreStudentStudySessionRequest;
 use App\Http\Requests\UpdateStudentStudySessionRequest;
 use Illuminate\Http\Request;
@@ -157,6 +158,57 @@ class StudentStudySessionController extends Controller
 
         // Return a success response
         return response()->json(['message' => 'Student deleted from class successfully']);
+    }
+
+    public function findClass(Request $request)
+    {
+        // Retrieve staff_id and year from the request
+        $staff_id = $request->input('staff_id');
+        $year = $request->input('year');
+    
+        // Validate the inputs
+        if (!$staff_id || !$year) {
+            return response()->json(['error' => 'Invalid input'], 400);
+        }
+    
+        // Retrieve the school session for the given year
+        $schoolSession = SchoolSession::where('year', $year)
+                                      ->where('is_Delete', 0)
+                                      ->first();
+    
+        if (!$schoolSession) {
+            return response()->json(['error' => 'School session not found'], 404);
+        }
+    
+        // Retrieve the school session class for the given staff_id and school_session_id
+        $schoolSessionClass = SchoolSessionClass::where('staff_id', $staff_id)
+                                                ->where('school_session_id', $schoolSession->id)
+                                                ->where('is_Delete', 0)
+                                                ->first();
+    
+        if (!$schoolSessionClass) {
+            return response()->json(['error' => 'Class not found'], 404);
+        }
+    
+        // Retrieve the classroom details
+        $classroom = Classroom::where('id', $schoolSessionClass->class_id)
+                              ->first();
+    
+        if (!$classroom) {
+            return response()->json(['error' => 'Classroom not found'], 404);
+        }
+    
+        // Prepare the response data
+        $response = [
+            'class_id' => $classroom->id,
+            'class_name' => $classroom->name,
+            'form_number' => $classroom->form_number,
+            'school_session_class_id' => $schoolSessionClass->id,
+            'school_session' => $schoolSession->id,
+        ];
+    
+        // Return the response as JSON
+        return response()->json($response);
     }
 
 

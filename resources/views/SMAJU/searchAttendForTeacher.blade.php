@@ -58,7 +58,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="http://127.0.0.1:8000/indexTeacher" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -79,14 +79,14 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>Kevin Anderson</h6>
-              <span>SCHOOL ADMINISTRATOR</span>
+              <span>CLASSROOM TEACHER</span>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/adminProfile" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="{{route('teacherProfile')}}" id="userProfileLink">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -115,119 +115,29 @@
 <ul class="sidebar-nav" id="sidebar-nav">
 
   <li class="nav-item">
-    <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+    <a class="nav-link " href="{{route('indexTeacher')}}">
       <i class="bi bi-grid"></i>
       <span>DASHBOARD</span>
     </a>
   </li><!-- End Dashboard Nav -->
   <li class="nav-item">
-    <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="rewards.html">
-      <i class="bi bi-ticket-detailed"></i><span>REGISTRATION</span><i class="bi bi-chevron-down ms-auto"></i>
+    <a class="nav-link collapsed" data-bs-target="#Attendance" data-bs-toggle="collapse" href="rewards.html">
+      <i class="bi bi-newspaper"></i><span>ATTENDANCE</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
-    <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+    <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
-        <a href="http://127.0.0.1:8000/add-student">
-          <i class="bi bi-circle"></i><span>STUDENT</span>
+        <a href="{{route('attendance-in-classroom')}}">
+          <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
         </a>
       </li>
       <li>
-        <a href="http://127.0.0.1:8000/add-staff">
-          <i class="bi bi-circle"></i><span>STAFF</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-class">
-          <i class="bi bi-circle"></i><span>CLASS</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-RFID">
-          <i class="bi bi-circle"></i><span>RFID</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-attendance-timetable">
-          <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-classroom-by-session">
-          <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-school-session">
-          <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/add-activity-occurrences">
-         <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
-       </a>
-     </li>
-    </ul>
-</li><!-- End Components Nav -->
-
-<li class="nav-item">
-  <a class="nav-link collapsed" data-bs-target="#tourismServicesList" data-bs-toggle="collapse" href="rewards.html">
-    <i class="bi bi-ticket-detailed"></i><span>MANAGEMENT</span><i class="bi bi-chevron-down ms-auto"></i>
-  </a>
-  <ul id="tourismServicesList" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-    <li>
-      <a href="http://127.0.0.1:8000/studentManagement">
-        <i class="bi bi-circle"></i><span>STUDENT</span>
+      <a href="{{route('attendance-to-school')}}">
+        <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
       </a>
     </li>
-    <li>
-        <a href="http://127.0.0.1:8000/staffManagement">
-          <i class="bi bi-circle"></i><span>STAFF</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/classroomManagement">
-          <i class="bi bi-circle"></i><span>CLASS</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
-          <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{route('Student-In-Class')}}">
-          <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://127.0.0.1:8000/schoolSessionManagement">
-          <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
-        </a>
-      </li>
-      <li>
-         <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
-          <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
-        </a>
-      </li>
-  </ul>
-</li><!-- End Components Nav -->
-<li class="nav-item">
-  <a class="nav-link collapsed" data-bs-target="#Attendance" data-bs-toggle="collapse" href="rewards.html">
-    <i class="bi bi-newspaper"></i><span>ATTENDANCE</span><i class="bi bi-chevron-down ms-auto"></i>
-  </a>
-  <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-    <li>
-        <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
-            <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
-        </a>
-    </li>
-    <li>
-          <a href="{{route('attendance-to-school')}}">
-            <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
-          </a>
-        </li>
-     
-  </ul>
-</li><!-- End Components Nav -->
+    </ul>
+  </li><!-- End Components Nav -->
+
 </ul>
 </aside><!-- End Sidebar-->
 
@@ -406,7 +316,7 @@ function searchForClassSession() {
       };
 
       sessionStorage.setItem('ListAttend', JSON.stringify(ListAttend));
-      window.location.href = "http://127.0.0.1:8000/list-attend-to-school";
+      window.location.href = "http://127.0.0.1:8000/list-attendance-to-school";
     }
 
     // Retrieve the JSON string from sessionStorage
@@ -444,7 +354,7 @@ function searchForClassSession() {
       }
 
     function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      window.open('indexTeacher.html','_self');
     }
 </script>
 
@@ -529,33 +439,40 @@ function fetchUser(staffId)
     document.addEventListener('DOMContentLoaded', function () {
 
       var storedStaffProfile = JSON.parse(sessionStorage.getItem('staffProfile'));
+      console.log("FGHGFDFGFG : ", storedStaffProfile);
+
+      var storedClassProfile = JSON.parse(sessionStorage.getItem('ClassProfile'));
+     
       var staffId = storedStaffProfile.staffId;
+      var class_id = storedClassProfile.class_id;
+      var ssc_id = storedClassProfile.ssc_id;
+      var class_name = storedClassProfile.class_name;
+      var form_number = storedClassProfile.form_number;
+      var school_session = storedClassProfile.school_session;
+
+      console.log("SSC_ID : ",ssc_id);
+      console.log("CLass Name : ",class_name);
+      console.log("Form number : ",form_number);
+      console.log("School Session Id : ",school_session);
+      // Retrieve the current year
+      var currentYear = new Date().getFullYear();
+      console.log("Current Year: " + currentYear); // For debugging purposes
+
+
       
       fetchUser(staffId);
-      fetchSchoolSession();
-      fetchClassroom();
+      updateSchoolSessionData(currentYear, school_session);
+      updateClassroomData(class_name, form_number, class_id);
       fetchTypeAttendance();
-      fetchTeacher();
+      
     });
 
   </script>
 
 <!--fetch school session-->
-<script>
-    function fetchSchoolSession(){
-        fetch('http://127.0.0.1:8000/SchoolSession/all-data')
-            .then(response => response.json())
-            .then(data => {
-               updateSchoolSessionData(data);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
-</script>
 
 <script>
-  function updateSchoolSessionData(data)
+  function updateSchoolSessionData(year, school_session)
   {
     const schoolSession = document.getElementById('SchoolSessionId');
     const currentValue = schoolSession.value; // Store the current selected value
@@ -568,13 +485,12 @@ function fetchUser(staffId)
     emptyOption.setAttribute('hidden', true);
     schoolSession.appendChild(emptyOption);
 
-    // Iterate over the data and create dropdown options
-    data.forEach((item) => {
-        const option = document.createElement('option');
-        option.textContent = item.year;
-        option.value = item.id;
-        schoolSession.appendChild(option);
-    });
+    
+    const option = document.createElement('option');
+    option.textContent = year;
+    option.value = school_session;
+    schoolSession.appendChild(option);
+  
 
     // Set the previously selected value if it exists
     if (currentValue) {
@@ -582,20 +498,6 @@ function fetchUser(staffId)
     }
   }
 </script>
-
-  <!--fetch classroom-->
-  <script>
-      function fetchClassroom(){
-          fetch('http://127.0.0.1:8000/classroom/all-data')
-              .then(response => response.json())
-              .then(data => {
-                updateClassroomData(data);
-              })
-              .catch(error => {
-                  console.error('Error fetching data:', error);
-              });
-      }
-  </script>
 
   <!--fetch classroom-->
   <script>
@@ -612,7 +514,10 @@ function fetchUser(staffId)
   </script>
 
   <script>
-      function updateClassroomData(data){
+    function updateClassroomData(name, form_number, class_id){
+
+        console.log("class_id : ", class_id);
+
       const classroom = document.getElementById('classroomId');
       const currentValue = classroom.value; // Store the current selected value
       classroom.innerHTML='';
@@ -624,19 +529,17 @@ function fetchUser(staffId)
       emptyOption.setAttribute('hidden', true);
       classroom.appendChild(emptyOption);
 
-      // Iterate over the data and create dropdown options
-      data.forEach((item) => {
-          const option = document.createElement('option');
-          option.textContent = item.form_number + " "+item.name ;
-          option.value = item.id;
-          classroom.appendChild(option);
-      });
+      const option = document.createElement('option');
+      option.textContent = form_number + " "+name ;
+      option.value = class_id;
+      classroom.appendChild(option);
+      
 
       // Set the previously selected value if it exists
       if (currentValue) {
           id.value = currentValue;
       }
-  }
+    }
   </script>
 
 <script>

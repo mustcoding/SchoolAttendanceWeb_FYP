@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAttendanceTimetableRequest;
 use App\Http\Requests\UpdateAttendanceTimetableRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceTimetableController extends Controller
 {
@@ -136,6 +137,18 @@ class AttendanceTimetableController extends Controller
                     'occurrence_type' => $occurrenceType
                 ], 200);
             }
+            else{
+
+                // Check if the occurrence type description matches the current day
+                if ($currentDay === $descriptionParts[0]) {
+                    return response()->json([
+                        'message' => 'Attendance can be recorded for the current day and time.',
+                        'timetable' => $timetable,
+                        'occurrence_type' => $occurrenceType
+                    ], 200);
+                }
+            }
+
         } else {
             // Check if the occurrence type description matches the current day
             if ($currentDay === $descriptionParts[0]) {

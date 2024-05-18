@@ -358,6 +358,8 @@ class StudentController extends Controller
                                         ->whereYear('end_date', '>=', now())
                                         ->first();
 
+        // Debug: Check the current session ID
+        \Log::info('Current Session ID: ' . $currentSession->id);
         if (!$currentSession) {
             // If there is no current session, return an empty array or appropriate response
             return response()->json([]);
@@ -370,6 +372,7 @@ class StudentController extends Controller
                             $query->where('school_session_id', $currentSession->id)
                                 ->where('class_id', $classId); // Filter by the specified class ID
                         })
+                        
                         ->get();
 
         // Transform the data as needed, for example, extract required fields

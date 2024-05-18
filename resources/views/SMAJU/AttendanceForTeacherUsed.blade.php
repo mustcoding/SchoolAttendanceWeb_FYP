@@ -81,14 +81,14 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>Kevin Anderson</h6>
-              <span>SCHOOL ADMINISTRATOR</span>
+              <span>CLASSROOM TEACHER</span>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/adminProfile" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="{{route('teacherProfile')}}" id="userProfileLink">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -133,7 +133,7 @@
             </a>
           </li>
           <li>
-          <a href="{{route('attend-to-school')}}">
+          <a href="{{route('attendance-to-school')}}">
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
@@ -289,6 +289,10 @@
         form_number: form_number
       };
 
+      console.log("class_id : ", classroomId);
+      console.log("class_name : ", class_name);
+      console.log("form_number : ", form_number);
+
       fetch('http://127.0.0.1:8000/student-data/list-students-in-classroom', 
       {
         method: 'POST', // Use the POST method
@@ -309,6 +313,7 @@
         }
       })
       .then(data => {
+        console.log("HEREISDFATA: ",data);
         updateTable(data);
       })
       .catch(error => {
@@ -558,7 +563,7 @@
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                        window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
                     }, 2000);
                 }
                 })
@@ -603,7 +608,7 @@
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoClass"]').style.display = 'block';
                     
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                        window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
                     }, 2000);
                 }
                 })
@@ -637,7 +642,7 @@
                         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoTime"]').style.display = 'block';
                         setTimeout(function() {
-                            window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                            window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
                         }, 2000);
                     }
                 })
@@ -710,7 +715,7 @@
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                     setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                    window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
                     }, 2000);
                 }
             })
@@ -721,7 +726,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
                 }, 2000);
             }
             else{
@@ -730,7 +735,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
                 setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                    window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
                 }, 2000);
             }
                 
