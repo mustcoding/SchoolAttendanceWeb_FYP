@@ -37,6 +37,14 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+  <style>
+    .logo-img {
+      width: 60px; /* Adjust the size as needed */
+      height: auto; /* Maintain aspect ratio */
+      margin-right: 10px; /* Space between the logo and the text */
+    }
+  </style>
 </head>
 
 <body>
@@ -65,10 +73,15 @@
 
                 <div class="card-body">
 
-                  <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                    <p class="text-center small">Enter your username & password to login</p>
+                <div class="pt-4 pb-2">
+                  <div class="d-flex align-items-center justify-content-center">
+                    <img src="assets/img/SMAJU.png" alt="Logo" class="logo-img">
+                    <div>
+                      <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
+                      <p class="text-center small">SMA JAWAHIR AL-ULUM ATTENDANCE SYSTEM</p>
+                    </div>
                   </div>
+                </div>
 
                 <form class="row g-3 needs-validation" method="post" action="melakago_php/appUserCheckExistence.php" novalidate> 
 
