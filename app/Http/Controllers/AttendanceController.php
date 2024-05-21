@@ -162,6 +162,7 @@ class AttendanceController extends Controller
         $allStudents = $attendances->map(function ($attendance) use ($dateTimeIn) {
             $student = $attendance->studentStudySession->student;
             $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
+            $phone_number = $student->parentGuardian ? $student->parentGuardian-> phone_number : "";
             $cardRfid = $student->cardRfid ? $student->cardRfid->number : "null";
             $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
             $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
@@ -178,11 +179,13 @@ class AttendanceController extends Controller
                 'class_name' => $className,
                 'form_number' => $formNumber,
                 'date_time_in' => $attendanceDateTime,
+                'phone_number' => $phone_number,
             ];
         });
     
         $studentsWithoutAttendance->each(function ($student) use ($allStudents) {
             $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
+            $phone_number = $student->parentGuardian ? $student->parentGuardian->phone_number : "";
             $cardRfid = $student->cardRfid ? $student->cardRfid->number : "null";
             $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
             $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
@@ -198,6 +201,7 @@ class AttendanceController extends Controller
                 'class_name' => $className,
                 'form_number' => $formNumber,
                 'date_time_in' => "ABSENT", // No attendance record
+                'phone_number' => $phone_number,
             ]);
         });
     

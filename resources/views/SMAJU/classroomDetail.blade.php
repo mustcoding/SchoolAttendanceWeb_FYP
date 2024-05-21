@@ -128,48 +128,47 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="http://127.0.0.1:8000/add-student">
-              <i class="bi bi-circle"></i><span>STUDENT</span>
-            </a>
-          </li>
-          <li>
-            <a href="http://127.0.0.1:8000/add-staff">
+            <a href="{{route('add-staff')}}">
               <i class="bi bi-circle"></i><span>STAFF</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/add-class">
+            <a href="{{route('add-class')}}">
               <i class="bi bi-circle"></i><span>CLASS</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/add-RFID">
+            <a href="{{route('add-RFID')}}">
               <i class="bi bi-circle"></i><span>RFID</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/add-attendance-timetable">
-              <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
+            <a href="{{route('add-student')}}">
+              <i class="bi bi-circle"></i><span>STUDENT</span>
             </a>
-          </li>
+          </li> 
           <li>
-            <a href="http://127.0.0.1:8000/add-classroom-by-session">
-              <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
-            </a>
-          </li>
-          <li>
-            <a href="http://127.0.0.1:8000/add-school-session">
+            <a href="{{route('add-school-session')}}">
               <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/add-activity-occurrences">
+            <a href="{{route('add-activity-occurrences')}}">
              <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
            </a>
          </li>
+          <li>
+            <a href="{{route('add-attendance-timetable')}}">
+              <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('add-classroom-by-session')}}">
+              <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
+            </a>
+          </li>
         </ul>
     </li><!-- End Components Nav -->
-
     <li class="nav-item">
       <a class="nav-link collapsed" data-bs-target="#tourismServicesList" data-bs-toggle="collapse" href="rewards.html">
         <i class="bi bi-ticket-detailed"></i><span>MANAGEMENT</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -282,6 +281,7 @@
             <div class="card-body">
               <h5 class="card-title">
                 List of Student
+                <button class="btn btn-primary float-end" onclick="printData()">Print</button>
               </h5>
 
               <!-- Default Table -->
@@ -342,6 +342,12 @@
 
 
   <script>
+
+    
+    function printData() {
+      // You can add additional styling or logic here if needed
+      window.print();
+    }
 
     function displayAddServicesPage(){
       window.open('tourismserviceadd.html','_self');

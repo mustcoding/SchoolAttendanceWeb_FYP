@@ -204,6 +204,7 @@
                     <th scope="col">#</th>
                     <th scope="col">Name</th>
                     <th scope="col">Parent Name</th>
+                    <th scope="col">Parent Phone Number</th>
                     <th scope="col">Time Attend</th>
                     <th scope="col">Class</th>
                     
@@ -395,6 +396,7 @@
                         <td>${index + 1}</td>
                         <td>${item.name}</td>
                         <td>${item.parent_name}</td>
+                        <td>${item.phone_number}</td>
                         <td>${item.date_time_in}</td>
                         <td>${item.form_number} ${item.class_name}</td> 
                       </tr>`;

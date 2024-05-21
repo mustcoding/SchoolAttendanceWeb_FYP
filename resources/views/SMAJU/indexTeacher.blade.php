@@ -282,9 +282,7 @@
           return response.json();
         }
         else{      
-          setTimeout(function() {
-            window.location.href = "{{route('indexTeacher')}}";
-          }, 2000);
+          
         }
       })
       .then(data => {
@@ -381,19 +379,26 @@
 
             console.log('Response:', data);
 
-            var ClassProfile = 
-            {
-              ssc_id: data.school_session_class_id,
-              class_id: data.class_id,
-              class_name: data.class_name,
-              form_number: data.form_number,
-              school_session: data.school_session
-            };
+            if(!data.error == "Class not found"){
+              var ClassProfile = 
+              {
+                ssc_id: data.school_session_class_id,
+                class_id: data.class_id,
+                class_name: data.class_name,
+                form_number: data.form_number,
+                school_session: data.school_session
+              };
 
-            sessionStorage.setItem('ClassProfile', JSON.stringify(ClassProfile));
-            console.log('HERE HOI: ', sessionStorage);
-           
-            updateUserData();
+              sessionStorage.setItem('ClassProfile', JSON.stringify(ClassProfile));
+              console.log('HERE HOI: ', sessionStorage);
+            
+              updateUserData();
+            }
+            else{
+              
+            }
+
+            
         })
         .catch(error => {
             console.error('Error during fetch:', error);

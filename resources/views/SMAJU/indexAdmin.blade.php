@@ -120,11 +120,6 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{{route('add-student')}}">
-              <i class="bi bi-circle"></i><span>STUDENT</span>
-            </a>
-          </li>
-          <li>
             <a href="{{route('add-staff')}}">
               <i class="bi bi-circle"></i><span>STAFF</span>
             </a>
@@ -140,15 +135,10 @@
             </a>
           </li>
           <li>
-            <a href="{{route('add-attendance-timetable')}}">
-              <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
+            <a href="{{route('add-student')}}">
+              <i class="bi bi-circle"></i><span>STUDENT</span>
             </a>
-          </li>
-          <li>
-            <a href="{{route('add-classroom-by-session')}}">
-              <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
-            </a>
-          </li>
+          </li> 
           <li>
             <a href="{{route('add-school-session')}}">
               <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
@@ -159,6 +149,16 @@
              <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
            </a>
          </li>
+          <li>
+            <a href="{{route('add-attendance-timetable')}}">
+              <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('add-classroom-by-session')}}">
+              <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
+            </a>
+          </li>
         </ul>
     </li><!-- End Components Nav -->
 
