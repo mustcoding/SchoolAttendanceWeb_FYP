@@ -413,7 +413,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
 
                 setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/indexAdmin';
+                    window.location.href = 'http://127.0.0.1:8000/add-attendance-timetable';
                 }, 2000); // 4000 milliseconds = 4 seconds
 
             })

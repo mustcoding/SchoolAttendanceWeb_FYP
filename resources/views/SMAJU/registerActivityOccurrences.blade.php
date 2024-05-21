@@ -277,6 +277,7 @@
                           <option value="SATURDAY">SATURDAY</option>
                           <option value="FRIDAY TO SATURDAY">FRIDAY TO SATURDAY</option>
                           <option value="SUNDAY TO THURSDAY">SUNDAY TO THURSDAY</option>
+                          <option value="SUNDAY TO SATURDAY">SUNDAY TO SATURDAY</option>
                         </select>
                         <div class="valid-feedback">
                             Looks good!
@@ -378,7 +379,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
 
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/indexAdmin';
+                window.location.href = 'http://127.0.0.1:8000/add-activity-occurrences';
                 }, 2000); // 4000 milliseconds = 4 seconds
 
             })

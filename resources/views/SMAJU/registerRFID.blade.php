@@ -374,8 +374,8 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
 
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/indexAdmin';
-                }, 2000); // 4000 milliseconds = 4 seconds
+                    window.location.href = 'http://127.0.0.1:8000/add-RFID';
+                }, 2000);
 
             })
             .catch(error => {
@@ -420,7 +420,7 @@
       }
 
     function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      window.open('{{route('indexAdmin')}}','_self');
     }
   </script>
 

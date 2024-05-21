@@ -171,52 +171,52 @@
       password: password
     };
 
-    fetch('http://127.0.0.1:8000/login', {
+    fetch('{{route('login')}}', {
         method: 'POST', // Use the POST method
         headers: {
           'Content-Type': 'application/json' // Set the content type to JSON
         },
         body: JSON.stringify(data) // Convert the data object to a JSON string
-      })
-      .then(response => response.json())
-      .then(response => {
-        // Handle the response from the server
-        console.log('Response:', response);
+    })
+    .then(response => response.json())
+    .then(response => {
+      // Handle the response from the server
+      console.log('Response:', response);
 
-        var staffProfile = {
-          staffId: response.staff.id,
-          staffName: response.staff.name,
-          email: response.staff.email,
-          password: response.staff.password,
-          position: response.staff.position,
-          nickname: response.staff.nickname,
-          image: response.staff.image,
-          position:response.staff.position,
-        };
+      var staffProfile = {
+        staffId: response.staff.id,
+        staffName: response.staff.name,
+        email: response.staff.email,
+        password: response.staff.password,
+        position: response.staff.position,
+        nickname: response.staff.nickname,
+        image: response.staff.image,
+        position:response.staff.position,
+      };
 
-        var token = response.token;
+      var token = response.token;
 
-        sessionStorage.setItem('staffProfile', JSON.stringify(staffProfile));
-        sessionStorage.setItem('token', JSON.stringify(token));
+      sessionStorage.setItem('staffProfile', JSON.stringify(staffProfile));
+      sessionStorage.setItem('token', JSON.stringify(token));
 
-        console.log(sessionStorage);
+      console.log(sessionStorage);
 
-        if (response.staff.hasOwnProperty('id')) {
-          console.log("kbghjbjhg: ",response.staff.id);
-          if (response.staff.position == "TEACHER") {
-            window.location.href = 'http://127.0.0.1:8000/indexTeacher';
-          } else if (response.staff.position == "ADMINISTRATOR") {
-            window.location.href = "{{route('indexAdmin')}}";
-          }
-        } else {
-          document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
+      if (response.staff.hasOwnProperty('id')) {
+        console.log("kbghjbjhg: ",response.staff.id);
+        if (response.staff.position == "TEACHER") {
+          window.location.href = '{{route('indexTeacher')}}';
+        } else if (response.staff.position == "ADMINISTRATOR") {
+          window.location.href = '{{route('indexAdmin')}}';
         }
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+      } else {
         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
 
-      });
+    });
   }
 </script>
 </body>

@@ -61,10 +61,9 @@
       <ul class="d-flex align-items-center">
 
         <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
-          Password Successfully being saved...
+          New Password Successfully being saved...
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    
     
         <div class="alert alert-danger alert-dismissible fade show" role="alert2" style="display: none;">
           Houston... New Password Doesn't Match The Confirmation Password.
@@ -73,6 +72,11 @@
     
         <div class="alert alert-danger alert-dismissible fade show" role="alert3" style="display: none;">
           Houston... Your current password is wrong.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="alert alert-danger alert-dismissible fade show" role="changeUnSuccess" style="display: none;">
+          Houston... Your New Password Cannot Being Saved.
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
@@ -757,18 +761,31 @@
         const currentPassword = form.elements['currentPassword'].value;
         const newPassword = form.elements['confirmPassword'].value;
 
+        var storedToken = JSON.parse(sessionStorage.getItem('token'));
+        console.log("TOKEN    : ",storedToken);
+        var token = storedToken;
+
         console.log("staff id : ", staffId);
         console.log("password : ", currentPassword);
-        console.log("Latest password : ",newPassword);
+        console.log("Latest password : ", newPassword);
+
+        console.log("YOUR TOKEN : ", token);
 
         fetch('http://127.0.0.1:8000/staff/check-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({ staffId, password: currentPassword }),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                // Handle non-OK responses
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 alert(data.error);
@@ -777,25 +794,41 @@
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
                     },
                     body: JSON.stringify({ staffId, password: newPassword }),
                 });
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                // Handle non-OK responses
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                alert(data.success);
+               
+                document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'block';
+                setTimeout(function() {
+                window.location.href = 'http://127.0.0.1:8000/adminProfile';
+                }, 2000); 
             } else {
-                alert(data.error);
+              document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="changeUnSuccess"]').style.display = 'block';
+                setTimeout(function() {
+                window.location.href = 'http://127.0.0.1:8000/adminProfile';
+                }, 2000);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            alert(`Error: ${error.message}`);
+        });
 
         return false;
     }
 </script>
-
 
 <script>
 
