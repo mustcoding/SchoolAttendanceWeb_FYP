@@ -175,6 +175,11 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
+    <div class="alert alert-danger alert-dismissible fade show" role="alertDailyStudent" style="display: none;">
+      Houston....DAILY STUDENT Not Eligible To Record Attendance At This Time.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div class="alert alert-success alert-dismissible fade show" role="successSearch" style="display: none;">
       Here is the student you were searching for.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -614,7 +619,7 @@
                 })
                 .then(data => {
 
-                  checkAttendanceTimeTable(data.study[0].id, attendanceStatus);
+                  checkAttendanceTimeTable(data.study[0].id, attendanceStatus, student_id);
                     
                 })
                 .catch(error => {
@@ -625,7 +630,7 @@
     </script>
 
     <script>
-        function checkAttendanceTimeTable(studentStudySession_id, attendanceStatus) {
+        function checkAttendanceTimeTable(studentStudySession_id, attendanceStatus, student_id) {
             const is_Delete = 0;
 
             fetch('http://127.0.0.1:8000/AttendanceTimetable/checkAttendance-by-time', {
@@ -650,7 +655,8 @@
                     const checkpoint = 1;
                     console.log("helllo");
                     const attendance_timetable_id = data.timetable.id;
-                    saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, attendanceStatus);
+                    console.log("timetable id : ", attendance_timetable_id);
+                    saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, attendanceStatus, student_id);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -659,8 +665,8 @@
     </script>
 
     <script>
-        function saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, attendanceStatus)
-        {
+      function saveAttendance(studentStudySession_id, attendance_timetable_id, checkpoint, attendanceStatus, student_id)
+      {
         const is_Delete = 0;
             
         // Get current date and time
@@ -683,22 +689,23 @@
         console.log("att: ",attendance_timetable_id);
         console.log("sss: ",studentStudySession_id);
 
-        proceedAttendanceSave(formattedDateTime, dateTimeOut, attendanceStatus, checkpoint, attendance_timetable_id, studentStudySession_id);
+        proceedAttendanceSave(formattedDateTime, dateTimeOut, attendanceStatus, checkpoint, attendance_timetable_id, studentStudySession_id, student_id);
         
-        }
+      }
 
-        function proceedAttendanceSave(formattedDateTime, dateTimeOut, attendanceStatus, checkpoint, attendance_timetable_id, studentStudySession_id)
-        {
+      function proceedAttendanceSave(formattedDateTime, dateTimeOut, attendanceStatus, checkpoint, attendance_timetable_id, studentStudySession_id, student_id)
+      {
 
         console.log("jigh");
         data={
-            date_time_in: formattedDateTime,
-            date_time_out: dateTimeOut,
-            is_attend: attendanceStatus,
-            checkpoint_id: checkpoint,
-            attendance_timetable_id: attendance_timetable_id,
-            student_study_session_id: studentStudySession_id
-            };
+          date_time_in: formattedDateTime,
+          date_time_out: dateTimeOut,
+          is_attend: attendanceStatus,
+          checkpoint_id: checkpoint,
+          attendance_timetable_id: attendance_timetable_id,
+          student_study_session_id: studentStudySession_id,
+          student_id: student_id,
+        };
             
             fetch('http://127.0.0.1:8000/Attendance/recordAttendance', 
             {
@@ -714,6 +721,12 @@
                 } else if (response.status === 404) {
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
+                    setTimeout(function() {
+                    window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                    }, 2000);
+                }else if (response.status === 400) {
+                    document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
+                    document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertDailyStudent"]').style.display = 'block';
                     setTimeout(function() {
                     window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
                     }, 2000);

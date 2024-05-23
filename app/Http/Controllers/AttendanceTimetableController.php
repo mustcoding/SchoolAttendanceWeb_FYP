@@ -87,7 +87,6 @@ class AttendanceTimetableController extends Controller
     {
         // Get current time and day
         $currentTime = now()->format('H:i');
-        
     
         // Find timetable entries where current time falls between start_time and end_time
         $timetable = AttendanceTimetable::where('start_time', '<=', $currentTime)
@@ -105,7 +104,7 @@ class AttendanceTimetableController extends Controller
     
         // Retrieve the occurrence type associated with the timetable
         $occurrenceType = OccurrenceType::find($timetable->occurrence_id);
-    
+
         // Check if the occurrence type is found
         if (!$occurrenceType) {
             return response()->json([
@@ -120,6 +119,7 @@ class AttendanceTimetableController extends Controller
         // Convert the day of the week to a textual representation
         $daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
         $currentDay = $daysOfWeek[$currentDayOfWeek];
+  
 
         // Parse the occurrence type description to extract the range
         $descriptionParts = explode(' TO ', $occurrenceType->description);

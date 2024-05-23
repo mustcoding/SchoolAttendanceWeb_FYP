@@ -194,166 +194,166 @@ Route::post('register',[StaffController::class,'registerStaff'])->name('register
 // Protected routes
 Route::prefix('user')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('logout', [StaffController::class, 'logout'])->name('logout');
-    Route::post('{id}',[StaffController::class,'UserData'])->name('findUser');
+    Route::post('logout', [StaffController::class, 'logout']);
+    Route::post('{id}',[StaffController::class,'UserData']);
 
 });
 
 Route::prefix('admin')->middleware(['auth:staff'])->group(function() {
 
-    Route::put('{id}',[StaffController::class,'updateStaff'])->name('update-staff');
-    Route::put('image/{id}',[StaffController::class,'addImage'])->name('admin.add-image');
+    Route::put('{id}',[StaffController::class,'updateStaff']);
+    Route::put('image/{id}',[StaffController::class,'addImage']);
 
 });
 
 Route::prefix('staff')->middleware(['auth:staff'])->group(function() {
 
-    Route::get('all-data', [StaffController::class, 'getAllTeachers'])->name('staff.all-data');
-    Route::get('totalTeacher', [StaffController::class, 'totalTeacher'])->name('totalTeacher');
-    Route::get('all-staff-data', [StaffController::class, 'getAllStaffs'])->name('all-staff-data');
-    Route::put('delete/{id}',[StaffController::class,'DeleteStaff'])->name('staff.delete');
-    Route::put('update/{id}',[StaffController::class,'updateStaffs'])->name('staff.update');
-    Route::put('findClass',[StaffController::class,'findClass'])->name('staff.findClass');
+    Route::get('all-data', [StaffController::class, 'getAllTeachers']);
+    Route::get('totalTeacher', [StaffController::class, 'totalTeacher']);
+    Route::get('all-staff-data', [StaffController::class, 'getAllStaffs']);
+    Route::put('delete/{id}',[StaffController::class,'DeleteStaff']);
+    Route::put('update/{id}',[StaffController::class,'updateStaffs']);
+    Route::put('findClass',[StaffController::class,'findClass']);
     //Route::post('/check-password', [StaffController::class, 'verifyPassword']);
     //Route::put('/change-password', [StaffController::class, 'updatePassword']);
 
 });
 
 Route::prefix('staff')->middleware(['auth:sanctum'])->group(function() {
-    Route::post('/check-password', [StaffController::class, 'verifyPassword'])->name('check-password');
-    Route::put('/change-password', [StaffController::class, 'updatePassword'])->name('change-password');
+    Route::post('/check-password', [StaffController::class, 'verifyPassword']);
+    Route::put('/change-password', [StaffController::class, 'updatePassword']);
 });
 
 
 Route::prefix('classroom')->middleware(['auth:staff,auth:sanctum'])->group(function() {
 
-    Route::post('add', [ClassroomController::class, 'registerClass'])->name('classroom.add');
-    Route::get('totalClassroom', [ClassroomController::class, 'totalClassroom'])->name('totalClassroom');
-    Route::get('all-data', [classroomController::class, 'getAllClassroom'])->name('classroom.all-data');
-    Route::post('get-classroom/{id}',[ClassroomController::class,'GetClassroom'])->name('getClassroom');
-    Route::get('list-classroom', [classroomController::class, 'getListClassroom'])->name('list-classroom');
-    Route::put('delete/{id}',[ClassroomController::class,'DeleteClassroom'])->name('classroom.delete');
+    Route::post('add', [ClassroomController::class, 'registerClass']);
+    Route::get('totalClassroom', [ClassroomController::class, 'totalClassroom']);
+    Route::get('all-data', [classroomController::class, 'getAllClassroom']);
+    Route::post('get-classroom/{id}',[ClassroomController::class,'GetClassroom']);
+    Route::get('list-classroom', [classroomController::class, 'getListClassroom']);
+    Route::put('delete/{id}',[ClassroomController::class,'DeleteClassroom']);
 
 });
 
 Route::prefix('SchoolSession')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [SchoolSessionController::class, 'registerSchoolSession'])->name('SchoolSession.add');
-    Route::get('all-data', [SchoolSessionController::class, 'getAllSchoolSession'])->name('SchoolSession.all-data');
-    Route::put('delete/{id}',[SchoolSessionController::class,'DeleteSchoolSession'])->name('SchoolSession.delete');
-    Route::put('update/{id}',[SchoolSessionController::class,'updateSchoolSession'])->name('SchoolSession.update');
-    Route::post('{id}',[SchoolSessionController::class,'SchoolSessionData'])->name('findSchoolSession');
+    Route::post('add', [SchoolSessionController::class, 'registerSchoolSession']);
+    Route::get('all-data', [SchoolSessionController::class, 'getAllSchoolSession']);
+    Route::put('delete/{id}',[SchoolSessionController::class,'DeleteSchoolSession']);
+    Route::put('update/{id}',[SchoolSessionController::class,'updateSchoolSession']);
+    Route::post('{id}',[SchoolSessionController::class,'SchoolSessionData']);
 
 });
 
 Route::prefix('rfid')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [RfidController::class, 'registerRFID'])->name('rfid.add');
-    Route::get('all-data', [RfidController::class, 'get0RFID'])->name('rfid.all-data');
-    Route::get('all-data-tag', [RfidController::class, 'get0TagRFID'])->name('all-data-tag');
-    Route::get('getAll', [RfidController::class, 'getRFID'])->name('getAll');
-    Route::put('delete/{id}',[RfidController::class,'DeleteRFID'])->name('rfid.delete');
-    Route::put('update/{id}',[RfidController::class,'updateRFID'])->name('rfid.update');
-    Route::post('{id}',[RfidController::class,'RFIDData'])->name('findRFID');
+    Route::post('add', [RfidController::class, 'registerRFID']);
+    Route::get('all-data', [RfidController::class, 'get0RFID']);
+    Route::get('all-data-tag', [RfidController::class, 'get0TagRFID']);
+    Route::get('getAll', [RfidController::class, 'getRFID']);
+    Route::put('delete/{id}',[RfidController::class,'DeleteRFID']);
+    Route::put('update/{id}',[RfidController::class,'updateRFID']);
+    Route::post('{id}',[RfidController::class,'RFIDData']);
 });
 
 Route::prefix('rfids')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('retrieve-rfid-id',[RfidController::class,'getRFIDid'])->name('retrieve-rfid-id');
+    Route::post('retrieve-rfid-id',[RfidController::class,'getRFIDid']);
 
 });
 
 Route::prefix('parent')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [ParentGuardianController::class, 'registerParent'])->name('parent.add');
-    Route::POST('checkExistence', [ParentGuardianController::class, 'CheckParent'])->name('checkExistence');
-    Route::put('update/{id}',[ParentGuardianController::class,'updateProfile'])->name('parent.update');
+    Route::post('add', [ParentGuardianController::class, 'registerParent']);
+    Route::POST('checkExistence', [ParentGuardianController::class, 'CheckParent']);
+    Route::put('update/{id}',[ParentGuardianController::class,'updateProfile']);
 
 });
 
 Route::prefix('OccurrenceType')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [OccurrenceTypeController::class, 'addOccurrenceType'])->name('OccurrenceType.add');
-    Route::get('all-data', [OccurrenceTypeController::class, 'getAllOccurrences'])->name('OccurrenceType.all-data');
-    Route::put('delete/{id}',[OccurrenceTypeController::class,'DeleteOccurrence'])->name('OccurrenceType.delete');
-    Route::put('update/{id}',[OccurrenceTypeController::class,'updateOccurrence'])->name('OccurrenceType.update');
-    Route::post('{id}',[OccurrenceTypeController::class,'OccurrenceData'])->name('findOccurrenceType');
+    Route::post('add', [OccurrenceTypeController::class, 'addOccurrenceType']);
+    Route::get('all-data', [OccurrenceTypeController::class, 'getAllOccurrences']);
+    Route::put('delete/{id}',[OccurrenceTypeController::class,'DeleteOccurrence']);
+    Route::put('update/{id}',[OccurrenceTypeController::class,'updateOccurrence']);
+    Route::post('{id}',[OccurrenceTypeController::class,'OccurrenceData']);
 
 });
 
 Route::prefix('Checkpoint')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [CheckpointController::class, 'addCheckpoint'])->name('Checkpoint.add');
+    Route::post('add', [CheckpointController::class, 'addCheckpoint']);
 
 });
 
 Route::prefix('AttendanceTimetable')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [AttendanceTimetableController::class, 'addAttendanceTimetable'])->name('AttendanceTimetable.add');
-    Route::get('all-data', [OccurrenceTypeController::class, 'getAllOccurrences'])->name('AttendanceTimetable.all-data');
-    Route::get('all-timetable-data', [AttendanceTimetableController::class, 'getAllAttendanceTimetable'])-> name('all-timetable-data');
-    Route::put('delete/{id}',[AttendanceTimetableController::class,'DeleteAttendanceTimetable'])->name('AttendanceTimetable.delete');
-    Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'checkAttendanceTimeTable'])->name('checkAttendance-by-time');
+    Route::post('add', [AttendanceTimetableController::class, 'addAttendanceTimetable']);
+    Route::get('all-data', [OccurrenceTypeController::class, 'getAllOccurrences']);
+    Route::get('all-timetable-data', [AttendanceTimetableController::class, 'getAllAttendanceTimetable']);
+    Route::put('delete/{id}',[AttendanceTimetableController::class,'DeleteAttendanceTimetable']);
+    Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'checkAttendanceTimeTable']);
     
 
 });
 
 Route::prefix('ADS')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [AbsentSupportingDocumentController::class, 'addAbsentSupportingDocument'])->name('ADS.add');
+    Route::post('add', [AbsentSupportingDocumentController::class, 'addAbsentSupportingDocument']);
 
 });
 
 Route::prefix('Student')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [StudentController::class, 'registerStudent'])->name('Student.add');
-    Route::get('total-students', [StudentController::class, 'totalStudents'])->name('total-students');
-    Route::post('add-image/{id}',[StudentImageController::class,'addImage'])->name('Student.add-image');
-    Route::post('get-by-birthYear',[StudentController::class,'getStudentByBirthYear'])->name('get-by-birthYear');
-    Route::get('all-data', [StudentController::class, 'getAllStudents'])->name('Student.all-data');
+    Route::post('add', [StudentController::class, 'registerStudent']);
+    Route::get('total-students', [StudentController::class, 'totalStudents']);
+    Route::post('add-image/{id}',[StudentImageController::class,'addImage']);
+    Route::post('get-by-birthYear',[StudentController::class,'getStudentByBirthYear']);
+    Route::get('all-data', [StudentController::class, 'getAllStudents']);
     Route::post('{id}',[StudentController::class,'studentById']);
-    Route::put('update/{id}',[StudentController::class,'updateStudent'])->name('Student.update');
-    Route::put('delete/{id}',[StudentController::class,'DeleteStudent'])->name('Student.delete');
-    Route::get('total-alumni', [StudentController::class, 'totalAlumni'])->name('total-alumni');
+    Route::put('update/{id}',[StudentController::class,'updateStudent']);
+    Route::put('delete/{id}',[StudentController::class,'DeleteStudent']);
+    Route::get('total-alumni', [StudentController::class, 'totalAlumni']);
 
 });
 
 Route::prefix('student-data')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('searchByRfid',[StudentController::class,'studentDataByRfid'])->name('searchByRfid');
-    Route::post('get-student-with-ssc-class',[StudentController::class,'getStudentBySSC_ClassId'])->name('get-student-with-ssc-class');
-    Route::get('all-data', [StudentController::class, 'getAllStudentsManagement'])->name('student-data.all-data');
+    Route::post('searchByRfid',[StudentController::class,'studentDataByRfid']);
+    Route::post('get-student-with-ssc-class',[StudentController::class,'getStudentBySSC_ClassId']);
+    Route::get('all-data', [StudentController::class, 'getAllStudentsManagement']);
     Route::post('total-students-in-classroom', [StudentController::class, 'getTotalStudentInClassroom']);
-    Route::post('list-students-in-classroom', [StudentController::class, 'getListStudentInClassroom'])->name('list-students-in-classroom');
+    Route::post('list-students-in-classroom', [StudentController::class, 'getListStudentInClassroom']);
     
 });
 
 Route::prefix('StudentImage')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [StudentImageController::class, 'addStudentMainImage'])->name('StudentImage.add');
+    Route::post('add', [StudentImageController::class, 'addStudentMainImage']);
 
 });
 
 Route::prefix('SchoolSessionClass')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [SchoolSessionClassController::class, 'registerSchoolSessionClass'])->name('SchoolSessionClass.add');
-    Route::get('totalClassroomTeacher', [SchoolSessionClassController::class, 'totalClassroomTeacher'])->name('totalClassroomTeacher');
-    Route::get('session-class', [SchoolSessionClassController::class, 'registerSchoolSessionClass'])->name('session-class');
+    Route::post('add', [SchoolSessionClassController::class, 'registerSchoolSessionClass']);
+    Route::get('totalClassroomTeacher', [SchoolSessionClassController::class, 'totalClassroomTeacher']);
+    Route::get('session-class', [SchoolSessionClassController::class, 'registerSchoolSessionClass']);
 
 });
 
 Route::prefix('StudentStudySession')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('add', [StudentStudySessionController::class, 'registerStudentStudySession'])->name('StudentStudySession.add');
-    Route::post('get-id-by-studentId',[StudentStudySessionController::class,'getIdByStudentId'])->name('get-id-by-studentId');
-    Route::put('delete-student',[StudentStudySessionController::class,'deleteStudentFromClass'])->name('delete-student');
-    Route::put('delete',[StudentStudySessionController::class,'deleteStudent'])->name('StudentStudySession.delete');
-    Route::post('findClass',[StudentStudySessionController::class,'findClass'])->name('StudentStudySession.findClass');
+    Route::post('add', [StudentStudySessionController::class, 'registerStudentStudySession']);
+    Route::post('get-id-by-studentId',[StudentStudySessionController::class,'getIdByStudentId']);
+    Route::put('delete-student',[StudentStudySessionController::class,'deleteStudentFromClass']);
+    Route::put('delete',[StudentStudySessionController::class,'deleteStudent']);
+    Route::post('findClass',[StudentStudySessionController::class,'findClass']);
 });
 
 Route::prefix('Attendance')->middleware(['auth:staff'])->group(function() {
 
-    Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry'])->name('recordAttendance');
-    Route::post('list-attend', [AttendanceController::class, 'getListAttend'])->name('list-attend');
+    Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry']);
+    Route::post('list-attend', [AttendanceController::class, 'getListAttend']);
 
 });

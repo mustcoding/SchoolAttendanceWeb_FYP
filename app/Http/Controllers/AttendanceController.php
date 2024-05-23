@@ -11,6 +11,7 @@ use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -22,52 +23,45 @@ class AttendanceController extends Controller
             // Retrieve the student's type from the database
             $studentType = Student::where('id', $request->input('student_id'))->value('type_student');
 
-            // Check if the student's type is DAILY STUDENT
-            if ($studentType === 'DAILY STUDENT') {
+       
+
+           // Check if the student's type is DAILY STUDENT
+            if ($studentType == 'DAILY STUDENT') {
                 // Retrieve the attendance timetable associated with the given attendance_timetable_id
                 $attendanceTimetable = AttendanceTimetable::find($request->input('attendance_timetable_id'));
 
+
+                // Extract the date part from the date_time_in
+                $date = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'));
+                $datePart = $date->format('m/d/y');
+
+                // Get the day of the week (0 for Sunday, 6 for Saturday)
+                $dayOfWeek = $date->format('w');
+
                 // Check if the occurrence type of the attendance timetable is 'SUNDAY TO THURSDAY'
                 if ($attendanceTimetable && $attendanceTimetable->occurrence->description === 'SUNDAY TO THURSDAY') {
-                    // Extract the date part from the date_time_in
-                    $date = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'));
-                    $datePart = $date->format('m/d/y');
+                    // Ensure the day is between Sunday (0) and Thursday (4)
+                    if ($dayOfWeek < 0 || $dayOfWeek > 4) {
+                        return response()->json([
+                            'error' => 'Attendance can only be recorded from Sunday to Thursday for DAILY STUDENT',
+                        ], 400);
+                    }
 
                     // Check if the current time is within the range of start_time and end_time
                     $startTime = strtotime($attendanceTimetable->start_time);
                     $endTime = strtotime($attendanceTimetable->end_time);
                     $currentTime = strtotime($date->format('H:i'));
-                    // Convert Unix timestamp to a readable time format (HH:MM)
                     $currentTimeFormatted = date('H:i', $currentTime);
-                    $startTimeFormatted = date('H:i', $currentTime);
-                    $endTimeFormatted = date('H:i', $currentTime);
 
-                    
-                    // If the current time is not within the range, return an error response
-                    if ($currentTimeFormatted < $startTimeFormatted || $currentTimeFormatted > $endTimeFormatted) {
+                    if ($currentTime < $startTime || $currentTime > $endTime) {
                         return response()->json([
                             'error' => 'Attendance can only be recorded during specified time ranges for DAILY STUDENT',
                             'time' => $currentTimeFormatted,
                         ], 400);
                     }
                 } else {
-
-                    // Extract the date part from the date_time_in
-                    $date = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'));
-                    $datePart = $date->format('m/d/y');
-
-                    // Check if the current time is within the range of start_time and end_time
-                    $startTime = strtotime($attendanceTimetable->start_time);
-                    $endTime = strtotime($attendanceTimetable->end_time);
-                    $currentTime = strtotime($date->format('H:i'));
-                    // Convert Unix timestamp to a readable time format (HH:MM)
-                    $currentTimeFormatted = date('H:i', $currentTime);
-
-                    
-                    // If the occurrence type is not 'SUNDAY TO THURSDAY', return an error response
                     return response()->json([
-                        'error' => 'Attendance can only be recorded during specified time ranges for DAILY STUDENT',
-                        'time' => $currentTimeFormatted,
+                        'error' => 'Invalid attendance timetable or occurrence type for DAILY STUDENT',
                     ], 400);
                 }
             }
