@@ -179,10 +179,13 @@ class StudentController extends Controller
         return response()->json($formattedData);
     }
 
-    public function studentById($id)
+    public function studentById(Request $request)
     {
-        // Retrieve the student with the specified ID along with their associated parent/guardian and RFID
-        $student = Student::with('parentGuardian', 'rfid')->find($id);
+        // Get the student ID from the request
+        $id = $request->id;
+
+        // Retrieve the student with the specified ID along with their associated parent/guardian and RFIDs
+        $student = Student::with(['parentGuardian', 'cardRfid', 'tagRfid'])->where('id', $id)->first();
 
         if (!$student) {
             // If the student with the given ID is not found, return an error response
@@ -198,7 +201,8 @@ class StudentController extends Controller
             'nickname' => $student->parentGuardian->nickname,
             'phone_number' => $student->parentGuardian->phone_number,
             'address' => $student->parentGuardian->address,
-            'rfid_number' => $student->rfid->number,
+            'card_rfid_number' => $student->cardRfid->number,
+            'tag_rfid_number' => $student->tagRfid->number,
             'parent_id' => $student->parentGuardian->id,
         ];
 

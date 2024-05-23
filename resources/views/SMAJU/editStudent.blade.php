@@ -501,15 +501,16 @@
   </script>
 
     <script>
-        var parent_id="";
         function fetchDetails(student_id)
         {
+          console.log('jkhfjdksfjkddh',student_id);
+
             const data = 
             {
-                id: student_id
+              id: student_id,
             };
 
-            fetch('http://127.0.0.1:8000/Student/'+student_id,
+            fetch(`http://127.0.0.1:8000/Student/${student_id}`,
             {
                 method: 'POST', // Use the POST method
                 headers: 
@@ -522,13 +523,13 @@
             .then(data => 
             {
 
-                console.log("Successfully Retrieving Data", data);
+              console.log("Successfully Retrieving Data", data);
            
-                updateDetails(data);
+              updateDetails(data);
 
             })
             .catch(error => {
-            console.error('Error fetching data:', error);
+              console.error('Error fetching data:', error);
             });
         }
 
@@ -566,7 +567,7 @@
             const student_id = urlParams.get('id');
 
             // Now you have the questionId, and you can use it as needed
-            console.log('Tourism Service ID:', student_id);
+            console.log('student_id:', student_id);
             // Fetch data when the page loads
             fetchDetails(student_id);
         });

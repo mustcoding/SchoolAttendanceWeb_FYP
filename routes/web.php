@@ -179,13 +179,6 @@ Route::get('/list-attendance-to-school', function () {
 
 
 
-
-
-
-
-
-
-
 //------------------------------- REST API -------------------------------------------------------
 
 // public used 
@@ -318,7 +311,7 @@ Route::prefix('Student')->middleware(['auth:staff'])->group(function() {
     Route::post('add-image/{id}',[StudentImageController::class,'addImage'])->name('Student.add-image');
     Route::post('get-by-birthYear',[StudentController::class,'getStudentByBirthYear'])->name('get-by-birthYear');
     Route::get('all-data', [StudentController::class, 'getAllStudents'])->name('Student.all-data');
-    Route::post('{id}',[StudentController::class,'studentById'])->name('findStudent');
+    Route::post('{id}',[StudentController::class,'studentById']);
     Route::put('update/{id}',[StudentController::class,'updateStudent'])->name('Student.update');
     Route::put('delete/{id}',[StudentController::class,'DeleteStudent'])->name('Student.delete');
     Route::get('total-alumni', [StudentController::class, 'totalAlumni'])->name('total-alumni');
