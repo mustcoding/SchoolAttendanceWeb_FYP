@@ -325,33 +325,36 @@ class StudentController extends Controller
 
     public function getTotalStudentInClassroom(Request $request)
     {
-        $staffId = $request->input('staff_id'); // Assuming staff_id is passed as a parameter
+        $staffId = $request->input('staff_id'); 
     
-        // Step 1: Fetch the classroom IDs associated with the teacher's staff_id
+        // Fetch the classroom IDs associated with the teacher's staff_id
         $classrooms = SchoolSessionClass::where('staff_id', $staffId)->pluck('class_id');
-        // Log classrooms data
         \Log::info('Classrooms data:', $classrooms->toArray());
     
-        // Step 2: Query the student_study_sessions table to count the number of students
         $totalStudents = 0;
         $currentYear = date('Y');
-        $classroomDetails; // Array to store classroom details
+        $classroomDetails = []; // Initialize as an empty array
+        
         foreach ($classrooms as $classroomId) {
-            $classroomDetails = \DB::table('student_study_sessions')
+            $details = \DB::table('student_study_sessions')
                 ->select('classrooms.id as class_id', 'classrooms.name', 'classrooms.form_number')
                 ->join('students', 'student_study_sessions.student_id', '=', 'students.id')
                 ->join('school_session_classes', 'student_study_sessions.ssc_id', '=', 'school_session_classes.id')
                 ->join('school_sessions', 'school_session_classes.school_session_id','=','school_sessions.id')
                 ->join('classrooms', 'school_session_classes.class_id','=','classrooms.id')
-                ->where('school_sessions.year',$currentYear)
-                ->where('school_session_classes.class_id', $classroomId) // Adjusted condition
+                ->where('school_sessions.year', $currentYear)
+                ->where('school_session_classes.class_id', $classroomId)
                 ->get();
-            $totalStudents += count($classroomDetails);
+            $classroomDetails = array_merge($classroomDetails, $details->toArray()); // Merge arrays
+            $totalStudents += count($details);
         }
-    
-        return response()->json(['total_students' => $totalStudents, 'classroom_details' => $classroomDetails]);
-    }
 
+    
+        return response()->json([
+            'total_students' => $totalStudents,
+            'classroom_details' => $classroomDetails
+        ]);
+    }
     public function getListStudentInClassroom(Request $request)
     {
         $classId = $request->input('id'); // Assuming classId is sent as a parameter in the request

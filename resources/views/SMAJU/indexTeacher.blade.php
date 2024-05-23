@@ -253,6 +253,7 @@
 
       // Construct the profile URL
       var staffId = storedStaffProfile.staffId;
+      console.log("DFFDEFVFDVF: ",staffId);
 
       // Update the href attribute with the appUserId
       var userProfileLink = document.getElementById('userProfileLink');
@@ -261,7 +262,6 @@
       } else {
         console.error('User profile link not found.');
       }
-
 
       const data = 
       {
@@ -377,9 +377,10 @@
         .then(response => response.json())
         .then(data => {
 
-            console.log('Response:', data);
+            console.log('Response class:', data);
 
             if(!data.error == "Class not found"){
+
               var ClassProfile = 
               {
                 ssc_id: data.school_session_class_id,
@@ -395,7 +396,19 @@
               updateUserData();
             }
             else{
-              
+              var ClassProfile = 
+              {
+                ssc_id: data.school_session_class_id,
+                class_id: data.class_id,
+                class_name: data.class_name,
+                form_number: data.form_number,
+                school_session: data.school_session
+              };
+
+              sessionStorage.setItem('ClassProfile', JSON.stringify(ClassProfile));
+              console.log('HERE HOI: ', sessionStorage);
+            
+              updateUserData();
             }
 
             

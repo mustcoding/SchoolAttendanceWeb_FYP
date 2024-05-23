@@ -323,10 +323,9 @@ Route::prefix('student-data')->middleware(['auth:staff'])->group(function() {
     Route::post('searchByRfid',[StudentController::class,'studentDataByRfid'])->name('searchByRfid');
     Route::post('get-student-with-ssc-class',[StudentController::class,'getStudentBySSC_ClassId'])->name('get-student-with-ssc-class');
     Route::get('all-data', [StudentController::class, 'getAllStudentsManagement'])->name('student-data.all-data');
-    Route::post('total-students-in-classroom', [StudentController::class, 'getTotalStudentInClassroom'])->name('total-students-in-classroom');
+    Route::post('total-students-in-classroom', [StudentController::class, 'getTotalStudentInClassroom']);
     Route::post('list-students-in-classroom', [StudentController::class, 'getListStudentInClassroom'])->name('list-students-in-classroom');
     
-
 });
 
 Route::prefix('StudentImage')->middleware(['auth:staff'])->group(function() {

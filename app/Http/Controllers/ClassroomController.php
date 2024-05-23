@@ -13,6 +13,7 @@ class ClassroomController extends Controller
     /**
      * Display a listing of the resource.
      */
+    ////
     public function registerClass(Request $request)
     {
         // Validate fields, including custom binary validation rule
@@ -22,7 +23,7 @@ class ClassroomController extends Controller
             'max_capacity' => 'required|integer',
             'is_Delete' => 'required|integer',
         ]);
-
+///
         // Create user
         $class = Classroom::create([
             'name' => $attrs['name'],

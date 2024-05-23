@@ -454,6 +454,7 @@ function fetchUser(staffId)
       console.log("CLass Name : ",class_name);
       console.log("Form number : ",form_number);
       console.log("School Session Id : ",school_session);
+      console.log("School Session Id : ",class_id);
       // Retrieve the current year
       var currentYear = new Date().getFullYear();
       console.log("Current Year: " + currentYear); // For debugging purposes
