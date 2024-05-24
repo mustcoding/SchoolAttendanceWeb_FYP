@@ -207,6 +207,7 @@
                     <th scope="col">Parent Phone Number</th>
                     <th scope="col">Time Attend</th>
                     <th scope="col">Class</th>
+                    <th scope="col">Type of Student</th>
                     
                   </tr>
                 </thead>
@@ -281,7 +282,7 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log('Response:', data);
+        console.log('List Attendance:', data);
 
         // Check if the response contains any student_id
         const containsStudentId = data.some(item => item.student_id !== undefined);
@@ -399,6 +400,7 @@
                         <td>${item.phone_number}</td>
                         <td>${item.date_time_in}</td>
                         <td>${item.form_number} ${item.class_name}</td> 
+                        <td>${item.type_student}</td> 
                       </tr>`;
         // Append the row to the tbody
         tbody.innerHTML += row;

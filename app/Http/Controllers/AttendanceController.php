@@ -162,7 +162,7 @@ class AttendanceController extends Controller
             $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
             $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
             $attendanceDateTime = $attendance->is_attend == 2 ? "EXCUSED" :($attendance->is_attend == 0 ? "ABSENT" : $attendance->date_time_in);
-    
+            $type_student = $student->type_student ? : "null";
             return [
                 'student_id' => $student->id,
                 'name' => $student->name,
@@ -174,6 +174,7 @@ class AttendanceController extends Controller
                 'form_number' => $formNumber,
                 'date_time_in' => $attendanceDateTime,
                 'phone_number' => $phone_number,
+                'type_student' => $type_student,
             ];
         });
     
@@ -184,7 +185,8 @@ class AttendanceController extends Controller
             $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
             $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
             $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
-    
+            $type_student = $student->type_student ? : "null";
+
             $allStudents->push([
                 'student_id' => $student->id,
                 'name' => $student->name,
@@ -196,6 +198,7 @@ class AttendanceController extends Controller
                 'form_number' => $formNumber,
                 'date_time_in' => "ABSENT", // No attendance record
                 'phone_number' => $phone_number,
+                'type_student' => $type_student,
             ]);
         });
     
