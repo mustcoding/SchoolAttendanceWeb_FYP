@@ -188,7 +188,7 @@ Route::post('login',[StaffController::class,'login'])->name('login');
 
 //----- admin module -----
 
-Route::post('register',[StaffController::class,'registerStaff'])->name('register');
+Route::post('register',[StaffController::class,'registerStaff']);
 
 
 // Protected routes
@@ -294,7 +294,7 @@ Route::prefix('AttendanceTimetable')->middleware(['auth:staff'])->group(function
     Route::get('all-timetable-data', [AttendanceTimetableController::class, 'getAllAttendanceTimetable']);
     Route::put('delete/{id}',[AttendanceTimetableController::class,'DeleteAttendanceTimetable']);
     Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'checkAttendanceTimeTable']);
-    
+    Route::post('attendanceDisplay', [AttendanceTimetableController::class, 'attendanceDisplay']);
 
 });
 

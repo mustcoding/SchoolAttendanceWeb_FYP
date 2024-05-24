@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateAttendanceTimetableRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class AttendanceTimetableController extends Controller
 {
@@ -169,6 +170,54 @@ class AttendanceTimetableController extends Controller
 
     }
 
+    public function attendanceDisplay(Request $request)
+    {
+        $day = $request->input('day');
+        $currentTime = $request->input('currentTime');
+
+        $attendanceTimetables = AttendanceTimetable::where('start_time', '<=', $currentTime)
+            ->where('end_time', '>=', $currentTime)
+            ->get();
+
+        $matchingTimetable = null;
+
+        foreach ($attendanceTimetables as $timetable) {
+            if ($timetable->occurrenceType && $this->isDayInRange($day, $timetable->occurrenceType->description)) {
+                $matchingTimetable = $timetable;
+                break;
+            }
+        }
+
+        if ($matchingTimetable) {
+            return response()->json(['attendanceTimetable' => ['id' => $matchingTimetable->id, 'name' => $matchingTimetable->name]]);
+        } else {
+            return response()->json(['error' => 'No matching timetable found'], 404);
+        }
+    }
+
+    public function isDayInRange($day, $range)
+    {
+        // Convert the day to a Carbon instance
+        $day = Carbon::parse($day)->dayOfWeek;
+        
+        // Parse the range
+        $parts = explode(' TO ', strtoupper($range));
+        if (count($parts) != 2) {
+            return false;
+        }
+
+        // Convert the days to Carbon dayOfWeek constants
+        $startDay = Carbon::parse($parts[0])->dayOfWeek;
+        $endDay = Carbon::parse($parts[1])->dayOfWeek;
+
+        // Check if the day is within the range
+        if ($startDay <= $endDay) {
+            return $day >= $startDay && $day <= $endDay;
+        } else {
+            // Handle the case where the range wraps around the week
+            return $day >= $startDay || $day <= $endDay;
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */

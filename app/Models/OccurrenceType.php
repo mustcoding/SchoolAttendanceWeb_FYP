@@ -15,4 +15,9 @@ class OccurrenceType extends Model
         'is_Delete',
       
     ];
+
+    public function attendanceTimetables()
+    {
+        return $this->hasMany(AttendanceTimetable::class, 'occurrence_id');
+    }
 }

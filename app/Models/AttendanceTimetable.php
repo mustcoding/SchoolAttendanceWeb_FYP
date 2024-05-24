@@ -21,4 +21,9 @@ class AttendanceTimetable extends Model
     {
         return $this->belongsTo(OccurrenceType::class, 'occurrence_id');
     }
+
+    public function occurrenceType()
+    {
+        return $this->belongsTo(OccurrenceType::class, 'occurrence_id');
+    }
 }
