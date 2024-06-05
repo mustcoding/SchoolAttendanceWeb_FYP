@@ -25,4 +25,16 @@ class SchoolSessionClass extends Model
     {
         return $this->belongsTo(SchoolSession::class);
     }
+
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class, 'class_id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
+
+    
 }

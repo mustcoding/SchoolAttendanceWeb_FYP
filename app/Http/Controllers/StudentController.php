@@ -9,6 +9,8 @@ use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Carbon\Carbon;
+
 
 class StudentController extends Controller
 {
@@ -405,7 +407,55 @@ class StudentController extends Controller
         return response()->json($formattedData);
     }
 
+    public function TotalChildren(Request $request)
+    {
+        $id = $request->input('id'); 
     
+        // Fetch the classroom IDs associated with the teacher's staff_id
+        $totalStudent = Student::where('parent_guardian_id', $id)->count();
+
+        if(!$totalStudent){
+            return response()->json([
+                'No Children Registered In This School',
+            ]);
+        }
+
+    
+        return response()->json([
+            'total_students' => $totalStudent,
+        ]);
+    }
+    
+    public function ListChildren(Request $request)
+{
+    $parentId = $request->input('parent_id');
+    $currentYear = Carbon::now()->year;
+
+    $students = Student::with([
+            'studentStudySessions.schoolSessionClass.schoolSession',
+            'studentStudySessions.schoolSessionClass.classroom',
+            'studentStudySessions.schoolSessionClass.staff'
+        ])
+        ->where('parent_guardian_id', $parentId)
+        ->whereHas('studentStudySessions.schoolSessionClass.schoolSession', function ($query) use ($currentYear) {
+            $query->where('year', $currentYear);
+        })
+        ->get()
+        ->map(function ($student) {
+            $currentSessionClass = $student->studentStudySessions->first()->schoolSessionClass;
+
+            return [
+                'id' => $student->id,
+                'name' => $student->name,
+                'teacher_id' => $currentSessionClass->staff->id,
+                'teacher_name' => $currentSessionClass->staff->name,
+                'class_name' => $currentSessionClass->classroom->name,
+                'form_number' => $currentSessionClass->classroom->form_number,
+            ];
+        });
+
+    return response()->json($students);
+}
     
     /**
      * Show the form for creating a new resource.

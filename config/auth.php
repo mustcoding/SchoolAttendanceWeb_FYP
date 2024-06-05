@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'staff',
         ],
+        'parent' => [
+            'driver' => 'session',
+            'provider' => 'parent',
+        ],
     ],
 
     /*
@@ -63,6 +67,11 @@ return [
         'staff' => [
             'driver' => 'eloquent',
             'model' => App\Models\Staff::class,
+            'username' => 'username', // Add this line to specify 'username' as the username field
+        ],
+        'parent' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ParentGuardian::class,
             'username' => 'username', // Add this line to specify 'username' as the username field
         ],
     ],
@@ -90,6 +99,12 @@ return [
     'passwords' => [
         'staff' => [ // Change the password broker to 'staff'
             'provider' => 'staff', // Change the provider to 'staff'
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'parent' => [ // Change the password broker to 'staff'
+            'provider' => 'parent', // Change the provider to 'staff'
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

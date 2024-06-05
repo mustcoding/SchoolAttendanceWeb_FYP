@@ -46,6 +46,10 @@ class Student extends Model
         return $this->hasManyThrough(Classroom::class, StudentStudySession::class, 'student_id', 'id', 'id', 'ssc_id');
     }
 
+    public function studySessions()
+    {
+        return $this->hasMany(StudentStudySession::class);
+    }
 
 
 }

@@ -7,11 +7,15 @@ use App\Models\Student;
 use App\Models\SchoolSession;
 use App\Models\StudentStudySession;
 use App\Models\AttendanceTimetable;
+use App\Models\AbsentSupportingDocument;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Carbon\CarbonPeriod;
 
 class AttendanceController extends Controller
 {
@@ -204,6 +208,353 @@ class AttendanceController extends Controller
     
         return response()->json($allStudents);
     }
+
+
+    public function totalPresent(Request $request){
+
+      // Get the student_study_session_id from the request
+        $studentStudySessionId = $request->input('student_study_session_id');
+        Log::info('studentStudySessionId   ' . $studentStudySessionId);
+
+        // Get the current year
+        $currentYear = date('Y'); // Get the current year in four-digit format
+
+        Log::info('currentYear   ' . $currentYear);
+
+        // Calculate the total attendance where date_time_in is within the current year
+        $totalAttendance = DB::table('attendances')
+            ->where('student_study_session_id', $studentStudySessionId)
+            ->where ('is_attend',1)
+            ->whereYear('created_at', $currentYear)
+            ->count();
+
+        return response()->json(['total_attendance' => $totalAttendance], 200);
+    }
+
+    public function totalLeave(Request $request){
+
+        // Get the student_study_session_id from the request
+          $studentStudySessionId = $request->input('student_study_session_id');
+          Log::info('studentStudySessionId   ' . $studentStudySessionId);
+  
+          // Get the current year
+          $currentYear = date('Y'); // Get the current year in four-digit format
+  
+          Log::info('currentYear   ' . $currentYear);
+  
+          // Calculate the total attendance where date_time_in is within the current year
+          $totalAttendance = DB::table('attendances')
+              ->where('student_study_session_id', $studentStudySessionId)
+              ->where ('is_attend',2)
+              ->whereYear('created_at', $currentYear)
+              ->count();
+  
+          return response()->json(['total_leave' => $totalAttendance], 200);
+    }
+
+    public function totalAbsent(Request $request)
+{
+    // Get the student_study_session_id from the request
+    $studentStudySessionId = $request->input('student_study_session_id');
+    Log::info('studentStudySessionId: ' . $studentStudySessionId);
+
+    // Retrieve the start date and end date of the school session
+    $schoolSessionDates = DB::table('student_study_sessions')
+        ->join('school_sessions', 'student_study_sessions.ssc_id', '=', 'school_sessions.id')
+        ->select('start_date', 'end_date')
+        ->where('student_study_sessions.id', $studentStudySessionId)
+        ->first();
+
+    if (!$schoolSessionDates) {
+        // Handle if school session not found for the provided student_study_session_id
+        return response()->json(['error' => 'School session not found'], 404);
+    }
+
+    // Initialize CarbonPeriod for the interval between start_date and the current date
+    $period = CarbonPeriod::create($schoolSessionDates->start_date, now());
+
+    // Get all attendance timetable IDs and their names
+    $attendanceTimetables = DB::table('attendance_timetables')
+        ->select('id', 'name', 'occurrence_id')
+        ->get();
+
+    // Get the description of occurrence types
+    $occurrenceTypes = DB::table('occurrence_types')
+        ->pluck('description', 'id');
+
+    // Initialize an array to store absent attendances
+    $absentAttendances = [];
+
+    // Loop through each day in the interval
+    foreach ($period as $date) {
+        // Get the date string in 'Y-m-d' format
+        $dateString = $date->format('Y-m-d');
+
+        // Get the day of the week in uppercase (e.g., "MONDAY", "TUESDAY")
+        $dayOfWeek = strtoupper($date->englishDayOfWeek);
+
+        // Concatenate the date string with the day of the week
+        $dateTimeIn = $dateString . ' (' . $dayOfWeek . ')';
+
+        // Loop through each attendance timetable
+        foreach ($attendanceTimetables as $timetable) {
+            // Check if the occurrence type description includes the current day of the week
+            if (strpos(strtoupper($occurrenceTypes[$timetable->occurrence_id]), $dayOfWeek) !== false || strpos($occurrenceTypes[$timetable->occurrence_id], 'EVERYDAY') !== false) {
+                // Check if there is an attendance record for the current date and timetable ID
+                $attendanceRecord = DB::table('attendances')
+                    ->where('student_study_session_id', $studentStudySessionId)
+                    ->where('attendance_timetable_id', $timetable->id)
+                    ->whereDate(DB::raw("STR_TO_DATE(date_time_in, '%m/%d/%y %H:%i:%s')"), $date->format('Y-m-d'))
+                    ->whereIn('is_attend', [1, 2])
+                    ->first();
+
+                // If no attendance record exists for this date and timetable, or if it exists but is marked as not attended, consider it absent
+                if (!$attendanceRecord) {
+                    $absentAttendances[] = [
+                        'attendance_timetable_id' => $timetable->id,
+                        'student_study_session_id' => $studentStudySessionId,
+                        'is_attend' => 0, // Marked as absent
+                        'date_time_in' => $dateTimeIn, // Date of absence with day of the week
+                        'date_time_out' => null, // Not recorded
+                        'name' => $timetable->name
+                    ];
+                }
+            }
+        }
+    }
+
+    // Count the total absent days
+    $totalAbsentDays = count($absentAttendances);
+
+    // Return the list of absent attendances along with the total absent days
+    return response()->json(['total_absent' => $totalAbsentDays], 200);
+}
+
+    public function ListPresent(Request $request)
+    {
+        // Assume the student study session ID is passed in the request
+        $studentStudySessionId = $request->input('student_study_session_id');
+    
+        // Get the current year
+        $currentYear = Carbon::now()->year;
+    
+        // Query the attendances and select only the required columns
+        $attendances = Attendance::where('student_study_session_id', $studentStudySessionId)
+            ->where('is_attend', 1)
+            ->whereYear('created_at', $currentYear)
+            ->select('id', 'date_time_in', 'date_time_out', 'is_attend', 'checkpoint_id', 'attendance_timetable_id', 'student_study_session_id')
+            ->with('attendanceTimetable:id,name') // Eager load the attendance timetable with only id and name
+            ->get();
+    
+        Log::info('studentStudySessionId   ' . $studentStudySessionId);
+    
+        // Iterate through each attendance and modify the date_time_in format
+        $attendancesWithFormattedDateTimeIn = $attendances->map(function ($attendance) {
+            // Parse the date_time_in field as a Carbon instance
+            $date = Carbon::parse($attendance->date_time_in);
+    
+            // Format the date_time_in as desired
+            $formattedDateTimeIn = $date->format('m/d/y H:i:s (l)');
+    
+            // Update the date_time_in field in the attendance object
+            $attendance->date_time_in = $formattedDateTimeIn;
+    
+            // Add only the timetable name to the response
+            $attendance->name = $attendance->attendanceTimetable->name;
+    
+            // Unset the nested attendance timetable object
+            unset($attendance->attendanceTimetable);
+    
+            return $attendance;
+        });
+    
+        // Return the results, with date_time_in formatted as desired, as a JSON response
+        return response()->json($attendancesWithFormattedDateTimeIn);
+    }
+
+
+    public function ListLeave(Request $request)
+    {
+
+       // Assume the student study session ID is passed in the request
+       $studentStudySessionId = $request->input('student_study_session_id');
+    
+       // Get the current year
+       $currentYear = Carbon::now()->year;
+   
+       // Query the attendances and select only the required columns
+       $attendances = Attendance::where('student_study_session_id', $studentStudySessionId)
+           ->where('is_attend', 2)
+           ->whereYear('created_at', $currentYear)
+           ->select('id', 'date_time_in', 'date_time_out', 'is_attend', 'checkpoint_id', 'attendance_timetable_id', 'student_study_session_id')
+           ->with('attendanceTimetable:id,name') // Eager load the attendance timetable with only id and name
+           ->get();
+   
+       Log::info('studentStudySessionId   ' . $studentStudySessionId);
+   
+       // Iterate through each attendance and modify the date_time_in format
+       $attendancesWithFormattedDateTimeIn = $attendances->map(function ($attendance) {
+           // Parse the date_time_in field as a Carbon instance
+           $date = Carbon::parse($attendance->date_time_in);
+   
+           // Format the date_time_in as desired
+           $formattedDateTimeIn = $date->format('m/d/y H:i:s (l)');
+   
+           // Update the date_time_in field in the attendance object
+           $attendance->date_time_in = $formattedDateTimeIn;
+   
+           // Add only the timetable name to the response
+           $attendance->name = $attendance->attendanceTimetable->name;
+   
+           // Unset the nested attendance timetable object
+           unset($attendance->attendanceTimetable);
+   
+           return $attendance;
+       });
+   
+       // Return the results, with date_time_in formatted as desired, as a JSON response
+       return response()->json($attendancesWithFormattedDateTimeIn);
+    }
+
+    // public function ListAbsentS(Request $request)
+    // {
+    //     // Get the student_study_session_id from the request
+    //     $studentStudySessionId = $request->input('student_study_session_id');
+    //     Log::info('studentStudySessionId   ' . $studentStudySessionId);
+    
+    //     // Retrieve the start date and end date of the school session
+    //     $schoolSessionDates = DB::table('student_study_sessions')
+    //         ->join('school_sessions', 'student_study_sessions.ssc_id', '=', 'school_sessions.id')
+    //         ->select('start_date', 'end_date')
+    //         ->where('student_study_sessions.id', $studentStudySessionId)
+    //         ->first();
+    
+    //     if (!$schoolSessionDates) {
+    //         // Handle if school session not found for the provided student_study_session_id
+    //         return response()->json(['error' => 'School session not found'], 404);
+    //     }
+    
+    //     // Initialize CarbonPeriod for the interval between start_date and the current date
+    //     $period = CarbonPeriod::create($schoolSessionDates->start_date, now());
+    
+    //     // Get all attendance timetable IDs and their names
+    //     $attendanceTimetables = DB::table('attendance_timetables')
+    //         ->select('id', 'name')
+    //         ->get();
+    
+    //     // Initialize an array to store absent attendances
+    //     $absentAttendances = [];
+    
+    //     // Loop through each day in the interval
+    //     foreach ($period as $date) {
+    //         // Check if the day is not a Friday or Saturday
+    //         if ($date->dayOfWeek !== Carbon::FRIDAY && $date->dayOfWeek !== Carbon::SATURDAY) {
+    //             // Loop through each attendance timetable
+    //             foreach ($attendanceTimetables as $timetable) {
+    //                 // Check if there is an attendance record for the current date and timetable ID
+    //                 $attendanceRecord = DB::table('attendances')
+    //                     ->where('student_study_session_id', $studentStudySessionId)
+    //                     ->where('attendance_timetable_id', $timetable->id)
+    //                     ->whereDate(DB::raw("STR_TO_DATE(date_time_in, '%m/%d/%y %H:%i:%s')"), $date->format('Y-m-d'))
+    //                     ->whereIn('is_attend', [1, 2])
+    //                     ->first();
+    
+    //                 // If no attendance record exists for this date and timetable, or if it exists but is marked as not attended, consider it absent
+    //                 if (!$attendanceRecord) {
+    //                     $absentAttendances[] = [
+    //                         'attendance_timetable_id' => $timetable->id,
+    //                         'student_study_session_id' => $studentStudySessionId,
+    //                         'is_attend' => 0, // Marked as absent
+    //                         'date_time_in' => $date->format('Y-m-d'), // Date of absence
+    //                         'date_time_out' => null, // Not recorded
+    //                         'name' => $timetable->name
+    //                     ];
+    //                 }
+    //             }
+    //         }
+    //     }
+    
+    //     // Return the list of absent attendances
+    //     return response()->json( $absentAttendances, 200);
+    // }
+
+    public function ListAbsent(Request $request)
+{
+    // Get the student_study_session_id from the request
+    $studentStudySessionId = $request->input('student_study_session_id');
+    Log::info('studentStudySessionId: ' . $studentStudySessionId);
+
+    // Retrieve the start date and end date of the school session
+    $schoolSessionDates = DB::table('student_study_sessions')
+        ->join('school_sessions', 'student_study_sessions.ssc_id', '=', 'school_sessions.id')
+        ->select('start_date', 'end_date')
+        ->where('student_study_sessions.id', $studentStudySessionId)
+        ->first();
+
+    if (!$schoolSessionDates) {
+        // Handle if school session not found for the provided student_study_session_id
+        return response()->json(['error' => 'School session not found'], 404);
+    }
+
+    // Initialize CarbonPeriod for the interval between start_date and the current date
+    $period = CarbonPeriod::create($schoolSessionDates->start_date, now());
+
+    // Get all attendance timetable IDs and their names
+    $attendanceTimetables = DB::table('attendance_timetables')
+        ->select('id', 'name', 'occurrence_id')
+        ->get();
+
+    // Get the description of occurrence types
+    $occurrenceTypes = DB::table('occurrence_types')
+        ->pluck('description', 'id');
+
+    // Initialize an array to store absent attendances
+    $absentAttendances = [];
+
+    // Loop through each day in the interval
+    foreach ($period as $date) {
+        // Get the date string in 'Y-m-d' format
+        $dateString = $date->format('Y-m-d');
+
+        // Get the day of the week in uppercase (e.g., "MONDAY", "TUESDAY")
+        $dayOfWeek = strtoupper($date->englishDayOfWeek);
+
+        // Concatenate the date string with the day of the week
+        $dateTimeIn = $dateString . ' (' . $dayOfWeek . ')';
+
+        // Loop through each attendance timetable
+        foreach ($attendanceTimetables as $timetable) {
+            // Check if the occurrence type description includes the current day of the week
+            if (strpos(strtoupper($occurrenceTypes[$timetable->occurrence_id]), $dayOfWeek) !== false || strpos($occurrenceTypes[$timetable->occurrence_id], 'EVERYDAY') !== false) {
+                // Check if there is an attendance record for the current date and timetable ID
+                $attendanceRecord = DB::table('attendances')
+                    ->where('student_study_session_id', $studentStudySessionId)
+                    ->where('attendance_timetable_id', $timetable->id)
+                    ->whereDate(DB::raw("STR_TO_DATE(date_time_in, '%m/%d/%y %H:%i:%s')"), $date->format('Y-m-d'))
+                    ->whereIn('is_attend', [1, 2])
+                    ->first();
+
+                // If no attendance record exists for this date and timetable, or if it exists but is marked as not attended, consider it absent
+                if (!$attendanceRecord) {
+                    $absentAttendances[] = [
+                        'attendance_timetable_id' => $timetable->id,
+                        'student_study_session_id' => $studentStudySessionId,
+                        'is_attend' => 0, // Marked as absent
+                        'date_time_in' => $dateTimeIn, // Date of absence with day of the week
+                        'date_time_out' => null, // Not recorded
+                        'name' => $timetable->name
+                    ];
+                }
+            }
+        }
+    }
+
+    // Return the list of absent attendances
+    return response()->json($absentAttendances, 200);
+}
+   
+    
+    
     /**
      * Show the form for creating a new resource.
      */

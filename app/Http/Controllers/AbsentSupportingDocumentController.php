@@ -7,6 +7,9 @@ use App\Http\Requests\StoreAbsentSupportingDocumentRequest;
 use App\Http\Requests\UpdateAbsentSupportingDocumentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 class AbsentSupportingDocumentController extends Controller
 {
     /**
@@ -27,6 +30,9 @@ class AbsentSupportingDocumentController extends Controller
                 'reason' => $request->input('reason'),
                 'parent_guardian_id' => $request->input('parent_guardian_id'),
                 'staff_id' => $request->input('staff_id'),
+                'is_Delete' => $request->input('is_Delete'),
+                'start_date_leave' => $request->input('start_date_leave'),
+                'end_date_leave' => $request->input('end_date_leave'),
             ]);
 
             // Return success response with 200 status code
@@ -51,6 +57,51 @@ class AbsentSupportingDocumentController extends Controller
             ], 500);
         }
        
+    }
+
+    // public function ListLeaves(Request $request)
+    // {
+    //     // Get the parent_id from the request
+    //     $parent_id = $request->input('parent_id');
+
+    //     // Get the current date time
+    //     $currentDateTimeDBFormat = Carbon::now()->format('Y-m-d');
+
+    //     // Retrieve data based on the provided conditions
+    //     $data = AbsentSupportingDocument::where('parent_guardian_id', $parent_id)
+    //         ->where('uploaded_date_time', '>=', $currentDateTimeDBFormat)
+    //         ->select('reason', 'verification_status')
+    //         ->with(['student' => function ($query) {
+    //             $query->select('id', 'name');
+    //         }])
+    //         ->get();
+    //         return response()->json([
+    //             'data' => $data, // Change this line
+    //             'currentDateTime' => $currentDateTimeDBFormat
+    //         ], 200);
+    // }
+
+    public function ListLeaves(Request $request)
+    {
+        // Get the parent_id from the request
+        $parent_id = $request->input('parent_id');
+        
+        // Get the current date formatted as 'Y-m-d'
+        $currentDateTimeDBFormat = Carbon::now()->format('Y-m-d');
+
+
+        $data = DB::table('absent_supporting_documents')
+            ->join('students', 'absent_supporting_documents.parent_guardian_id', '=', 'students.parent_guardian_id')
+            ->join('student_study_sessions', 'students.id', '=', 'student_study_sessions.student_id')
+            ->join('school_session_classes', 'student_study_sessions.ssc_id', '=', 'school_session_classes.id')
+            ->join('staff', 'school_session_classes.staff_id', '=', 'staff.id')
+            ->where('students.parent_guardian_id', $parent_id)
+            ->where('absent_supporting_documents.start_date_leave', '>=', $currentDateTimeDBFormat)
+            ->select('students.name as name', 'absent_supporting_documents.verification_status', 'absent_supporting_documents.reason',
+            'absent_supporting_documents.start_date_leave', 'absent_supporting_documents.end_date_leave')
+            ->get();
+
+            return response()->json($data, 200);
     }
 
 

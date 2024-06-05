@@ -29,4 +29,7 @@ class StudentStudySession extends Model
     {
         return $this->hasMany(Attendance::class);
     }
+
+    
+
 }

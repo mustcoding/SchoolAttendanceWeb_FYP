@@ -6,6 +6,7 @@ use App\Http\Requests\StoreParentGuardianRequest;
 use App\Http\Requests\UpdateParentGuardianRequest;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request; // Import the Request class
+use Illuminate\Support\Facades\Auth; // Import the Auth facade
 
 class ParentGuardianController extends Controller
 {
@@ -127,6 +128,34 @@ class ParentGuardianController extends Controller
         return response()->json(['message' => 'User updated successfully', 'parent' => $parent]);
     }
 
+    public function ParentLogin(Request $request)
+    {
+        // Validate fields
+        $attrs = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string|min:3',
+        ]);
+    
+        // Manually check the credentials
+        $parent = ParentGuardian::where('username', $attrs['username'])
+            ->where('password', $attrs['password'])
+            ->first();
+    
+        if (!$parent) {
+            return response([
+                'message' => 'Invalid credentials.'
+            ], 403);
+        }
+    
+        // Generate token for the user
+        $token = $parent->createToken('secret')->plainTextToken;
+    
+        // Return user & token in response
+        return response([
+            $parent,
+            'token' => $token
+        ], 200);
+    }
     /**
      * Show the form for creating a new resource.
      */

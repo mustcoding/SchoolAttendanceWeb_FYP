@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('absent_supporting_documents', function (Blueprint $table) {
             $table->id();
             $table->string('file_name');
-            $table->binary('document_path');
+            $table->binary('document_path'); 
             $table->dateTime('uploaded_date_time');
             $table->string('verification_status');
             $table->dateTime('verified_date_time');
@@ -22,6 +22,8 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_guardian_id');
             $table->unsignedBigInteger('staff_id');
             $table->integer('is_Delete');
+            $table->integer('start_date_leave');
+            $table->integer('end_date_leave');
             $table->timestamps();
 
             $table->foreign('parent_guardian_id')

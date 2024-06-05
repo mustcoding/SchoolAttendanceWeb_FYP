@@ -185,10 +185,11 @@ Route::get('/list-attendance-to-school', function () {
 
 Route::post('login',[StaffController::class,'login'])->name('login');
 
-
+Route::post('ParentLogin',[ParentGuardianController::class,'ParentLogin']);
 //----- admin module -----
 
 Route::post('register',[StaffController::class,'registerStaff']);
+
 
 
 // Protected routes
@@ -357,3 +358,19 @@ Route::prefix('Attendance')->middleware(['auth:staff'])->group(function() {
     Route::post('list-attend', [AttendanceController::class, 'getListAttend']);
 
 });
+
+Route::prefix('ParentGuardianApps')->middleware(['auth:sanctum'])->group(function() {
+
+    Route::post('TotalChildren', [StudentController::class, 'TotalChildren']);
+    Route::post('ListChildren', [StudentController::class, 'ListChildren']);
+    Route::post('ApplyLeaves', [AbsentSupportingDocumentController::class, 'addAbsentSupportingDocument']);
+    Route::post('ListLeaves', [AbsentSupportingDocumentController::class, 'ListLeaves']);
+    Route::post('studentStudySession', [StudentStudySessionController::class, 'studentStudySession']);
+    Route::post('totalPresent', [AttendanceController::class, 'totalPresent']);
+    Route::post('totalLeave', [AttendanceController::class, 'totalLeave']);
+    Route::post('totalAbsent', [AttendanceController::class, 'totalAbsent']);
+    Route::post('ListPresent', [AttendanceController::class, 'ListPresent']);
+    Route::post('ListLeave', [AttendanceController::class, 'ListLeave']);
+    Route::post('ListAbsent', [AttendanceController::class, 'ListAbsent']);
+});
+

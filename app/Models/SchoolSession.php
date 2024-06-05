@@ -20,4 +20,6 @@ class SchoolSession extends Model
     {
         return $this->hasMany(SchoolSessionClass::class);
     }
+
+   
 }

@@ -211,6 +211,26 @@ class StudentStudySessionController extends Controller
         return response()->json($response);
     }
 
+    public function studentStudySession(Request $request){
+        // Retrieve staff_id and year from the request
+        $student_id = $request->input('student_id');
+
+        $currentYear = Carbon::now()->year;
+
+        $studentStudySession = StudentStudySession::whereHas('schoolSessionClass.schoolSession', function($query) use ($currentYear) {
+            $query->where('year', $currentYear);
+        })
+        ->where('student_id', $student_id)
+        ->first();
+
+        if ($studentStudySession) {
+            return response()->json(['student_study_session_id' => $studentStudySession->id], 200);
+        } else {
+            return response()->json(['message' => 'Student study session not found for the current year.'], 404);
+        }
+ 
+    }
+
 
 
     /**

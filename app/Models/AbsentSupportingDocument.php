@@ -19,5 +19,18 @@ class AbsentSupportingDocument extends Model
         'parent_guardian_id',
         'staff_id',
         'is_Delete',
+        'start_date_leave',
+        'end_date_leave',
     ];
+
+
+     public function student()
+     {
+         return $this->belongsTo(Student::class, 'student_id', 'id');
+     }
+
+     public function parentGuardian()
+    {
+        return $this->belongsTo(ParentGuardian::class);
+    }
 }
