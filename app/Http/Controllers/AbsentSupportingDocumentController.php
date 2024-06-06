@@ -100,10 +100,76 @@ class AbsentSupportingDocumentController extends Controller
             ->select('students.name as name', 'absent_supporting_documents.verification_status', 'absent_supporting_documents.reason',
             'absent_supporting_documents.start_date_leave', 'absent_supporting_documents.end_date_leave')
             ->get();
-
-            return response()->json($data, 200);
+        return response()->json($data, 200);
     }
 
+    public function getAppliedLeave(){
+        
+        $results = AbsentSupportingDocument::select(
+            'absent_supporting_documents.id as absent_supporting_document_id',
+            'absent_supporting_documents.file_name',
+            'absent_supporting_documents.document_path',
+            'absent_supporting_documents.uploaded_date_time',
+            'absent_supporting_documents.verification_status',
+            'absent_supporting_documents.verified_date_time',
+            'absent_supporting_documents.reason',
+            'absent_supporting_documents.start_date_leave',
+            'absent_supporting_documents.end_date_leave',
+            'students.name as student_name',
+            'student_study_sessions.id as student_study_session_id',
+            'parent_guardians.name as parent_name',
+            'classrooms.name as class_name',
+            'classrooms.form_number',
+            'staff.name as teacher_name'
+        )
+        ->join('parent_guardians', 'absent_supporting_documents.parent_guardian_id', '=', 'parent_guardians.id')
+        ->join('students', 'parent_guardians.id', '=', 'students.parent_guardian_id')
+        ->join('student_study_sessions', 'students.id', '=', 'student_study_sessions.student_id')
+        ->join('school_session_classes', 'student_study_sessions.ssc_id', '=', 'school_session_classes.id')
+        ->join('classrooms', 'school_session_classes.class_id', '=', 'classrooms.id')
+        ->join('staff', 'school_session_classes.staff_id', '=', 'staff.id')
+        ->where('absent_supporting_documents.verification_status', 'PENDING')
+        ->get();
+
+        return response()->json($results, 200);
+        
+    }
+
+    public function viewDocument(Request $request)
+    {
+
+        $document_path = $request->input('document_path');
+        $absent_supporting_document_id = $request->input('absent_supporting_document_id');
+        // Retrieve the document from the database by ID
+        $document = AbsentSupportingDocument::select('document_path')
+        ->where('id',$absent_supporting_document_id);
+
+        // Serve the PDF file to the browser
+        return response()->streamDownload(function () use ($document) {
+            echo $document->content; // Output the PDF content stored in the database
+        }, 'document.pdf', ['Content-Type' => 'application/pdf']);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        // Extract the request ID
+        $requestId = $request->input('id');
+
+        // Find the absent_supporting_document record by ID
+        $document = AbsentSupportingDocument::find($requestId);
+
+        // Check if the document exists
+        if (!$document) {
+            return response()->json(['error' => 'Absent supporting document not found'], 404);
+        }
+
+        // Update the verification_status to "APPROVED"
+        $document->verification_status = 'APPROVED';
+        $document->save();
+
+        // Return a success response
+        return response()->json(['message' => 'Verification status updated successfully'], 200);
+    }
 
     /**
      * Show the form for creating a new resource.

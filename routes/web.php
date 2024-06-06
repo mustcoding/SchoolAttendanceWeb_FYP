@@ -173,6 +173,18 @@ Route::get('/list-attendance-to-school', function () {
     return view('SMAJU.listAttendanceForTeacher');
 })->name('list-attendance-to-school');
 
+Route::get('/applied-leave-management', function () {
+    return view('SMAJU.appliedLeaveManagement');
+})->name('appliedLeaveManagement');
+
+Route::get('/pdf/{documentPath}', function(){
+    return view('SMAJU.absentiesDocument');
+});
+
+Route::get('/absentiesDocument', function (Illuminate\Http\Request $request) {
+    $document_path = $request->query('document_pth');
+    return view('SMAJU.absentiesDocument', ['document_path' => $document_path]);
+});
 
 
 //parent
@@ -302,7 +314,9 @@ Route::prefix('AttendanceTimetable')->middleware(['auth:staff'])->group(function
 Route::prefix('ADS')->middleware(['auth:staff'])->group(function() {
 
     Route::post('add', [AbsentSupportingDocumentController::class, 'addAbsentSupportingDocument']);
-
+    Route::get('applied-leave', [AbsentSupportingDocumentController::class, 'getAppliedLeave']);
+    Route::get('/documents/{id}',[AbsentSupportingDocumentController::class, 'viewDocument'])->name('documents.show');
+    Route::put('updateStatus',[AbsentSupportingDocumentController::class,'updateStatus']);
 });
 
 Route::prefix('Student')->middleware(['auth:staff'])->group(function() {
@@ -356,7 +370,7 @@ Route::prefix('Attendance')->middleware(['auth:staff'])->group(function() {
 
     Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry']);
     Route::post('list-attend', [AttendanceController::class, 'getListAttend']);
-
+    Route::post('recordAttendanceLeave', [AttendanceController::class, 'recordAttendanceLeave']);
 });
 
 Route::prefix('ParentGuardianApps')->middleware(['auth:sanctum'])->group(function() {

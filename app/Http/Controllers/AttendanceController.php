@@ -552,7 +552,54 @@ class AttendanceController extends Controller
     // Return the list of absent attendances
     return response()->json($absentAttendances, 200);
 }
-   
+
+    public function recordAttendanceLeave(Request $request) {
+        // Extract data from the request
+        $date_time_in = $request->input('date_time_in');
+        $is_attend = $request->input('is_attend');
+        $checkpoint_id = $request->input('checkpoint_id');
+        $student_study_session_id = $request->input('student_study_session_id');
+
+        // Fetch the student study session based on the provided ID
+        $studentStudySession = StudentStudySession::find($student_study_session_id);
+
+        // Check if the student study session exists
+        if (!$studentStudySession) {
+            return response()->json(['error' => 'Student study session not found'], 404);
+        }
+
+        // Get the student type
+        $studentType = $studentStudySession->student->type_student;
+
+        // Retrieve all attendance timetable IDs based on the student type
+        $attendanceTimetableIds = [];
+        if ($studentType === 'DAILY STUDENT') {
+            // For daily students, only use attendance timetable ID 1
+            $attendanceTimetableIds[] = 1;
+        } elseif ($studentType === 'BOARDING STUDENT') {
+            // For boarding students, retrieve all attendance timetable IDs
+            $attendanceTimetables = AttendanceTimetable::all();
+            foreach ($attendanceTimetables as $timetable) {
+                $attendanceTimetableIds[] = $timetable->id;
+            }
+        }
+
+        // Record attendance for each timetable ID
+        foreach ($attendanceTimetableIds as $timetableId) {
+            // Create a new Attendance record
+            $attendance = new Attendance();
+            $attendance->date_time_in = $date_time_in;
+            $attendance->is_attend = $is_attend;
+            $attendance->checkpoint_id = $checkpoint_id;
+            $attendance->attendance_timetable_id = $timetableId;
+            $attendance->student_study_session_id = $student_study_session_id;
+            // Save the attendance record
+            $attendance->save();
+        }
+
+        // Return a success response
+        return response()->json(['message' => 'Attendance recorded successfully'], 200);
+    }
     
     
     /**
