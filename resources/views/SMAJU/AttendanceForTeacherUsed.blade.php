@@ -97,7 +97,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/user/logout" onClick="signOut()">
+              <a class="dropdown-item d-flex align-items-center" href="/user/logout" onClick="signOut()">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -298,7 +298,7 @@
       console.log("class_name : ", class_name);
       console.log("form_number : ", form_number);
 
-      fetch('http://127.0.0.1:8000/student-data/list-students-in-classroom', 
+      fetch('/student-data/list-students-in-classroom', 
       {
         method: 'POST', // Use the POST method
         headers: {
@@ -333,7 +333,7 @@
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -471,7 +471,7 @@
           currentTime: currentTime,
         };
 
-        fetch('http://127.0.0.1:8000/AttendanceTimetable/attendanceDisplay', {
+        fetch('/AttendanceTimetable/attendanceDisplay', {
             method: 'POST', // Use the POST method
             headers: {
                 'Content-Type': 'application/json' // Set the content type to JSON
@@ -563,7 +563,7 @@
                 number: rfidNumber
             };
 
-            fetch('http://127.0.0.1:8000/rfids/retrieve-rfid-id', {
+            fetch('/rfids/retrieve-rfid-id', {
                 method: 'POST', // Use the POST method
                 headers: {
                     'Content-Type': 'application/json' // Set the content type to JSON
@@ -578,7 +578,7 @@
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'block';
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                        window.location.href = '/AttendanceRecordManagement';
                     }, 2000);
                 }
             })
@@ -605,7 +605,7 @@
             rfidNumber: rfid_id,
             };
             
-            fetch('http://127.0.0.1:8000/student-data/searchByRfid', 
+            fetch('/student-data/searchByRfid', 
             {
             method: 'POST', // Use the POST method
             headers: {
@@ -622,7 +622,7 @@
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                        window.location.href = '/attendance-in-classroom';
                     }, 2000);
                 }
                 })
@@ -648,7 +648,7 @@
             student_id: student_id,
             };
             
-            fetch('http://127.0.0.1:8000/StudentStudySession/get-id-by-studentId', 
+            fetch('/StudentStudySession/get-id-by-studentId', 
             {
             method: 'POST', // Use the POST method
             headers: {
@@ -667,7 +667,7 @@
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoClass"]').style.display = 'block';
                     
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                        window.location.href = '/attendance-in-classroom';
                     }, 2000);
                 }
                 })
@@ -687,7 +687,7 @@
         function checkAttendanceTimeTable(studentStudySession_id, attendanceStatus, student_id) {
             const is_Delete = 0;
 
-            fetch('http://127.0.0.1:8000/AttendanceTimetable/checkAttendance-by-time', {
+            fetch('/AttendanceTimetable/checkAttendance-by-time', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -701,7 +701,7 @@
                         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoTime"]').style.display = 'block';
                         setTimeout(function() {
-                            window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                            window.location.href = '/attendance-in-classroom';
                         }, 2000);
                     }
                 })
@@ -761,7 +761,7 @@
           student_id: student_id,
         };
             
-            fetch('http://127.0.0.1:8000/Attendance/recordAttendance', 
+            fetch('/Attendance/recordAttendance', 
             {
             method: 'POST', // Use the POST method
             headers: {
@@ -776,13 +776,13 @@
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                     setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                    window.location.href = '/attendance-in-classroom';
                     }, 2000);
                 }else if (response.status === 400) {
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertDailyStudent"]').style.display = 'block';
                     setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                    window.location.href = '/attendance-in-classroom';
                     }, 2000);
                 }
             })
@@ -793,7 +793,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                window.location.href = '/attendance-in-classroom';
                 }, 2000);
             }
             else{
@@ -802,7 +802,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
                 setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/attendance-in-classroom';
+                    window.location.href = '/attendance-in-classroom';
                 }, 2000);
             }
                 
@@ -820,7 +820,7 @@
         {
         const data={};
 
-            fetch('http://127.0.0.1:8000/user/logout', {
+            fetch('/user/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -832,7 +832,7 @@
             console.log('Response:', data);
             
             // Redirect to the login page
-            window.location.replace('http://127.0.0.1:8000/login');
+            window.location.replace('/login');
                 
             })
             .catch(error => {

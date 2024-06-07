@@ -58,7 +58,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="/indexAdmin" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -95,7 +95,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/user/logout" onClick="signOut()">
+              <a class="dropdown-item d-flex align-items-center" href="/user/logout" onClick="signOut()">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -115,7 +115,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+        <a class="nav-link " href="/indexAdmin">
           <i class="bi bi-grid"></i>
           <span>DASHBOARD</span>
         </a>
@@ -174,22 +174,22 @@
       </a>
       <ul id="tourismServicesList" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-          <a href="http://127.0.0.1:8000/studentManagement">
+          <a href="/studentManagement">
             <i class="bi bi-circle"></i><span>STUDENT</span>
           </a>
         </li>
         <li>
-            <a href="http://127.0.0.1:8000/staffManagement">
+            <a href="/staffManagement">
               <i class="bi bi-circle"></i><span>STAFF</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/classroomManagement">
+            <a href="/classroomManagement">
               <i class="bi bi-circle"></i><span>CLASS</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
+            <a href="/attendanceTimetableManagement">
               <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
             </a>
           </li>
@@ -199,13 +199,18 @@
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/schoolSessionManagement">
+            <a href="/schoolSessionManagement">
               <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
             </a>
           </li>
           <li>
-             <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
+             <a href="/activityOccurrenceManagement">
               <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
+            </a>
+          </li>
+          <li>
+             <a href="/applied-leave-management">
+              <i class="bi bi-circle"></i><span>APPLIED LEAVES </span>
             </a>
           </li>
       </ul>
@@ -216,7 +221,7 @@
       </a>
       <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-            <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
+            <a href="/AttendanceRecordManagement">
                 <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
             </a>
         </li>
@@ -225,6 +230,7 @@
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
+        
        
       </ul>
     </li><!-- End Components Nav -->
@@ -368,7 +374,7 @@
         };
 
         // Make a PUT request to update the staff information
-        fetch('http://127.0.0.1:8000/OccurrenceType/update/' + occurrence_id, {
+        fetch('/OccurrenceType/update/' + occurrence_id, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -383,7 +389,7 @@
             document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
 
             setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/activityOccurrenceManagement';
+                window.location.href = '/activityOccurrenceManagement';
             }, 2000);
         })
         .catch(error => {
@@ -401,7 +407,7 @@
                 id: occurrence_id
             };
 
-            fetch('http://127.0.0.1:8000/OccurrenceType/'+occurrence_id,
+            fetch('/OccurrenceType/'+occurrence_id,
             {
                 method: 'POST', // Use the POST method
                 headers: 
@@ -462,7 +468,7 @@
                 staffId : staffId,
             };
 
-            fetch('http://127.0.0.1:8000/user/'+staffId, {
+            fetch('/user/'+staffId, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

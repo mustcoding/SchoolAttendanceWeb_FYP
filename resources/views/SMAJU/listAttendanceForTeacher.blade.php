@@ -62,7 +62,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexTeacher" class="logo d-flex align-items-center">
+      <a href="/indexTeacher" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -97,7 +97,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/user/logout" onClick="signOut()">
+              <a class="dropdown-item d-flex align-items-center" href="/user/logout" onClick="signOut()">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -273,7 +273,7 @@
         attendanceDate: attendanceDate
       };
 
-      fetch('http://127.0.0.1:8000/Attendance/list-attend',{
+      fetch('/Attendance/list-attend',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -311,7 +311,7 @@
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -479,7 +479,7 @@
         {
         const data={};
 
-            fetch('http://127.0.0.1:8000/user/logout', {
+            fetch('/user/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -491,7 +491,7 @@
             console.log('Response:', data);
             
             // Redirect to the login page
-            window.location.replace('http://127.0.0.1:8000/login');
+            window.location.replace('/login');
                 
             })
             .catch(error => {

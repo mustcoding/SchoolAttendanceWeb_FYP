@@ -57,7 +57,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="/indexAdmin" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -85,7 +85,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/adminProfile" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="/adminProfile" id="userProfileLink">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -114,7 +114,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+        <a class="nav-link " href="/indexAdmin">
           <i class="bi bi-grid"></i>
           <span>DASHBOARD</span>
         </a>
@@ -173,22 +173,22 @@
       </a>
       <ul id="tourismServicesList" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-          <a href="http://127.0.0.1:8000/studentManagement">
+          <a href="/studentManagement">
             <i class="bi bi-circle"></i><span>STUDENT</span>
           </a>
         </li>
         <li>
-            <a href="http://127.0.0.1:8000/staffManagement">
+            <a href="/staffManagement">
               <i class="bi bi-circle"></i><span>STAFF</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/classroomManagement">
+            <a href="/classroomManagement">
               <i class="bi bi-circle"></i><span>CLASS</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
+            <a href="/attendanceTimetableManagement">
               <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
             </a>
           </li>
@@ -198,12 +198,12 @@
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/schoolSessionManagement">
+            <a href="/schoolSessionManagement">
               <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
             </a>
           </li>
           <li>
-             <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
+             <a href="/activityOccurrenceManagement">
               <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
             </a>
           </li>
@@ -215,7 +215,7 @@
       </a>
       <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-            <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
+            <a href="/AttendanceRecordManagement">
                 <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
             </a>
         </li>
@@ -224,6 +224,11 @@
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
+        <li>
+             <a href="{{route('appliedLeaveManagement')}}">
+              <i class="bi bi-circle"></i><span>APPLIED LEAVES </span>
+            </a>
+          </li>
       
       </ul>
     </li><!-- End Components Nav -->
@@ -360,7 +365,7 @@
                 is_Delete:is_Delete
             };
 
-            fetch('http://127.0.0.1:8000/SchoolSessionClass/add', 
+            fetch('/SchoolSessionClass/add', 
             {
                     method: 'POST', // Use the POST method
                     headers: {
@@ -380,7 +385,7 @@
                         
                    setTimeout(function() 
                    {
-                        window.location.href = 'http://127.0.0.1:8000/add-classroom-by-session';
+                        window.location.href = '/add-classroom-by-session';
                     }, 2000);
                 }
             })
@@ -423,7 +428,7 @@
             is_Delete:is_Delete
         };
 
-        fetch('http://127.0.0.1:8000/StudentStudySession/add', {
+        fetch('/StudentStudySession/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -436,7 +441,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
 
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/indexAdmin';
+                window.location.href = '/indexAdmin';
             }, 2000); // 4000 milliseconds = 4 seconds
         })
         .catch(error => {
@@ -454,7 +459,7 @@ function fetchUser(staffId)
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -594,7 +599,7 @@ function fetchUser(staffId)
             date_of_birth : birthYear,
         };
 
-        fetch('http://127.0.0.1:8000/Student/get-by-birthYear', {
+        fetch('/Student/get-by-birthYear', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -609,7 +614,7 @@ function fetchUser(staffId)
             document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
 
             setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/indexAdmin';
+                window.location.href = '/indexAdmin';
             }, 2000);
 
           }
@@ -726,7 +731,7 @@ function generateSelectElement(available_size, data)
   {
     const data={};
 
-      fetch('http://127.0.0.1:8000/user/logout', {
+      fetch('/user/logout', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -738,7 +743,7 @@ function generateSelectElement(available_size, data)
         console.log('Response:', data);
         
         // Redirect to the login page
-        window.location.replace('http://127.0.0.1:8000/login');
+        window.location.replace('/login');
           
       })
       .catch(error => {

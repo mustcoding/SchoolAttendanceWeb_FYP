@@ -58,7 +58,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexTeacher" class="logo d-flex align-items-center">
+      <a href="/indexTeacher" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -316,7 +316,7 @@ function searchForClassSession() {
       };
 
       sessionStorage.setItem('ListAttend', JSON.stringify(ListAttend));
-      window.location.href = "http://127.0.0.1:8000/list-attendance-to-school";
+      window.location.href = "/list-attendance-to-school";
     }
 
     // Retrieve the JSON string from sessionStorage
@@ -366,7 +366,7 @@ function fetchUser(staffId)
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -503,7 +503,7 @@ function fetchUser(staffId)
   <!--fetch classroom-->
   <script>
       function fetchTypeAttendance(){
-          fetch('http://127.0.0.1:8000/AttendanceTimetable/all-timetable-data')
+          fetch('/AttendanceTimetable/all-timetable-data')
               .then(response => response.json())
               .then(data => {
                 updateTimetableData(data);
@@ -596,7 +596,7 @@ function signOut()
 {
   const data={};
 
-    fetch('http://127.0.0.1:8000/user/logout', {
+    fetch('/user/logout', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -608,7 +608,7 @@ function signOut()
       console.log('Response:', data);
       
       // Redirect to the login page
-      window.location.replace('http://127.0.0.1:8000/login');
+      window.location.replace('/login');
         
     })
     .catch(error => {

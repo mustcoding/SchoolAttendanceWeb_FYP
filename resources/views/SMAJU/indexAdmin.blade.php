@@ -204,7 +204,7 @@
             </a>
           </li>
           <li>
-             <a href="{{route('appliedLeaveManagement')}}">
+             <a href="/applied-leave-management">
               <i class="bi bi-circle"></i><span>APPLIED LEAVES </span>
             </a>
           </li>
@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Update the href attribute with the appUserId
       var userProfileLink = document.getElementById('userProfileLink');
       if (userProfileLink) {
-        userProfileLink.href = "http://127.0.0.1:8000/adminProfile";
+        userProfileLink.href = "/adminProfile";
       } else {
         console.error('User profile link not found.');
       }
@@ -478,17 +478,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
       // AJAX call to calculate total tourist register MelakaGo
-      promises.push(makeAjaxRequest("http://127.0.0.1:8000/Student/total-students"));
+      promises.push(makeAjaxRequest("/Student/total-students"));
 
       // AJAX call to calculate the active tourist
-      promises.push(makeAjaxRequest("http://127.0.0.1:8000/SchoolSessionClass/totalClassroomTeacher"));
+      promises.push(makeAjaxRequest("/SchoolSessionClass/totalClassroomTeacher"));
 
       // AJAX call to calculate local tourist
-      promises.push(makeAjaxRequest("http://127.0.0.1:8000/classroom/totalClassroom"));
+      promises.push(makeAjaxRequest("/classroom/totalClassroom"));
 
-      promises.push(makeAjaxRequest("http://127.0.0.1:8000/staff/totalTeacher"));
+      promises.push(makeAjaxRequest("/staff/totalTeacher"));
 
-      promises.push(makeAjaxRequest("http://127.0.0.1:8000/Student/total-alumni"));
+      promises.push(makeAjaxRequest("/Student/total-alumni"));
 
       // Wait for all promises to be resolved
       Promise.all(promises)
@@ -549,7 +549,7 @@ document.addEventListener("DOMContentLoaded", function () {
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -638,7 +638,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function signOut() {
       const data = {};
 
-      fetch('http://127.0.0.1:8000/user/logout', {
+      fetch('/user/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -653,7 +653,7 @@ document.addEventListener("DOMContentLoaded", function () {
         sessionStorage.clear();
 
         // Redirect to the login page
-        window.location.replace('http://127.0.0.1:8000/login');
+        window.location.replace('/login');
       })
       .catch(error => {
         console.error('Error during fetch:', error);

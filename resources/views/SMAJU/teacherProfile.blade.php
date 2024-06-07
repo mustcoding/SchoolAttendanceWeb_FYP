@@ -50,7 +50,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexTeacher" class="logo d-flex align-items-center">
+      <a href="/indexTeacher" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -350,7 +350,7 @@
       staffId : staffId,
     };
 
-    fetch('http://127.0.0.1:8000/user/'+staffId, {
+    fetch('/user/'+staffId, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -506,7 +506,7 @@
             username: username,
         };
 
-        fetch('http://127.0.0.1:8000/admin/'+staffId, {
+        fetch('/admin/'+staffId, {
             method: 'PUT',
             headers: {
             'Content-Type': 'application/json',
@@ -550,7 +550,7 @@
           staffId : staffId,
       };
 
-      fetch('http://127.0.0.1:8000/user/'+staffId,
+      fetch('/user/'+staffId,
       {
             method: 'POST', // Use the POST method
             headers: {
@@ -681,7 +681,7 @@
         console.log("TOKEN    : ",storedToken);
         var token = storedToken;
 
-        fetch('http://127.0.0.1:8000/staff/check-password', {
+        fetch('/staff/check-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -694,7 +694,7 @@
             if (data.error) {
                 alert(data.error);
             } else {
-                return fetch('http://127.0.0.1:8000/staff/change-password', {
+                return fetch('/staff/change-password', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -710,12 +710,12 @@
                 
                 document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'block';
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/adminProfile';
+                window.location.href = '/adminProfile';
                 }, 2000);
             } else {
               document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="changeUnSuccess"]').style.display = 'block';
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/adminProfile';
+                window.location.href = '/adminProfile';
                 }, 2000);
             }
         })
@@ -731,7 +731,7 @@
     {
       const data={};
 
-        fetch('http://127.0.0.1:8000/user/logout', {
+        fetch('/user/logout', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -743,7 +743,7 @@
           console.log('Response:', data);
           
           // Redirect to the login page
-          window.location.replace('http://127.0.0.1:8000/login');
+          window.location.replace('/login');
             
         })
         .catch(error => {

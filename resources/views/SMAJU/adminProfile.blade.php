@@ -50,7 +50,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="/indexAdmin" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -125,7 +125,7 @@
 <ul class="sidebar-nav" id="sidebar-nav">
 
   <li class="nav-item">
-    <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+    <a class="nav-link " href="/indexAdmin">
       <i class="bi bi-grid"></i>
       <span>DASHBOARD</span>
     </a>
@@ -184,22 +184,22 @@
   </a>
   <ul id="tourismServicesList" class="nav-content collapse " data-bs-parent="#sidebar-nav">
     <li>
-      <a href="http://127.0.0.1:8000/studentManagement">
+      <a href="/studentManagement">
         <i class="bi bi-circle"></i><span>STUDENT</span>
       </a>
     </li>
     <li>
-        <a href="http://127.0.0.1:8000/staffManagement">
+        <a href="/staffManagement">
           <i class="bi bi-circle"></i><span>STAFF</span>
         </a>
       </li>
       <li>
-        <a href="http://127.0.0.1:8000/classroomManagement">
+        <a href="/classroomManagement">
           <i class="bi bi-circle"></i><span>CLASS</span>
         </a>
       </li>
       <li>
-        <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
+        <a href="/attendanceTimetableManagement">
           <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
         </a>
       </li>
@@ -209,15 +209,20 @@
         </a>
       </li>
       <li>
-        <a href="http://127.0.0.1:8000/schoolSessionManagement">
+        <a href="/schoolSessionManagement">
           <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
         </a>
       </li>
       <li>
-         <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
+         <a href="/activityOccurrenceManagement">
           <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
         </a>
       </li>
+      <li>
+             <a href="{{route('appliedLeaveManagement')}}">
+              <i class="bi bi-circle"></i><span>APPLIED LEAVES </span>
+            </a>
+          </li>
   </ul>
 </li><!-- End Components Nav -->
 <li class="nav-item">
@@ -226,7 +231,7 @@
   </a>
   <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
     <li>
-        <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
+        <a href="/AttendanceRecordManagement">
             <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
         </a>
     </li>
@@ -439,7 +444,7 @@
       staffId : staffId,
     };
 
-    fetch('http://127.0.0.1:8000/user/'+staffId, {
+    fetch('/user/'+staffId, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -549,7 +554,7 @@
     // Update the href attribute with the appUserId
     var userProfileLink = document.getElementById('userProfileLink');
     if (userProfileLink) {
-      userProfileLink.href = "http://127.0.0.1:8000/adminProfile";
+      userProfileLink.href = "/adminProfile";
     } else {
       console.error('User profile link not found.');
     }
@@ -595,7 +600,7 @@
             username: username,
         };
 
-        fetch('http://127.0.0.1:8000/admin/'+staffId, {
+        fetch('/admin/'+staffId, {
             method: 'PUT',
             headers: {
             'Content-Type': 'application/json',
@@ -638,7 +643,7 @@
           staffId : staffId,
       };
 
-      fetch('http://127.0.0.1:8000/user/'+staffId,
+      fetch('/user/'+staffId,
       {
             method: 'POST', // Use the POST method
             headers: {
@@ -771,7 +776,7 @@
 
         console.log("YOUR TOKEN : ", token);
 
-        fetch('http://127.0.0.1:8000/staff/check-password', {
+        fetch('/staff/check-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -790,7 +795,7 @@
             if (data.error) {
                 alert(data.error);
             } else {
-                return fetch('http://127.0.0.1:8000/staff/change-password', {
+                return fetch('/staff/change-password', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -812,12 +817,12 @@
                
                 document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'block';
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/adminProfile';
+                window.location.href = '/adminProfile';
                 }, 2000); 
             } else {
               document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="changeUnSuccess"]').style.display = 'block';
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/adminProfile';
+                window.location.href = '/adminProfile';
                 }, 2000);
             }
         })
@@ -836,7 +841,7 @@
     {
       const data={};
 
-        fetch('http://127.0.0.1:8000/user/logout', {
+        fetch('/user/logout', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -848,7 +853,7 @@
           console.log('Response:', data);
           
           // Redirect to the login page
-          window.location.replace('http://127.0.0.1:8000/login');
+          window.location.replace('/login');
             
         })
         .catch(error => {

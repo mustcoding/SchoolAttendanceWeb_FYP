@@ -62,7 +62,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="/indexAdmin" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -88,7 +88,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/adminProfile" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="/adminProfile" id="userProfileLink">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -97,7 +97,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/user/logout" onClick="signOut()">
+              <a class="dropdown-item d-flex align-items-center" href="/user/logout" onClick="signOut()">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -117,7 +117,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+        <a class="nav-link " href="/indexAdmin">
           <i class="bi bi-grid"></i>
           <span>DASHBOARD</span>
         </a>
@@ -181,17 +181,17 @@
           </a>
         </li>
         <li>
-            <a href="http://127.0.0.1:8000/staffManagement">
+            <a href="/staffManagement">
               <i class="bi bi-circle"></i><span>STAFF</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/classroomManagement">
+            <a href="/classroomManagement">
               <i class="bi bi-circle"></i><span>CLASS</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
+            <a href="/attendanceTimetableManagement">
               <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
             </a>
           </li>
@@ -201,12 +201,12 @@
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/schoolSessionManagement">
+            <a href="/schoolSessionManagement">
               <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
             </a>
           </li>
           <li>
-             <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
+             <a href="/activityOccurrenceManagement">
               <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
             </a>
           </li>
@@ -223,7 +223,7 @@
       </a>
       <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-            <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
+            <a href="/AttendanceRecordManagement">
                 <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
             </a>
         </li>
@@ -376,7 +376,7 @@
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -538,7 +538,7 @@
       is_Delete:is_Delete,
     };
 
-    fetch('http://127.0.0.1:8000/Student/delete/'+student_id, {
+    fetch('/Student/delete/'+student_id, {
             method: 'PUT', // Use the POST method
             headers: {
             'Content-Type': 'application/json' // Set the content type to JSON
@@ -580,7 +580,7 @@
         is_Delete:is_Delete,
       };
 
-      fetch('http://127.0.0.1:8000/rfid/delete/'+studentdata.student.card_rfid, {
+      fetch('/rfid/delete/'+studentdata.student.card_rfid, {
         method: 'PUT', // Use the POST method
         headers: {
           'Content-Type': 'application/json' // Set the content type to JSON
@@ -608,7 +608,7 @@
         is_Delete:is_Delete,
       };
 
-      fetch('http://127.0.0.1:8000/rfid/delete/'+studentdata.student.tag_rfid, {
+      fetch('/rfid/delete/'+studentdata.student.tag_rfid, {
               method: 'PUT', // Use the POST method
               headers: {
               'Content-Type': 'application/json' // Set the content type to JSON
@@ -638,7 +638,7 @@
         is_Delete:is_Delete,
       };
 
-      fetch('http://127.0.0.1:8000/StudentStudySession/delete', {
+      fetch('/StudentStudySession/delete', {
         method: 'PUT', // Use the POST method
         headers: {
           'Content-Type': 'application/json' // Set the content type to JSON
@@ -653,7 +653,7 @@
         toggleAlert('delete', true);
 
         setTimeout(function() {
-          window.location.href = "http://127.0.0.1:8000/studentManagement";
+          window.location.href = "/studentManagement";
         }, 2000);
         
               
@@ -681,7 +681,7 @@ function signOut()
 {
   const data={};
 
-    fetch('http://127.0.0.1:8000/user/logout', {
+    fetch('/user/logout', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -693,7 +693,7 @@ function signOut()
       console.log('Response:', data);
       
       // Redirect to the login page
-      window.location.replace('http://127.0.0.1:8000/login');
+      window.location.replace('/login');
         
     })
     .catch(error => {
@@ -762,7 +762,7 @@ function signOut()
             student_study_session_id: student_study_session_id,
           };
 
-          fetch('http://127.0.0.1:8000/Attendance/recordAttendanceLeave', {
+          fetch('/Attendance/recordAttendanceLeave', {
             method: 'POST', // Use the POST method
             headers: {
               'Content-Type': 'application/json' // Set the content type to JSON
@@ -799,7 +799,7 @@ function signOut()
       id: absent_supporting_document_id,
     };
 
-    fetch('http://127.0.0.1:8000/ADS/updateStatus', {
+    fetch('/ADS/updateStatus', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

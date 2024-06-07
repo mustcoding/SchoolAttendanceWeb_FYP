@@ -268,7 +268,7 @@
         staff_id: staffId,
       };
 
-      fetch('http://127.0.0.1:8000/student-data/total-students-in-classroom', 
+      fetch('/student-data/total-students-in-classroom', 
       {
         method: 'POST', // Use the POST method
         headers: {
@@ -321,7 +321,7 @@
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -367,7 +367,7 @@
         year : year
       };
 
-      fetch('http://127.0.0.1:8000/StudentStudySession/findClass', {
+      fetch('/StudentStudySession/findClass', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -476,7 +476,7 @@
     function signOut() {
       const data = {};
 
-      fetch('http://127.0.0.1:8000/user/logout', {
+      fetch('/user/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -491,7 +491,7 @@
         sessionStorage.clear();
 
         // Redirect to the login page
-        window.location.replace('http://127.0.0.1:8000/login');
+        window.location.replace('/login');
       })
       .catch(error => {
         console.error('Error during fetch:', error);

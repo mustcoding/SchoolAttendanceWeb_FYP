@@ -63,7 +63,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="/indexAdmin" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -89,7 +89,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/adminProfile" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="/adminProfile" id="userProfileLink">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -98,7 +98,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/user/logout" onClick="signOut()">
+              <a class="dropdown-item d-flex align-items-center" href="/user/logout" onClick="signOut()">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -118,7 +118,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+        <a class="nav-link " href="/indexAdmin">
           <i class="bi bi-grid"></i>
           <span>DASHBOARD</span>
         </a>
@@ -168,6 +168,7 @@
               <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
             </a>
           </li>
+          
         </ul>
     </li><!-- End Components Nav -->
 
@@ -177,22 +178,22 @@
       </a>
       <ul id="tourismServicesList" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-          <a href="http://127.0.0.1:8000/studentManagement">
+          <a href="/studentManagement">
             <i class="bi bi-circle"></i><span>STUDENT</span>
           </a>
         </li>
         <li>
-            <a href="http://127.0.0.1:8000/staffManagement">
+            <a href="/staffManagement">
               <i class="bi bi-circle"></i><span>STAFF</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/classroomManagement">
+            <a href="/classroomManagement">
               <i class="bi bi-circle"></i><span>CLASS</span>
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
+            <a href="/attendanceTimetableManagement">
               <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
             </a>
           </li>
@@ -202,13 +203,18 @@
             </a>
           </li>
           <li>
-            <a href="http://127.0.0.1:8000/schoolSessionManagement">
+            <a href="/schoolSessionManagement">
               <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
             </a>
           </li>
           <li>
-             <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
+             <a href="/activityOccurrenceManagement">
               <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
+            </a>
+          </li>
+          <li>
+             <a href="/applied-leave-management">
+              <i class="bi bi-circle"></i><span>APPLIED LEAVES </span>
             </a>
           </li>
       </ul>
@@ -219,7 +225,7 @@
       </a>
       <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-            <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
+            <a href="/AttendanceRecordManagement">
                 <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
             </a>
         </li>
@@ -346,7 +352,7 @@
   
     // Function to fetch data from the server
     function fetchData() {
-      fetch('http://127.0.0.1:8000/staff/all-staff-data')
+      fetch('/staff/all-staff-data')
         .then(response => response.json())
         .then(data => {
           // Call a function to update the table with the fetched data
@@ -363,7 +369,7 @@
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -527,7 +533,7 @@
       is_Delete:is_Delete,
     };
 
-    fetch('http://127.0.0.1:8000/staff/delete/'+staff_id, {
+    fetch('/staff/delete/'+staff_id, {
             method: 'PUT', // Use the POST method
             headers: {
             'Content-Type': 'application/json' // Set the content type to JSON
@@ -538,7 +544,7 @@
       .then(data => {
             // Handle the response from the server
             console.log("Student Successfully deleted ", data);
-            window.location.href = "http://127.0.0.1:8000/staffManagement";
+            window.location.href = "/staffManagement";
             
         })
       .catch(error => {
@@ -556,7 +562,7 @@ function signOut()
 {
   const data={};
 
-    fetch('http://127.0.0.1:8000/user/logout', {
+    fetch('/user/logout', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -568,7 +574,7 @@ function signOut()
       console.log('Response:', data);
       
       // Redirect to the login page
-      window.location.replace('http://127.0.0.1:8000/login');
+      window.location.replace('/login');
         
     })
     .catch(error => {

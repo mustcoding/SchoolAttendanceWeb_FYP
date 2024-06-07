@@ -62,7 +62,7 @@
     </style>
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="http://127.0.0.1:8000/indexAdmin" class="logo d-flex align-items-center">
+      <a href="/indexAdmin" class="logo d-flex align-items-center">
         <img src="assets/img/SMAJU.png" alt="">
         <span class="d-none d-lg-block">School Attendance</span>
       </a>
@@ -88,7 +88,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/adminProfile" id="userProfileLink">
+              <a class="dropdown-item d-flex align-items-center" href="/adminProfile" id="userProfileLink">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -97,7 +97,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="http://127.0.0.1:8000/user/logout" onClick="signOut()">
+              <a class="dropdown-item d-flex align-items-center" href="/user/logout" onClick="signOut()">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -117,7 +117,7 @@
 <ul class="sidebar-nav" id="sidebar-nav">
 
   <li class="nav-item">
-    <a class="nav-link " href="http://127.0.0.1:8000/indexAdmin">
+    <a class="nav-link " href="/indexAdmin">
       <i class="bi bi-grid"></i>
       <span>DASHBOARD</span>
     </a>
@@ -176,23 +176,23 @@
   </a>
   <ul id="tourismServicesList" class="nav-content collapse " data-bs-parent="#sidebar-nav">
     <li>
-      <a href="http://127.0.0.1:8000/studentManagement">
+      <a href="/studentManagement">
         <i class="bi bi-circle"></i><span>STUDENT</span>
       </a>
     </li>
     <li>
-        <a href="http://127.0.0.1:8000/staffManagement">
+        <a href="/staffManagement">
           <i class="bi bi-circle"></i><span>STAFF</span>
         </a>
       </li>
       <li>
-        <a href="http://127.0.0.1:8000/classroomManagement">
+        <a href="/classroomManagement">
           <i class="bi bi-circle"></i><span>CLASS</span>
         </a>
       </li>
 
       <li>
-        <a href="http://127.0.0.1:8000/attendanceTimetableManagement">
+        <a href="/attendanceTimetableManagement">
           <i class="bi bi-circle"></i><span>ATTENDANCE TIMETABLE</span>
         </a>
       </li>
@@ -202,15 +202,20 @@
         </a>
       </li>
       <li>
-        <a href="http://127.0.0.1:8000/schoolSessionManagement">
+        <a href="/schoolSessionManagement">
           <i class="bi bi-circle"></i><span>SCHOOL SESSION</span>
         </a>
       </li>
       <li>
-         <a href="http://127.0.0.1:8000/activityOccurrenceManagement">
+         <a href="/activityOccurrenceManagement">
           <i class="bi bi-circle"></i><span>ACTIVITY OCCURRENCES </span>
         </a>
       </li>
+      <li>
+             <a href="{{route('appliedLeaveManagement')}}">
+              <i class="bi bi-circle"></i><span>APPLIED LEAVES </span>
+            </a>
+          </li>
   </ul>
 </li><!-- End Components Nav -->
 
@@ -220,7 +225,7 @@
   </a>
   <ul id="Attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
     <li>
-        <a href="http://127.0.0.1:8000/AttendanceRecordManagement">
+        <a href="/AttendanceRecordManagement">
             <i class="bi bi-circle"></i><span>RECORD ATTENDANCE</span>
         </a>
     </li>
@@ -377,7 +382,7 @@
   
     // Function to fetch data from the server
     function fetchData() {
-      fetch('http://127.0.0.1:8000/Student/all-data')
+      fetch('/Student/all-data')
         .then(response => response.json())
         .then(data => {
           // Call a function to update the table with the fetched data
@@ -394,7 +399,7 @@
             staffId : staffId,
         };
 
-        fetch('http://127.0.0.1:8000/user/'+staffId, {
+        fetch('/user/'+staffId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -565,7 +570,7 @@
                 number: rfidNumber
             };
 
-            fetch('http://127.0.0.1:8000/rfids/retrieve-rfid-id', {
+            fetch('/rfids/retrieve-rfid-id', {
                 method: 'POST', // Use the POST method
                 headers: {
                     'Content-Type': 'application/json' // Set the content type to JSON
@@ -580,7 +585,7 @@
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'block';
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                        window.location.href = '/AttendanceRecordManagement';
                     }, 2000);
                 }
             })
@@ -607,7 +612,7 @@
             rfidNumber: rfid_id,
             };
             
-            fetch('http://127.0.0.1:8000/student-data/searchByRfid', 
+            fetch('/student-data/searchByRfid', 
             {
             method: 'POST', // Use the POST method
             headers: {
@@ -624,7 +629,7 @@
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                        window.location.href = '/AttendanceRecordManagement';
                     }, 2000);
                 }
                 })
@@ -650,7 +655,7 @@
             student_id: student_id,
             };
             
-            fetch('http://127.0.0.1:8000/StudentStudySession/get-id-by-studentId', 
+            fetch('/StudentStudySession/get-id-by-studentId', 
             {
             method: 'POST', // Use the POST method
             headers: {
@@ -669,7 +674,7 @@
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoClass"]').style.display = 'block';
                     
                     setTimeout(function() {
-                        window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                        window.location.href = '/AttendanceRecordManagement';
                     }, 2000);
                 }
                 })
@@ -689,7 +694,7 @@
         function checkAttendanceTimeTable(studentStudySession_id, attendanceStatus,student_id) {
             const is_Delete = 0;
 
-            fetch('http://127.0.0.1:8000/AttendanceTimetable/checkAttendance-by-time', {
+            fetch('/AttendanceTimetable/checkAttendance-by-time', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -703,7 +708,7 @@
                         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoTime"]').style.display = 'block';
                         setTimeout(function() {
-                            window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                            window.location.href = '/AttendanceRecordManagement';
                         }, 2000);
                     }
                 })
@@ -763,7 +768,7 @@
             student_study_session_id: studentStudySession_id
             };
             
-            fetch('http://127.0.0.1:8000/Attendance/recordAttendance', 
+            fetch('/Attendance/recordAttendance', 
             {
             method: 'POST', // Use the POST method
             headers: {
@@ -778,13 +783,13 @@
                     document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                     setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                    window.location.href = '/AttendanceRecordManagement';
                     }, 2000);
                 }else if (response.status === 400) {
                     
                     document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertDailyStudent"]').style.display = 'block';
                     setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                    window.location.href = '/AttendanceRecordManagement';
                     }, 2000);
                 }
             })
@@ -795,7 +800,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
                 setTimeout(function() {
-                window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                window.location.href = '/AttendanceRecordManagement';
                 }, 2000);
             }
             else{
@@ -804,7 +809,7 @@
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertRFID"]').style.display = 'none';
                 setTimeout(function() {
-                    window.location.href = 'http://127.0.0.1:8000/AttendanceRecordManagement';
+                    window.location.href = '/AttendanceRecordManagement';
                 }, 2000);
             }
                 
@@ -823,7 +828,7 @@
         {
         const data={};
 
-            fetch('http://127.0.0.1:8000/user/logout', {
+            fetch('/user/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -835,7 +840,7 @@
             console.log('Response:', data);
             
             // Redirect to the login page
-            window.location.replace('http://127.0.0.1:8000/login');
+            window.location.replace('/login');
                 
             })
             .catch(error => {
