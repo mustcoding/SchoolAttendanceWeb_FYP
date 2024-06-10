@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMA JAWAHIR AL-ULUM ATTENDANCE SYSTEM</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <link href="assets/img/SMAJU.png" rel="icon">
+  <link href="assets/img/SMAJU.png" rel="apple-touch-icon">
+    <link rel="stylesheet" href="assets/css/webDisplay.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="circle-container">
+                    <img src="assets/img/SMAJU.png" alt="" class="circle">
+                </div>
+                <h1>SEKOLAH MENENGAH AGAMA JAWAHIR AL-ULUM ATTENDANCE SYSTEM</h1>
+            </div>
+            <br>
+            <br>
+            <div class="details">
+                <span id="date-time" class="date-time">SATURDAY 09/06/2024 13:30:00</span>
+                <span id="attendanceType" class="date-time"></span>
+            </div>
+        </header>
+        <main>
+            <div class="rectangle-container">
+                <div class="rectangle">
+                    <img src="assets/img/SMAJU.png" alt="" id="student-image" class="student-image">
+                </div>
+            </div>
+            <br>
+            <h2 id="studentName">IDRIS MAHMOR ALIIMRAN BIN MUSTAPA</h2>
+            <br>
+            <br>
+            <p id="status">ATTENDANCE SUCCESSFULLY RECORDED</p>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Start the interval function
+            gothrough();
+
+            // Update every 3 seconds
+            setInterval(gothrough, 2000);
+        });
+
+        async function gothrough() {
+            fetchDate();
+            await fetchAttendanceType();
+            await fetchData();
+        }
+
+        function fetchDate() {
+            const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+            const date = new Date();
+
+            const dayName = daysOfWeek[date.getDay()];
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+            const formattedDate = `${dayName} ${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            
+            document.getElementById('date-time').textContent = formattedDate;
+        }
+
+        async function fetchAttendanceType(){
+            try {
+                const response = await fetch('/attendanceType');
+                const data = await response.json();
+                const name = data[0].name;
+                const start_time = data[0].start_time;
+                const end_time = data[0].end_time;
+
+                const timeFormatted = `${name} (${start_time} - ${end_time})`;
+
+                document.getElementById('attendanceType').textContent = timeFormatted;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/toDisplayStudent');
+                const data = await response.json();
+                console.log('student_id:', data.student_id);
+                console.log('attendance_id:', data.attendance_id);
+                if (data.attendance_id != 0) {
+                    await updateName(data.student_id);
+                } else {
+                    await clearStudentInfo(data.student_id);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function updateName(student_id) {
+            const data = { student_id: student_id };
+
+            try {
+                const response = await fetch('/getDisplayStudent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                console.log('Response:', result);
+                if (result.student) {
+                    document.getElementById('studentName').textContent = result.student.name;
+                    document.getElementById('status').textContent = "ATTENDANCE SUCCESSFULLY BEING RECORDED";
+                    if (result.official_image) {
+                        document.getElementById('student-image').src = 'data:image/jpeg;base64,' + result.official_image;
+                    } else {
+                        document.getElementById('student-image').src = 'assets/img/default-image.jpg';
+                    }
+                }
+            } catch (error) {
+                console.error('Error during fetch:', error);
+            }
+        }
+
+        async function clearStudentInfo(student_id) {
+            const data = { student_id: student_id };
+
+            try {
+                const response = await fetch('/getDisplayStudent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                console.log('Response:', result);
+                if (result.student) {
+                    document.getElementById('studentName').textContent = result.student.name;
+                    document.getElementById('status').textContent = "ATTENDANCE ALREADY BEING RECORDED BEFORE!!";
+                    if (result.official_image) {
+                        document.getElementById('student-image').src = 'data:image/jpeg;base64,' + result.official_image;
+                    } else {
+                        document.getElementById('student-image').src = 'assets/img/default-image.jpg';
+                    }
+                }
+            } catch (error) {
+                console.error('Error during fetch:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -262,7 +262,7 @@
                 <form id="RFIDForm" class="row g-3 needs-validation" novalidate>
                     <div class="col-12">
                       <label for="className" class="form-label">RFID Tag Number</label>
-                      <input type="text" class="form-control" id="rfidNumber" required>
+                      <input type="text" class="form-control" id="rfidNumber" readOnly>
                       <div class="valid-feedback">
                         Looks good!
                       </div>
@@ -566,6 +566,38 @@ function signOut()
 
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    
+    // Function to fetch data from the server
+    function fetchData() {
+      fetch('/rfidArduino')
+        .then(response => response.json())
+        .then(data => {
+          // Update the value of the textbox with the fetched RFID number
+          console.log("hjek");
+          console.log('data : ',data);
+          document.getElementById('rfidNumber').value = data;
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+
+    // // Call fetchData initially
+    // fetchData();
+
+    // Add event listener to the textbox for click event
+    document.getElementById('rfidNumber').addEventListener('click', function () {
+      // Call fetchData when the textbox is clicked
+      console.log("Event clicker")
+      fetchData();
+      setInterval(fetchData, 2000);
+
+    });
+
+  });
+</script>
   
 
 </body>

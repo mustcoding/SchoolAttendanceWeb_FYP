@@ -719,30 +719,27 @@ function signOut()
       return `${month}/${day}/${year}`;
   }
 
-  // Helper function to get all dates between start and end dates, including time
-  function getDatesInRangeWithTime(startDate, endDate, time) {
-      const dates = [];
-      const [hours, minutes, seconds] = time.split(':').map(Number);
-
-      let currentDate = new Date(startDate);
-      while (currentDate <= new Date(endDate)) {
-          const dateWithTime = new Date(currentDate);
-          dateWithTime.setHours(hours);
-          dateWithTime.setMinutes(minutes);
-          dateWithTime.setSeconds(seconds);
-          dates.push(formatDate(dateWithTime));
-          currentDate.setDate(currentDate.getDate() + 1);
-      }
-      return dates;
-  }
-
   function getCurrentTime() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
+  const now = new Date();
+  return now.toTimeString().split(' ')[0];
+}
+
+// Helper function to get the date range with the specified time
+function getDatesInRangeWithTime(startDate, endDate, time) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const dates = [];
+
+  while (start <= end) {
+    // Format date as m/d/y
+    const formattedDate = `${('0' + (start.getMonth() + 1)).slice(-2)}/${('0' + start.getDate()).slice(-2)}/${start.getFullYear().toString().slice(-2)}`;
+    dates.push(formattedDate);
+    start.setDate(start.getDate() + 1);
   }
+
+  return dates;
+}
+
 
   function approveLeave(student_study_session_id, start_date_leave, end_date_leave, absent_supporting_document_id) {
       try {

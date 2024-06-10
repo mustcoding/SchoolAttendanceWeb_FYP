@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use App\Models\Rfid;
 use App\Http\Requests\StoreRfidRequest;
 use App\Http\Requests\UpdateRfidRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class RfidController extends Controller
 {
-  
+    private $student_rfid = '';
     /**
      * Display a listing of the resource.
      */
@@ -145,6 +147,8 @@ class RfidController extends Controller
             // Get the RFID values from the request
             $number = $request->number;
 
+            Log::info('RFID retrieved from cache: ' . $number);
+
             // Query students using parameter binding with OR condition
             $rfid = Rfid::where('number', $number)->get();
 
@@ -169,6 +173,27 @@ class RfidController extends Controller
             ], 400);
         }
     }
+
+   // Handle the data sent from Arduino IDE
+   public function getArduinoRfid(Request $request)
+   {
+       // Get the RFID values from the request
+       $number = $request->rfid;
+       
+
+       Cache::put('student_rfid', $number);
+       
+   }
+   
+   // Called from HTML to get the stored RFID value
+   public function getArduinoStudentRfid()
+   {
+       // Retrieve the RFID value from the cache
+        $rfid = Cache::get('student_rfid');
+
+        // Return the RFID number
+        return response()->json($rfid);
+   }
 
 
     /**

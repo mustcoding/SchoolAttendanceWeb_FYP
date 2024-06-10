@@ -760,6 +760,8 @@
           student_study_session_id: studentStudySession_id,
           student_id: student_id,
         };
+
+        console.log("data attendance : ", data);
             
             fetch('/Attendance/recordAttendance', 
             {

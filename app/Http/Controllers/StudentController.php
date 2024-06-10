@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\SchoolSession;
 use App\Models\SchoolSessionClass;
+use App\Models\StudentImage;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 
 class StudentController extends Controller
@@ -331,7 +334,7 @@ class StudentController extends Controller
     
         // Fetch the classroom IDs associated with the teacher's staff_id
         $classrooms = SchoolSessionClass::where('staff_id', $staffId)->pluck('class_id');
-        \Log::info('Classrooms data:', $classrooms->toArray());
+
     
         $totalStudents = 0;
         $currentYear = date('Y');
@@ -367,8 +370,7 @@ class StudentController extends Controller
                                         ->whereYear('end_date', '>=', now())
                                         ->first();
 
-        // Debug: Check the current session ID
-        \Log::info('Current Session ID: ' . $currentSession->id);
+       
         if (!$currentSession) {
             // If there is no current session, return an empty array or appropriate response
             return response()->json([]);
@@ -456,6 +458,56 @@ class StudentController extends Controller
 
     return response()->json($students);
 }
+
+
+    // Handle the data sent from Arduino IDE
+   public function displayStudent(Request $request)
+   {
+       // Get the RFID values from the request
+       $student_id = $request->student_id;
+       $attendance_id = $request->attendance_id;
+
+       Cache::put('student_id', $student_id);
+       Cache::put('attendance_id', $attendance_id);
+   }
+   
+   public function toDisplayStudent()
+    {
+        // Retrieve the RFID value from the cache
+        $student_id = Cache::get('student_id');
+        $attendance_id = Cache::get('attendance_id');
+
+        // Return the RFID number
+        return response()->json([
+            'student_id' => $student_id,
+            'attendance_id' => $attendance_id
+        ]);
+    }
+
+    public function getDisplayStudent(Request $request)
+    {
+        $id = $request->student_id;
+    
+        // Retrieve the student by ID
+        $student = Student::find($id);
+    
+        if (!$student) {
+            return response()->json([
+                'message' => 'No Children Registered In This School',
+            ], 404);
+        }
+    
+        // Retrieve the official image of the student
+        $officialImage = StudentImage::where('student_id', $id)
+                                     ->where('is_official', 1)
+                                     ->first();
+    
+        return response()->json([
+            'student' => $student,
+            'official_image' => $officialImage ? base64_encode($officialImage->image) : null,
+        ], 200);
+    }
+
     
     /**
      * Show the form for creating a new resource.

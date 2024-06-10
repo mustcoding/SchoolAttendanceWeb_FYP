@@ -26,6 +26,10 @@ Route::get('/login', function () {
     return view('SMAJU.login');
 });
 
+Route::get('/welcomePage', function(){
+    return view('SMAJU.displayStudentWeb');
+});
+
 //admin
 
 Route::get('/adminProfile', function () {
@@ -198,6 +202,21 @@ Route::get('/absentiesDocument', function (Illuminate\Http\Request $request) {
 Route::post('login',[StaffController::class,'login'])->name('login');
 
 Route::post('ParentLogin',[ParentGuardianController::class,'ParentLogin']);
+
+Route::post('getDisplayStudent',[StudentController::class,'getDisplayStudent']);
+
+// from arduino IDE
+Route::post('rfid',[RfidController::class, 'getArduinoRfid']);
+
+Route::get('rfidArduino',[RfidController::class, 'getArduinoStudentRfid']);
+
+Route::post('toDisplay',[StudentController::class, 'displayStudent']);
+
+Route::get('toDisplayStudent',[StudentController::class, 'toDisplayStudent']);
+
+Route::get('attendanceType',[AttendanceTimetableController::class, 'attendanceType']);
+
+
 //----- admin module -----
 
 Route::post('register',[StaffController::class,'registerStaff']);
@@ -388,3 +407,10 @@ Route::prefix('ParentGuardianApps')->middleware(['auth:sanctum'])->group(functio
     Route::post('ListAbsent', [AttendanceController::class, 'ListAbsent']);
 });
 
+//record attendance by arduino
+
+Route::post('retrieve-rfid-id',[RfidController::class,'getRFIDid']);
+Route::post('searchByRfid',[StudentController::class,'studentDataByRfid']);
+Route::post('get-id-by-studentId',[StudentStudySessionController::class,'getIdByStudentId']);
+Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'checkAttendanceTimeTable']);
+Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry']);

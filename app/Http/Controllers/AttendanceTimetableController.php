@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAttendanceTimetableRequest;
 use App\Http\Requests\UpdateAttendanceTimetableRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -217,6 +218,23 @@ class AttendanceTimetableController extends Controller
             // Handle the case where the range wraps around the week
             return $day >= $startDay || $day <= $endDay;
         }
+    }
+
+
+    public function attendanceType()
+    {
+        // Get the current time
+        $currentTime = now()->format('H:i');
+    
+        // Retrieve the name, start_time, and end_time where the current time is between start_time and end_time
+        $attendanceTimetables = DB::table('attendance_timetables')
+            ->select('name', 'start_time', 'end_time')
+            ->where('is_Delete', 0)
+            ->whereTime('start_time', '<=', $currentTime)
+            ->whereTime('end_time', '>=', $currentTime)
+            ->get();
+    
+            return response()->json($attendanceTimetables, 200);
     }
     /**
      * Show the form for creating a new resource.
