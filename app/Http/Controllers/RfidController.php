@@ -181,8 +181,7 @@ class RfidController extends Controller
        $number = $request->rfid;
        
 
-       Cache::put('student_rfid', $number);
-       
+       Cache::put('student_rfid', $number);  
    }
    
    // Called from HTML to get the stored RFID value

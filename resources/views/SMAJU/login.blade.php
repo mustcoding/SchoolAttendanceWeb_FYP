@@ -28,17 +28,31 @@
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="SMAJU\assets\css\style.css" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Updated: Nov 17 2023 with Bootstrap v5.3.2
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+  <link href="SMAJU/assets/css/style.css" rel="stylesheet">
 
   <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+    }
+
+    .background-container {
+      background-color:#98AFC7;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100%;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .content-container {
+      position: relative;
+      z-index: 1;
+    }
+
     .logo-img {
       width: 60px; /* Adjust the size as needed */
       height: auto; /* Maintain aspect ratio */
@@ -48,8 +62,9 @@
 </head>
 
 <body>
+  <div class="background-container"></div>
 
-  <main>
+  <main class="content-container">
     <div class="container">
 
       <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
@@ -68,7 +83,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
 
-
               <div class="card mb-3">
 
                 <div class="card-body">
@@ -83,7 +97,7 @@
                   </div>
                 </div>
 
-                <form class="row g-3 needs-validation" method="post" action="melakago_php/appUserCheckExistence.php" novalidate> 
+                <form class="row g-3 needs-validation" method="post" action="melakago_php/appUserCheckExistence.php" novalidate>
 
                     <div class="col-12">
                       <label for="Username" class="form-label">Username</label>
@@ -109,7 +123,6 @@
                     <div class="col-12">
                       <button class="btn btn-primary w-100" id="loginBtn">Login</button>
                     </div>
-            
                     
                     <div class="col-12">
                         <p class="small mb-0">Forget Your Password? <a href="forgetpassword.html">Reset Password</a></p>
@@ -121,10 +134,6 @@
               </div>
 
               <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
                 Designed by <a>SMAJU</a>
               </div>
 
@@ -135,10 +144,9 @@
       </section>
 
     </div>
-  </main><!-- End #main -->
+  </main>
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
@@ -153,85 +161,79 @@
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 
+  <script>
+    // Wait for the DOM to be loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get the login button
+      const loginBtn = document.getElementById('loginBtn');
 
+      // Add click event listener to the login button
+      loginBtn.addEventListener('click', function (event) {
+        // Prevent the default form submission
+        event.preventDefault();
 
-<script>
-   // Wait for the DOM to be loaded
-   document.addEventListener('DOMContentLoaded', function () {
-    // Get the login button
-    const loginBtn = document.getElementById('loginBtn');
+        // Get the email and password input values
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-    // Add click event listener to the login button
-    loginBtn.addEventListener('click', function (event) {
-      // Prevent the default form submission
-      event.preventDefault();
-
-      // Get the email and password input values
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      // Call the Login function with email and password
-      Login(username, password);
+        // Call the Login function with email and password
+        Login(username, password);
+      });
     });
-  });
-</script>
-<script>
-  function Login(username, password) {
-  
 
-    const data = {
-      username: username,
-      password: password
-    };
-
-    fetch('{{route('login')}}', {
-        method: 'POST', // Use the POST method
-        headers: {
-          'Content-Type': 'application/json' // Set the content type to JSON
-        },
-        body: JSON.stringify(data) // Convert the data object to a JSON string
-    })
-    .then(response => response.json())
-    .then(response => {
-      // Handle the response from the server
-      console.log('Response:', response);
-
-      var staffProfile = {
-        staffId: response.staff.id,
-        staffName: response.staff.name,
-        email: response.staff.email,
-        password: response.staff.password,
-        position: response.staff.position,
-        nickname: response.staff.nickname,
-        image: response.staff.image,
-        position:response.staff.position,
+    function Login(username, password) {
+      const data = {
+        username: username,
+        password: password
       };
 
-      var token = response.token;
+      fetch('{{route('login')}}', {
+          method: 'POST', // Use the POST method
+          headers: {
+            'Content-Type': 'application/json' // Set the content type to JSON
+          },
+          body: JSON.stringify(data) // Convert the data object to a JSON string
+      })
+      .then(response => response.json())
+      .then(response => {
+        // Handle the response from the server
+        console.log('Response:', response);
 
-      sessionStorage.setItem('staffProfile', JSON.stringify(staffProfile));
-      sessionStorage.setItem('token', JSON.stringify(token));
+        var staffProfile = {
+          staffId: response.staff.id,
+          staffName: response.staff.name,
+          email: response.staff.email,
+          password: response.staff.password,
+          position: response.staff.position,
+          nickname: response.staff.nickname,
+          image: response.staff.image,
+          position:response.staff.position,
+        };
 
-      console.log(sessionStorage);
+        var token = response.token;
 
-      if (response.staff.hasOwnProperty('id')) {
-        console.log("kbghjbjhg: ",response.staff.id);
-        if (response.staff.position == "TEACHER") {
-          window.location.href = '{{route('indexTeacher')}}';
-        } else if (response.staff.position == "ADMINISTRATOR") {
-          window.location.href = '{{route('indexAdmin')}}';
+        sessionStorage.setItem('staffProfile', JSON.stringify(staffProfile));
+        sessionStorage.setItem('token', JSON.stringify(token));
+
+        console.log(sessionStorage);
+
+        if (response.staff.hasOwnProperty('id')) {
+          console.log("kbghjbjhg: ",response.staff.id);
+          if (response.staff.position == "TEACHER") {
+            window.location.href = '{{route('indexTeacher')}}';
+          } else if (response.staff.position == "ADMINISTRATOR") {
+            window.location.href = '{{route('indexAdmin')}}';
+          }
+        } else {
+          document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
         }
-      } else {
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
         document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-      document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
-
-    });
-  }
-</script>
+      });
+    }
+  </script>
 </body>
 
 </html>

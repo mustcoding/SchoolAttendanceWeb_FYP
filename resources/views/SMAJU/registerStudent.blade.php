@@ -555,65 +555,38 @@
 </script>
 
 <script>
+
   function saveImages(studentId) {
-    var inputElement = document.getElementById('pictureFiles');
-    var studentId = studentId;
-    var files = inputElement.files;
+      var inputElement = document.getElementById('pictureFiles');
+      var studentId = studentId;
+      var files = inputElement.files;
 
-    if (files.length > 0) {
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            var reader = new FileReader();
+      if (files.length > 0) {
+          for (var i = 0; i < files.length; i++) {
+              var file = files[i];
+              var reader = new FileReader();
 
-            reader.onload = function (e) {
-                var img = new Image();
-                img.src = e.target.result;
+              reader.onload = function (e) {
+                  var img = new Image();
+                  img.src = e.target.result;
 
-                img.onload = function () {
-                    var canvas = document.createElement('canvas');
-                    var ctx = canvas.getContext('2d');
+                  img.onload = function () {
+                      // Get image data URL
+                      var imageData = e.target.result;
 
-                    // Calculate new dimensions while maintaining aspect ratio
-                    var maxWidth = 800; // Set maximum width
-                    var maxHeight = 600; // Set maximum height
-                    var width = img.width;
-                    var height = img.height;
+                      // Send image data to the server
+                      sendImagesToServer(studentId, imageData);
+                  };
+              };
 
-                    if (width > height) {
-                        if (width > maxWidth) {
-                            height *= maxWidth / width;
-                            width = maxWidth;
-                        }
-                    } else {
-                        if (height > maxHeight) {
-                            width *= maxHeight / height;
-                            height = maxHeight;
-                        }
-                    }
-
-                    // Set canvas dimensions
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    // Draw image on canvas
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Get compressed data URL
-                    var compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // Adjust quality as needed
-
-                    // Send compressed image data to the server
-                    sendImagesToServer(studentId, compressedBase64);
-                };
-            };
-
-            // Read the file as Data URL (base64 encoding)
-            reader.readAsDataURL(file);
-        }
-    } else {
-        setTimeout(function () {
-            window.location.href = "searchServices.html";
-        }, 1000);
-    }
+              // Read the file as Data URL (base64 encoding)
+              reader.readAsDataURL(file);
+          }
+      } else {
+          setTimeout(function () {
+              window.location.href = "searchServices.html";
+          }, 1000);
+      }
   }
 
   function sendImagesToServer(studentId, base64String) {
@@ -832,6 +805,8 @@
         reader.onload = function (e) {
           // e.target.result contains the base64-encoded string
           var base64String = e.target.result;
+
+          console.log('Base64-encoded image:', base64String);
     
           // Create an image element
           var img = document.createElement('img');

@@ -165,11 +165,7 @@
               <i class="bi bi-circle"></i><span>CLASSROOM BY SESSION</span>
             </a>
           </li>
-          <li>
-             <a href="/applied-leave-management">
-              <i class="bi bi-circle"></i><span>APPLIED LEAVES </span>
-            </a>
-          </li>
+         
         </ul>
     </li><!-- End Components Nav -->
 

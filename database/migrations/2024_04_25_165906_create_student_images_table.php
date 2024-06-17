@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('student_images', function (Blueprint $table) {
             $table->id();
-            $table->binary('image')->nullable();
+            $table->longText('image')->nullable();
             $table->integer('is_official');
             $table->unsignedBigInteger('student_id');
             $table->timestamps();
@@ -32,4 +32,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('student_images');
     }
+    
 };

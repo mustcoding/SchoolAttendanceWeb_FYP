@@ -414,3 +414,5 @@ Route::post('searchByRfid',[StudentController::class,'studentDataByRfid']);
 Route::post('get-id-by-studentId',[StudentStudySessionController::class,'getIdByStudentId']);
 Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'checkAttendanceTimeTable']);
 Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry']);
+
+Route::get('studentId', [StudentController::class, 'checkImages']);

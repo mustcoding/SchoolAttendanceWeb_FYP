@@ -98,8 +98,10 @@
                 console.log('attendance_id:', data.attendance_id);
                 if (data.attendance_id != 0) {
                     await updateName(data.student_id);
+
                 } else {
-                    await clearStudentInfo(data.student_id);
+                    await updateFailed(data.student_id);
+                   
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -122,18 +124,17 @@
                 if (result.student) {
                     document.getElementById('studentName').textContent = result.student.name;
                     document.getElementById('status').textContent = "ATTENDANCE SUCCESSFULLY BEING RECORDED";
-                    if (result.official_image) {
-                        document.getElementById('student-image').src = 'data:image/jpeg;base64,' + result.official_image;
-                    } else {
-                        document.getElementById('student-image').src = 'assets/img/default-image.jpg';
-                    }
+                    console.log("hye");
+                    console.log("image : ", result.official_image.image);
+                    document.getElementById('student-image').src = `${result.official_image.image}`;
+                    // await sendNotification(result.parent_username);
                 }
             } catch (error) {
                 console.error('Error during fetch:', error);
             }
         }
 
-        async function clearStudentInfo(student_id) {
+        async function updateFailed(student_id) {
             const data = { student_id: student_id };
 
             try {
@@ -148,17 +149,46 @@
                 console.log('Response:', result);
                 if (result.student) {
                     document.getElementById('studentName').textContent = result.student.name;
-                    document.getElementById('status').textContent = "ATTENDANCE ALREADY BEING RECORDED BEFORE!!";
-                    if (result.official_image) {
-                        document.getElementById('student-image').src = 'data:image/jpeg;base64,' + result.official_image;
-                    } else {
-                        document.getElementById('student-image').src = 'assets/img/default-image.jpg';
-                    }
+                    document.getElementById('status').textContent = "ATTENDANCE ALREADY BEING RECORDED";
+                    console.log("hye");
+                    console.log("image : ", result.official_image.image);
+                    document.getElementById('student-image').src = `${result.official_image.image}`;
+                
                 }
             } catch (error) {
                 console.error('Error during fetch:', error);
             }
         }
+
+        // async function sendNotification(username) {
+        //     const data = {
+        //         app_id: "78f2e497-f306-4a96-9f47-c0ae59591675",
+        //         include_external_user_ids: [username],
+        //         headings: {
+        //             "en": "SMAJU Attendance System"
+        //         },
+        //         contents: {
+        //             "en": "THANK YOU WAFIR"
+        //         }
+        //     };
+
+        //     try {
+        //         const response = await fetch('https://onesignal.com/api/v1/notifications', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'accept':'application/json',
+        //                 'Authorization':'Basic OGMxODYyZmMtODllYS00MjYzLThkMzctODQzMTIyZDllZTkw'
+        //             },
+        //             body: JSON.stringify(data)
+        //         });
+                
+        //     } catch (error) {
+        //         console.error('Error during fetch:', error);
+        //     }
+        // }
+
+
     </script>
 </body>
 </html>

@@ -1257,3 +1257,14 @@ h6 {
   color: #012970;
 }
 
+.background-container {
+  background-image: url('assets/img/jawahir_background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}

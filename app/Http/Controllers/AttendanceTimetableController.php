@@ -107,6 +107,8 @@ class AttendanceTimetableController extends Controller
         // Retrieve the occurrence type associated with the timetable
         $occurrenceType = OccurrenceType::find($timetable->occurrence_id);
 
+        Log::info('Current day: ' . $occurrenceType);
+
         // Check if the occurrence type is found
         if (!$occurrenceType) {
             return response()->json([
@@ -125,6 +127,8 @@ class AttendanceTimetableController extends Controller
 
         // Parse the occurrence type description to extract the range
         $descriptionParts = explode(' TO ', $occurrenceType->description);
+        
+        Log::info('Description parts: ' . json_encode($descriptionParts));
 
         // Check if the array has at least two elements
         if (count($descriptionParts) >= 2) {
@@ -151,7 +155,7 @@ class AttendanceTimetableController extends Controller
                 }
             }
 
-        } else {
+        } else if (count($descriptionParts) === 1){
             // Check if the occurrence type description matches the current day
             if ($currentDay === $descriptionParts[0]) {
                 return response()->json([
@@ -161,13 +165,6 @@ class AttendanceTimetableController extends Controller
                 ], 200);
             }
         }
-
-        // If the current day does not match the occurrence type description, return a 404 response
-        return response()->json([
-            'message' => 'Attendance cannot be recorded for the current day and time.',
-            'error' => 'Day does not match occurrence type description.',
-            'DAY' => $currentDay,
-        ], 404);
 
     }
 
@@ -223,18 +220,64 @@ class AttendanceTimetableController extends Controller
 
     public function attendanceType()
     {
-        // Get the current time
+        // Get the current time and day
         $currentTime = now()->format('H:i');
-    
-        // Retrieve the name, start_time, and end_time where the current time is between start_time and end_time
+        $currentDay = now()->format('l'); // Get the full name of the day (e.g., Monday)
+        
+        // Retrieve all timetables
         $attendanceTimetables = DB::table('attendance_timetables')
-            ->select('name', 'start_time', 'end_time')
-            ->where('is_Delete', 0)
-            ->whereTime('start_time', '<=', $currentTime)
-            ->whereTime('end_time', '>=', $currentTime)
+            ->join('occurrence_types', 'attendance_timetables.occurrence_id', '=', 'occurrence_types.id')
+            ->select('attendance_timetables.name', 'attendance_timetables.start_time', 'attendance_timetables.end_time', 'occurrence_types.description')
+            ->where('attendance_timetables.is_Delete', 0)
+            ->whereTime('attendance_timetables.start_time', '<=', $currentTime)
+            ->whereTime('attendance_timetables.end_time', '>=', $currentTime)
             ->get();
+        
+        // Filter timetables based on the current day in description
+        $filteredTimetables = $attendanceTimetables->filter(function ($timetable) use ($currentDay) {
+            return $this->isCurrentDayInDescription($timetable->description, $currentDay);
+        });
     
-            return response()->json($attendanceTimetables, 200);
+        return response()->json($filteredTimetables, 200);
+    }
+    
+    function isCurrentDayInDescription($description, $currentDay) {
+        // Split the description into parts
+        $parts = explode(', ', $description);
+    
+        foreach ($parts as $part) {
+            // Check if the part contains "TO"
+            if (strpos($part, ' TO ') !== false) {
+                list($startDay, $endDay) = explode(' TO ', $part);
+    
+                // Convert days to their numerical representation
+                $daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+                $startIndex = array_search(strtoupper($startDay), $daysOfWeek);
+                $endIndex = array_search(strtoupper($endDay), $daysOfWeek);
+                $currentIndex = array_search(strtoupper($currentDay), $daysOfWeek);
+    
+                if ($startIndex !== false && $endIndex !== false && $currentIndex !== false) {
+                    if ($startIndex <= $endIndex) {
+                        // Check if current day is within the range
+                        if ($currentIndex >= $startIndex && $currentIndex <= $endIndex) {
+                            return true;
+                        }
+                    } else {
+                        // Handle the case where the range wraps around the week (e.g., FRIDAY TO MONDAY)
+                        if ($currentIndex >= $startIndex || $currentIndex <= $endIndex) {
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                // Check for individual days
+                if (strtoupper($part) == strtoupper($currentDay)) {
+                    return true;
+                }
+            }
+        }
+    
+        return false;
     }
     /**
      * Show the form for creating a new resource.

@@ -6,6 +6,7 @@ use App\Models\Student;
 use App\Models\SchoolSession;
 use App\Models\SchoolSessionClass;
 use App\Models\StudentImage;
+use App\Models\ParentGuardian;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Http\Request;
@@ -270,27 +271,42 @@ class StudentController extends Controller
     public function studentDataByRfid(Request $request)
     {
         try {
-
             // Get the RFID values from the request
             $rfidNumber = $request->rfidNumber;
-
+    
             // Query students using parameter binding with OR condition
-            $students = Student::where('tag_rfid', $rfidNumber)
+            // Include the parent guardian information
+            $students = Student::with('parentGuardian')
+                                ->where('tag_rfid', $rfidNumber)
                                 ->orWhere('card_rfid', $rfidNumber)
                                 ->get();
-
-            // Check if any student is found by tag_rfid
+    
+            // Check if any student is found by tag_rfid or card_rfid
             if ($students->isEmpty()) {
-               
                 return response()->json([
                     'message' => 'No student found for the given RFID values.',
                 ], 404);
-              
             }
-
-            // Return the found students
-            return response()->json(['students' => $students], 200);
-
+    
+            // Prepare the response data to include parent username
+            $response = $students->map(function ($student) {
+                return [
+                    'id' => $student->id,
+                    'name' => $student->name,
+                    'date_of_birth' => $student->date_of_birth,
+                    'parent_guardian' => [
+                        'id' => $student->parentGuardian->id,
+                        'username' => $student->parentGuardian->username,
+                    ],
+                    'card_rfid' => $student->card_rfid,
+                    'tag_rfid' => $student->tag_rfid,
+                    'type_student' => $student->type_student,
+                ];
+            });
+    
+            // Return the found students with parent username
+            return response()->json(['students' => $response], 200);
+    
         } catch (\Exception $e) {
             // Handle any exceptions
             return response()->json([
@@ -487,27 +503,36 @@ class StudentController extends Controller
     public function getDisplayStudent(Request $request)
     {
         $id = $request->student_id;
-    
+
         // Retrieve the student by ID
         $student = Student::find($id);
-    
+
         if (!$student) {
             return response()->json([
                 'message' => 'No Children Registered In This School',
             ], 404);
         }
-    
+
         // Retrieve the official image of the student
         $officialImage = StudentImage::where('student_id', $id)
-                                     ->where('is_official', 1)
-                                     ->first();
-    
+                                    ->where('is_official', 1)
+                                    ->first();
+
+        // Retrieve the parent information
+        $parent = ParentGuardian::find($student->parent_guardian_id);
+
+        if (!$parent) {
+            return response()->json([
+                'message' => 'Parent information not found',
+            ], 404);
+        }
+
         return response()->json([
             'student' => $student,
-            'official_image' => $officialImage ? base64_encode($officialImage->image) : null,
+            'official_image' => $officialImage,
+            'parent_username' => $parent->username,
         ], 200);
     }
-
     
     /**
      * Show the form for creating a new resource.
@@ -555,5 +580,27 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         //
+    }
+
+    public function checkImages(Request $request)
+    {
+        $id = $request->student_id;
+    
+        // Retrieve the official image of the student
+        $image = StudentImage::where('student_id', $id)->where('is_official', 1)->first();
+
+        if ($image && $image->image) {
+            // Return the image as a response
+            return response()->json([
+                'status' => 'success',
+                'image' => base64_encode($image->image)
+            ]);
+        } else {
+            // Return a default image or an error message
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Image not found'
+            ], 404);
+        }
     }
 }
