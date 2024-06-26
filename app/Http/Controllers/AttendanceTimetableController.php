@@ -279,6 +279,55 @@ class AttendanceTimetableController extends Controller
     
         return false;
     }
+
+    public function getAttendance($id)
+    {
+        // Retrieve the user by their ID
+        $timetable= AttendanceTimetable::find($id);
+
+        // Check if the user exists
+        if ($timetable) {
+            return response([
+                'timetable' => $timetable,
+                'message' => 'Successfully retrieving data'
+            ], 200);
+        }
+        else{
+
+            return response([
+                'message' => 'Invalid credentials.'
+            ], 403);
+        }
+    }
+
+    public function updateTimetable(Request $request, $id)
+    {
+     
+        // Retrieve the user by ID
+        $timetable = AttendanceTimetable::find($id);
+
+        // Check if the user exists
+        if (!$timetable) {
+            return response()->json(['message' => 'Classroom not found'], 404);
+        }
+
+        // Update the user's attributes
+        $timetable->name = $request->input('name');
+        $timetable->start_time = $request->input('start_time');
+        $timetable->end_time = $request->input('end_time');
+        $timetable->occurrence_id = $request->input('occurrence_id');
+        // Update other fields as needed
+
+        // Save the changes to the database
+        $timetable->save();
+
+        // Return a success response
+        return response()->json(['message' => 'Classroom updated successfully', 'timetable' => $timetable]);
+    }
+
+
+
+
     /**
      * Show the form for creating a new resource.
      */

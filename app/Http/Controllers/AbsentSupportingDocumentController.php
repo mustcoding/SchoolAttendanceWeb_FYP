@@ -118,6 +118,7 @@ class AbsentSupportingDocumentController extends Controller
             'students.name as student_name',
             'student_study_sessions.id as student_study_session_id',
             'parent_guardians.name as parent_name',
+            'parent_guardians.username',
             'classrooms.name as class_name',
             'classrooms.form_number',
             'staff.name as teacher_name'

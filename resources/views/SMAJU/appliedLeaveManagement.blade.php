@@ -468,7 +468,7 @@
                     <td><a href="absentiesDocument?document_path=${item.document_path}" onclick="viewDocument('${item.document_path}')">View Document</a></td>
                       <td>
                         <div class="button-column">
-                          <button type="button" class="btn btn-primary" onclick="approveLeave(${item.student_study_session_id}, '${item.start_date_leave}', '${item.end_date_leave}',${item.absent_supporting_document_id})">APPROVE</button>
+                          <button type="button" class="btn btn-primary" onclick="approveLeave(${item.student_study_session_id}, '${item.start_date_leave}', '${item.end_date_leave}',${item.absent_supporting_document_id},'${item.username}')">APPROVE</button>
                           <button type="button" class="btn btn-danger" onclick="deleteStudent(${item.student_id})">Delete </button>
                         </div>
                       </td>
@@ -670,7 +670,8 @@
     function viewDocument(document_path){
      // Get the tourismServiceId from the URL
     
-     window.open(`absentiesDocument?document_path=${document_path}`,'_self');
+     sessionStorage.setItem('document', JSON.stringify(document_path));
+     window.open(`absentiesDocument`,'_self');
 
     }
   </script>
@@ -741,7 +742,7 @@ function getDatesInRangeWithTime(startDate, endDate, time) {
 }
 
 
-  function approveLeave(student_study_session_id, start_date_leave, end_date_leave, absent_supporting_document_id) {
+  function approveLeave(student_study_session_id, start_date_leave, end_date_leave, absent_supporting_document_id, username) {
       try {
         
         const time = getCurrentTime();
@@ -770,7 +771,7 @@ function getDatesInRangeWithTime(startDate, endDate, time) {
           .then(data => {
             // Handle the response from the server
             if(data.message == 'Attendance recorded successfully'){
-
+              sendNotification(username, start_date_leave, end_date_leave);
             }
             else{
               console.log("ERROR")
@@ -816,6 +817,41 @@ function getDatesInRangeWithTime(startDate, endDate, time) {
       console.error('Error during fetch:', error);
     });
   }
+
+  function sendNotification(username, start_date_leave, end_date_leave) {
+    const notificationData = {
+        app_id: "78f2e497-f306-4a96-9f47-c0ae59591675",
+        include_external_user_ids: [username],  // Use the username parameter here
+        headings: {
+            "en": "SMAJU Attendance System"
+        },
+        contents: {
+            "en": "Your Application For Leave Being Approved Starting  " + start_date_leave+" until "+ end_date_leave// Custom message with username
+        }
+    };
+
+    fetch('https://onesignal.com/api/v1/notifications', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'accept': 'application/json',
+            'Authorization': 'Basic OGMxODYyZmMtODllYS00MjYzLThkMzctODQzMTIyZDllZTkw'
+        },
+        body: JSON.stringify(notificationData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Response:', data);
+
+        setTimeout(function() {
+            window.location.href = "/applied-leave-management";
+        }, 2000);
+
+    })
+    .catch(error => {
+        console.error('Error during fetch:', error);
+    });
+}
 
 </script>
 

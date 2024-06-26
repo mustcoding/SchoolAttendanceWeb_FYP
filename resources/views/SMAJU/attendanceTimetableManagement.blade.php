@@ -522,7 +522,7 @@
   function editAttendanceTimetable(timetable_id){
      // Get the tourismServiceId from the URL
     
-     window.open(`editStudent?id=${timetable_id}`,'_self');
+     window.open(`editAttendanceTimetable?id=${timetable_id}`,'_self');
   }
 
   function deleteAttendanceTimetable(timetable_id)

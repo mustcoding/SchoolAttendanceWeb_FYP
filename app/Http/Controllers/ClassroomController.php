@@ -121,6 +121,32 @@ class ClassroomController extends Controller
         return response()->json(['message' => 'Classroom Deleted Successfully', 'classroom' => $classroom]);
     }
 
+    
+    public function updateClass(Request $request, $id)
+    {
+     
+        // Retrieve the user by ID
+        $classroom = Classroom::find($id);
+
+        // Check if the user exists
+        if (!$classroom) {
+            return response()->json(['message' => 'Classroom not found'], 404);
+        }
+
+        // Update the user's attributes
+        $classroom->name = $request->input('name');
+        $classroom->form_number = $request->input('form_number');
+        $classroom->max_capacity = $request->input('max_capacity');
+        // Update other fields as needed
+
+        // Save the changes to the database
+        $classroom->save();
+
+        // Return a success response
+        return response()->json(['message' => 'Classroom updated successfully', 'classroom' => $classroom]);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */

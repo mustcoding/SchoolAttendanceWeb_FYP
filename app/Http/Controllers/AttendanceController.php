@@ -72,14 +72,17 @@ class AttendanceController extends Controller
 
             // Extract the date part from the date_time_in
             $date = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'));
+            Log::info('date   ' . $date->format('m/d/y H:i:s'));
+
             $datePart = $date->format('m/d/y');
+            Log::info('datePart   ' . $datePart);
 
             // Check if an attendance record already exists for the given session, timetable, and date
             $existingAttendance = Attendance::where('student_study_session_id', $request->input('student_study_session_id'))
                 ->where('attendance_timetable_id', $request->input('attendance_timetable_id'))
-                ->whereDate('date_time_in', $datePart)
+                ->whereRaw('LEFT(date_time_in, 8) = ?', [$datePart])
                 ->first();
-
+            Log::info('existingAttendance   ' . $existingAttendance);
             // If an attendance record already exists, return a message indicating that attendance is already recorded for this session, timetable, and date
             if ($existingAttendance) {
                 return response()->json([

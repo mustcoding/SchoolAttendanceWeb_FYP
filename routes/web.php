@@ -109,6 +109,16 @@ Route::get('/editActivityOccurrence', function (Illuminate\Http\Request $request
     return view('SMAJU.editActivityOccurrence', ['id' => $id]);
 })->name('editActivityOccurrence');
 
+Route::get('/editClassroom', function (Illuminate\Http\Request $request) {
+    $id = $request->query('id');
+    return view('SMAJU.editClassroom', ['id' => $id]);
+})->name('editClassroom');
+
+Route::get('/editAttendanceTimetable', function (Illuminate\Http\Request $request) {
+    $id = $request->query('id');
+    return view('SMAJU.editAttendanceTimetable', ['id' => $id]);
+})->name('editAttendanceTimetable');
+
 //teacher
 
 Route::get('/indexTeacher', function () {
@@ -257,7 +267,7 @@ Route::prefix('staff')->middleware(['auth:sanctum'])->group(function() {
 });
 
 
-Route::prefix('classroom')->middleware(['auth:staff,auth:sanctum'])->group(function() {
+Route::prefix('classroom')->middleware(['auth:staff'])->group(function() {
 
     Route::post('add', [ClassroomController::class, 'registerClass']);
     Route::get('totalClassroom', [ClassroomController::class, 'totalClassroom']);
@@ -265,6 +275,7 @@ Route::prefix('classroom')->middleware(['auth:staff,auth:sanctum'])->group(funct
     Route::post('get-classroom/{id}',[ClassroomController::class,'GetClassroom']);
     Route::get('list-classroom', [classroomController::class, 'getListClassroom']);
     Route::put('delete/{id}',[ClassroomController::class,'DeleteClassroom']);
+    Route::put('update/{id}',[ClassroomController::class,'updateClass']);
 
 });
 
@@ -327,6 +338,8 @@ Route::prefix('AttendanceTimetable')->middleware(['auth:staff'])->group(function
     Route::put('delete/{id}',[AttendanceTimetableController::class,'DeleteAttendanceTimetable']);
     Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'checkAttendanceTimeTable']);
     Route::post('attendanceDisplay', [AttendanceTimetableController::class, 'attendanceDisplay']);
+    Route::post('get-attendance/{id}',[AttendanceTimetableController::class,'getAttendance']);
+    Route::put('update/{id}',[AttendanceTimetableController::class,'updateTimetable']);
 
 });
 

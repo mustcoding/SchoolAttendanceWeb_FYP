@@ -313,7 +313,7 @@
                         <button type="button" class="btn btn-primary" onclick="saveClass(value)">Save</button>
                         <button type="button" class="btn btn-secondary" onclick="returnToIndex()">Cancel</button>
                     </div>
-                  </form><!-- End Custom Styled Validation -->
+                </form><!-- End Custom Styled Validation -->
   
               </div>
           </div>
