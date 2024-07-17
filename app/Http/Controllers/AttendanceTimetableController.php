@@ -85,87 +85,167 @@ class AttendanceTimetableController extends Controller
         return response()->json(['message' => 'User updated successfully', 'attendance' => $attendance]);
     }
 
+    // public function checkAttendanceTimeTable(Request $request)
+    // {
+    //     // Get current time and day
+    //     $currentTime = now()->format('H:i');
+
+    //     Log::info('Current day: ' . $currentTime);
+    
+    //     // Find timetable entries where current time falls between start_time and end_time
+    //     $timetable = AttendanceTimetable::where('start_time', '<=', $currentTime)
+    //                     ->where('end_time', '>=', $currentTime)
+    //                     ->where('is_Delete', 0)
+    //                     ->first();
+    
+    //     // Check if any timetable is found
+    //     if (!$timetable) {
+    //         return response()->json([
+    //             'message' => 'Attendance cannot be recorded at this time.',
+    //             'error' => $currentTime,
+    //         ], 404);
+    //     }
+    
+    //     // Retrieve the occurrence type associated with the timetable
+    //     $occurrenceType = OccurrenceType::find($timetable->occurrence_id);
+
+    //     Log::info('Current day: ' . $occurrenceType);
+
+    //     // Check if the occurrence type is found
+    //     if (!$occurrenceType) {
+    //         return response()->json([
+    //             'message' => 'Occurrence type not found.',
+    //             'error' => $timetable->occurrence_id
+    //         ], 404);
+    //     }
+    
+    //     // Get the current day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+    //     $currentDayOfWeek = date('w');
+
+    //     // Convert the day of the week to a textual representation
+    //     $daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    //     $currentDay = $daysOfWeek[$currentDayOfWeek];
+  
+
+    //     // Parse the occurrence type description to extract the range
+    //     $descriptionParts = explode(' TO ', $occurrenceType->description);
+        
+    //     Log::info('Description parts: ' . json_encode($descriptionParts));
+
+    //     // Check if the array has at least two elements
+    //     if (count($descriptionParts) >= 2) {
+    //         $startDay = trim($descriptionParts[0]);
+    //         $endDay = trim($descriptionParts[1]);
+
+    //         // Check if the current day falls within the range
+    //         if ($currentDayOfWeek >= array_search($startDay, $daysOfWeek) && $currentDayOfWeek <= array_search($endDay, $daysOfWeek)) {
+    //             return response()->json([
+    //                 'message' => 'Attendance can be recorded for the current day and time.',
+    //                 'timetable' => $timetable,
+    //                 'occurrence_type' => $occurrenceType
+    //             ], 200);
+    //         }
+    //         else{
+
+    //             // Check if the occurrence type description matches the current day
+    //             if ($currentDay === $descriptionParts[0]) {
+    //                 return response()->json([
+    //                     'message' => 'Attendance can be recorded for the current day and time.',
+    //                     'timetable' => $timetable,
+    //                     'occurrence_type' => $occurrenceType
+    //                 ], 200);
+    //             }
+    //         }
+
+    //     } else if (count($descriptionParts) === 1){
+    //         // Check if the occurrence type description matches the current day
+    //         if ($currentDay === $descriptionParts[0]) {
+    //             return response()->json([
+    //                 'message' => 'Attendance can be recorded for the current day and time.',
+    //                 'timetable' => $timetable,
+    //                 'occurrence_type' => $occurrenceType
+    //             ], 200);
+    //         }
+    //     }
+
+    // }
+
     public function checkAttendanceTimeTable(Request $request)
     {
         // Get current time and day
         $currentTime = now()->format('H:i');
-    
-        // Find timetable entries where current time falls between start_time and end_time
-        $timetable = AttendanceTimetable::where('start_time', '<=', $currentTime)
-                        ->where('end_time', '>=', $currentTime)
-                        ->where('is_Delete', 0)
-                        ->first();
-    
-        // Check if any timetable is found
-        if (!$timetable) {
-            return response()->json([
-                'message' => 'Attendance cannot be recorded at this time.',
-                'error' => $currentTime,
-            ], 404);
-        }
-    
-        // Retrieve the occurrence type associated with the timetable
-        $occurrenceType = OccurrenceType::find($timetable->occurrence_id);
+        Log::info('Current time: ' . $currentTime);
 
-        Log::info('Current day: ' . $occurrenceType);
-
-        // Check if the occurrence type is found
-        if (!$occurrenceType) {
-            return response()->json([
-                'message' => 'Occurrence type not found.',
-                'error' => $timetable->occurrence_id
-            ], 404);
-        }
-    
         // Get the current day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
         $currentDayOfWeek = date('w');
 
         // Convert the day of the week to a textual representation
         $daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
         $currentDay = $daysOfWeek[$currentDayOfWeek];
-  
+        Log::info('Current day: ' . $currentDay);
 
-        // Parse the occurrence type description to extract the range
-        $descriptionParts = explode(' TO ', $occurrenceType->description);
-        
-        Log::info('Description parts: ' . json_encode($descriptionParts));
+        // Find timetable entries where current time falls between start_time and end_time
+        $timetable = AttendanceTimetable::where('start_time', '<=', $currentTime)
+                        ->where('end_time', '>=', $currentTime)
+                        ->where('is_Delete', 0)
+                        ->orderBy('id', 'desc') // Modify the order as needed
+                        ->get();
 
-        // Check if the array has at least two elements
-        if (count($descriptionParts) >= 2) {
-            $startDay = trim($descriptionParts[0]);
-            $endDay = trim($descriptionParts[1]);
+        // Check if any timetable is found
+        if ($timetable->isEmpty()) {
+            return response()->json([
+                'message' => 'Attendance cannot be recorded at this time.',
+                'error' => $currentTime,
+            ], 404);
+        }
 
-            // Check if the current day falls within the range
-            if ($currentDayOfWeek >= array_search($startDay, $daysOfWeek) && $currentDayOfWeek <= array_search($endDay, $daysOfWeek)) {
+        foreach ($timetable as $entry) {
+            // Retrieve the occurrence type associated with the timetable
+            $occurrenceType = OccurrenceType::find($entry->occurrence_id);
+            Log::info('Occurrence type: ' . $occurrenceType);
+
+            // Check if the occurrence type is found
+            if (!$occurrenceType) {
                 return response()->json([
-                    'message' => 'Attendance can be recorded for the current day and time.',
-                    'timetable' => $timetable,
-                    'occurrence_type' => $occurrenceType
-                ], 200);
+                    'message' => 'Occurrence type not found.',
+                    'error' => $entry->occurrence_id
+                ], 404);
             }
-            else{
 
+            // Parse the occurrence type description to extract the range
+            $descriptionParts = explode(' TO ', $occurrenceType->description);
+            Log::info('Description parts: ' . json_encode($descriptionParts));
+
+            // Check if the array has at least two elements
+            if (count($descriptionParts) >= 2) {
+                $startDay = trim($descriptionParts[0]);
+                $endDay = trim($descriptionParts[1]);
+
+                // Check if the current day falls within the range
+                if ($currentDayOfWeek >= array_search($startDay, $daysOfWeek) && $currentDayOfWeek <= array_search($endDay, $daysOfWeek)) {
+                    return response()->json([
+                        'message' => 'Attendance can be recorded for the current day and time.',
+                        'timetable' => $entry,
+                        'occurrence_type' => $occurrenceType
+                    ], 200);
+                }
+            } else if (count($descriptionParts) === 1) {
                 // Check if the occurrence type description matches the current day
                 if ($currentDay === $descriptionParts[0]) {
                     return response()->json([
                         'message' => 'Attendance can be recorded for the current day and time.',
-                        'timetable' => $timetable,
+                        'timetable' => $entry,
                         'occurrence_type' => $occurrenceType
                     ], 200);
                 }
             }
-
-        } else if (count($descriptionParts) === 1){
-            // Check if the occurrence type description matches the current day
-            if ($currentDay === $descriptionParts[0]) {
-                return response()->json([
-                    'message' => 'Attendance can be recorded for the current day and time.',
-                    'timetable' => $timetable,
-                    'occurrence_type' => $occurrenceType
-                ], 200);
-            }
         }
 
+        // If no matching timetable entry is found for the current day
+        return response()->json([
+            'message' => 'Attendance cannot be recorded for the current day and time.',
+            'error' => $currentDay
+        ], 404);
     }
 
     public function attendanceDisplay(Request $request)

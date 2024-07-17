@@ -74,21 +74,47 @@
             document.getElementById('date-time').textContent = formattedDate;
         }
 
-        async function fetchAttendanceType(){
-            try {
-                const response = await fetch('/attendanceType');
-                const data = await response.json();
-                const name = data[0].name;
-                const start_time = data[0].start_time;
-                const end_time = data[0].end_time;
+        // async function fetchAttendanceType(){
+        //     try {
+        //         const response = await fetch('/attendanceType');
+        //         const data = await response.json();
+        //         const name = data[0].name;
+        //         const start_time = data[0].start_time;
+        //         const end_time = data[0].end_time;
+
+        //         const timeFormatted = `${name} (${start_time} - ${end_time})`;
+
+        //         document.getElementById('attendanceType').textContent = timeFormatted;
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error);
+        //     }
+        // }
+
+        async function fetchAttendanceType() {
+    try {
+        const response = await fetch('/attendanceType');
+        const data = await response.json();
+        console.log('Attendance type data:', data);
+
+        // Iterate over the keys in the response object
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                const attendanceType = data[key];
+                const name = attendanceType.name;
+                const start_time = attendanceType.start_time;
+                const end_time = attendanceType.end_time;
 
                 const timeFormatted = `${name} (${start_time} - ${end_time})`;
-
                 document.getElementById('attendanceType').textContent = timeFormatted;
-            } catch (error) {
-                console.error('Error fetching data:', error);
+                break; // Assuming you only want to display the first entry found
             }
         }
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
 
         async function fetchData() {
             try {
