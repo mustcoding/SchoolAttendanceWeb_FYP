@@ -603,8 +603,170 @@ class AttendanceController extends Controller
         // Return a success response
         return response()->json(['message' => 'Attendance recorded successfully'], 200);
     }
-    
-    
+
+    public function getAttendanceWarning(Request $request)
+{
+    $studentId = $request->input('studentId');
+    $teacherId = $request->input('teacherId');
+
+    // Define thresholds and conditions for warnings and suspension
+    $firstWarningThreshold = 3;
+    $secondWarningThreshold = 10;
+    $thirdWarningThreshold = 17;
+    $suspensionThreshold = 31;
+    $firstWarningUncontinuous = 10;
+    $secondWarningUncontinuous = 20;
+    $thirdWarningUncontinuous = 40;
+    $suspensionUncontinuous = 60;
+
+    // Get the current year and session
+    $currentYear = Carbon::now()->year;
+    $currentSession = SchoolSession::where('year', $currentYear)->first();
+    if (!$currentSession) {
+        return response()->json(['error' => 'No school session found for the current year.'], 404);
+    }
+
+    // Retrieve class and study session information
+    $schoolSessionClass = DB::table('school_session_classes')
+        ->where('school_session_id', $currentSession->id)
+        ->where('staff_id', $teacherId)
+        ->first();
+    if (!$schoolSessionClass) {
+        return response()->json(['error' => 'No class found for the given teacher in the current session.'], 404);
+    }
+
+    $studentStudySession = DB::table('student_study_sessions')
+        ->where('ssc_id', $schoolSessionClass->id)
+        ->where('student_id', $studentId)
+        ->first();
+    if (!$studentStudySession) {
+        return response()->json(['error' => 'No study session found for the given student in the specified class.'], 404);
+    }
+
+    // Retrieve all attendance records
+    $attendances = Attendance::where('student_study_session_id', $studentStudySession->id)
+        ->orderBy('date_time_in')
+        ->get();
+
+    // Generate all relevant dates from session start date to current date
+    $sessionStartDate = Carbon::parse($currentSession->start_date);
+    $currentDate = Carbon::now();
+    $allDates = [];
+    for ($date = $sessionStartDate; $date <= $currentDate; $date->addDay()) {
+        if (in_array($date->dayOfWeek, [0, 1, 2, 3, 4])) {
+            $allDates[] = $date->format('m/d/y');
+        }
+    }
+
+    // Initialize arrays for tracking absences
+    $continuousAbsences = [];
+    $nonContinuousAbsences = [];
+    $currentContinuousCount = 0;
+    $currentContinuousDates = [];
+    $allAbsentDates = [];
+    $previousDate = null;
+
+    foreach ($allDates as $date) {
+        $attendance = $attendances->firstWhere('date_time_in', 'like', "%$date%");
+        if (!$attendance || $attendance->is_attend == 0) {
+            if ($previousDate) {
+                $daysDifference = Carbon::createFromFormat('m/d/y', $date)->diffInDays($previousDate);
+                if ($daysDifference == 1 && in_array(Carbon::createFromFormat('m/d/y', $date)->dayOfWeek, [0, 1, 2, 3, 4])) {
+                    $currentContinuousCount++;
+                    $currentContinuousDates[] = $date;
+                } else {
+                    if ($currentContinuousCount > 0) {
+                        $continuousAbsences[] = [
+                            'count' => $currentContinuousCount,
+                            'dates' => $currentContinuousDates,
+                        ];
+                    }
+                    $currentContinuousCount = 1;
+                    $currentContinuousDates = [$date];
+                }
+            } else {
+                $currentContinuousCount = 1;
+                $currentContinuousDates = [$date];
+            }
+            $allAbsentDates[] = $date;
+            $previousDate = Carbon::createFromFormat('m/d/y', $date);
+        } else {
+            if ($currentContinuousCount > 0) {
+                $continuousAbsences[] = [
+                    'count' => $currentContinuousCount,
+                    'dates' => $currentContinuousDates,
+                ];
+            }
+            $currentContinuousCount = 0;
+            $currentContinuousDates = [];
+            $previousDate = null;
+        }
+    }
+
+    if ($currentContinuousCount > 0) {
+        $continuousAbsences[] = [
+            'count' => $currentContinuousCount,
+            'dates' => $currentContinuousDates,
+        ];
+    }
+
+    // Calculate non-continuous absences by excluding continuous absence dates
+    $continuousAbsentDates = array_merge(...array_column($continuousAbsences, 'dates'));
+    $filteredNonContinuousAbsences = array_filter($allAbsentDates, function($date) use ($continuousAbsentDates) {
+        return !in_array($date, $continuousAbsentDates);
+    });
+
+    // Determine warnings based on continuous absences
+    $warnings = [];
+    $totalContinuousAbsences = array_sum(array_column($continuousAbsences, 'count'));
+    if ($totalContinuousAbsences >= $suspensionThreshold) {
+        $warnings[] = 'Student suspended due to continuous absences exceeding 31 days.';
+    } else {
+        // Aggregate all continuous absence dates
+        $allContinuousDates = [];
+        foreach ($continuousAbsences as $continuousAbsence) {
+            $allContinuousDates = array_merge($allContinuousDates, $continuousAbsence['dates']);
+        }
+
+        // Sort the dates to ensure they are in order
+        sort($allContinuousDates);
+        $datesCount = count($allContinuousDates);
+
+        // Generate warnings based on thresholds
+        if ($totalContinuousAbsences >= $firstWarningThreshold) {
+            $warnings[] = '1st warning: Continuous absences from ' . $allContinuousDates[0] . ' to ' . ($allContinuousDates[min(2, $datesCount - 1)] ?? end($allContinuousDates));
+        }
+        if ($totalContinuousAbsences >= $secondWarningThreshold) {
+            $start = min(3, $datesCount - 1);
+            $end = min(9, $datesCount - 1);
+            $warnings[] = '2nd warning: Continuous absences from ' . $allContinuousDates[$start] . ' to ' . ($allContinuousDates[$end] ?? end($allContinuousDates));
+        }
+        if ($totalContinuousAbsences >= $thirdWarningThreshold) {
+            $start = min(10, $datesCount - 1);
+            $end = min(17, $datesCount - 1);
+            $warnings[] = '3rd warning: Continuous absences from ' . $allContinuousDates[$start] . ' to ' . ($allContinuousDates[$end] ?? end($allContinuousDates));
+        }
+    }
+
+    // Determine warnings based on non-continuous absences
+    $totalNonContinuousAbsences = count($filteredNonContinuousAbsences);
+    if ($totalNonContinuousAbsences >= $suspensionUncontinuous) {
+        $warnings[] = 'Student suspended due to non-continuous absences exceeding 60 days.';
+    } else {
+        if ($totalNonContinuousAbsences >= $firstWarningUncontinuous) {
+            $warnings[] = '1st warning: Non-continuous absences on ' . implode(', ', array_slice($filteredNonContinuousAbsences, 0, $firstWarningUncontinuous));
+        }
+        if ($totalNonContinuousAbsences >= $secondWarningUncontinuous) {
+            $warnings[] = '2nd warning: Non-continuous absences on ' . implode(', ', array_slice($filteredNonContinuousAbsences, $firstWarningUncontinuous, $secondWarningUncontinuous - $firstWarningUncontinuous));
+        }
+        if ($totalNonContinuousAbsences >= $thirdWarningUncontinuous) {
+            $warnings[] = '3rd warning: Non-continuous absences on ' . implode(', ', array_slice($filteredNonContinuousAbsences, $secondWarningUncontinuous, $thirdWarningUncontinuous - $secondWarningUncontinuous));
+        }
+    }
+
+    return response()->json(['warnings' => $warnings]);
+}
+
     /**
      * Show the form for creating a new resource.
      */

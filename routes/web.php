@@ -226,6 +226,7 @@ Route::get('toDisplayStudent',[StudentController::class, 'toDisplayStudent']);
 
 Route::get('attendanceType',[AttendanceTimetableController::class, 'attendanceType']);
 
+Route::post('attendanceWarning',[AttendanceController::class, 'getAttendanceWarning']);
 
 //----- admin module -----
 
