@@ -482,79 +482,79 @@ class AttendanceController extends Controller
     // }
 
     public function ListAbsent(Request $request)
-{
-    // Get the student_study_session_id from the request
-    $studentStudySessionId = $request->input('student_study_session_id');
-    Log::info('studentStudySessionId: ' . $studentStudySessionId);
+    {
+        // Get the student_study_session_id from the request
+        $studentStudySessionId = $request->input('student_study_session_id');
+        Log::info('studentStudySessionId: ' . $studentStudySessionId);
 
-    // Retrieve the start date and end date of the school session
-    $schoolSessionDates = DB::table('student_study_sessions')
-        ->join('school_sessions', 'student_study_sessions.ssc_id', '=', 'school_sessions.id')
-        ->select('start_date', 'end_date')
-        ->where('student_study_sessions.id', $studentStudySessionId)
-        ->first();
+        // Retrieve the start date and end date of the school session
+        $schoolSessionDates = DB::table('student_study_sessions')
+            ->join('school_sessions', 'student_study_sessions.ssc_id', '=', 'school_sessions.id')
+            ->select('start_date', 'end_date')
+            ->where('student_study_sessions.id', $studentStudySessionId)
+            ->first();
 
-    if (!$schoolSessionDates) {
-        // Handle if school session not found for the provided student_study_session_id
-        return response()->json(['error' => 'School session not found'], 404);
-    }
+        if (!$schoolSessionDates) {
+            // Handle if school session not found for the provided student_study_session_id
+            return response()->json(['error' => 'School session not found'], 404);
+        }
 
-    // Initialize CarbonPeriod for the interval between start_date and the current date
-    $period = CarbonPeriod::create($schoolSessionDates->start_date, now());
+        // Initialize CarbonPeriod for the interval between start_date and the current date
+        $period = CarbonPeriod::create($schoolSessionDates->start_date, now());
 
-    // Get all attendance timetable IDs and their names
-    $attendanceTimetables = DB::table('attendance_timetables')
-        ->select('id', 'name', 'occurrence_id')
-        ->get();
+        // Get all attendance timetable IDs and their names
+        $attendanceTimetables = DB::table('attendance_timetables')
+            ->select('id', 'name', 'occurrence_id')
+            ->get();
 
-    // Get the description of occurrence types
-    $occurrenceTypes = DB::table('occurrence_types')
-        ->pluck('description', 'id');
+        // Get the description of occurrence types
+        $occurrenceTypes = DB::table('occurrence_types')
+            ->pluck('description', 'id');
 
-    // Initialize an array to store absent attendances
-    $absentAttendances = [];
+        // Initialize an array to store absent attendances
+        $absentAttendances = [];
 
-    // Loop through each day in the interval
-    foreach ($period as $date) {
-        // Get the date string in 'Y-m-d' format
-        $dateString = $date->format('Y-m-d');
+        // Loop through each day in the interval
+        foreach ($period as $date) {
+            // Get the date string in 'Y-m-d' format
+            $dateString = $date->format('Y-m-d');
 
-        // Get the day of the week in uppercase (e.g., "MONDAY", "TUESDAY")
-        $dayOfWeek = strtoupper($date->englishDayOfWeek);
+            // Get the day of the week in uppercase (e.g., "MONDAY", "TUESDAY")
+            $dayOfWeek = strtoupper($date->englishDayOfWeek);
 
-        // Concatenate the date string with the day of the week
-        $dateTimeIn = $dateString . ' (' . $dayOfWeek . ')';
+            // Concatenate the date string with the day of the week
+            $dateTimeIn = $dateString . ' (' . $dayOfWeek . ')';
 
-        // Loop through each attendance timetable
-        foreach ($attendanceTimetables as $timetable) {
-            // Check if the occurrence type description includes the current day of the week
-            if (strpos(strtoupper($occurrenceTypes[$timetable->occurrence_id]), $dayOfWeek) !== false || strpos($occurrenceTypes[$timetable->occurrence_id], 'EVERYDAY') !== false) {
-                // Check if there is an attendance record for the current date and timetable ID
-                $attendanceRecord = DB::table('attendances')
-                    ->where('student_study_session_id', $studentStudySessionId)
-                    ->where('attendance_timetable_id', $timetable->id)
-                    ->whereDate(DB::raw("STR_TO_DATE(date_time_in, '%m/%d/%y %H:%i:%s')"), $date->format('Y-m-d'))
-                    ->whereIn('is_attend', [1, 2])
-                    ->first();
+            // Loop through each attendance timetable
+            foreach ($attendanceTimetables as $timetable) {
+                // Check if the occurrence type description includes the current day of the week
+                if (strpos(strtoupper($occurrenceTypes[$timetable->occurrence_id]), $dayOfWeek) !== false || strpos($occurrenceTypes[$timetable->occurrence_id], 'EVERYDAY') !== false) {
+                    // Check if there is an attendance record for the current date and timetable ID
+                    $attendanceRecord = DB::table('attendances')
+                        ->where('student_study_session_id', $studentStudySessionId)
+                        ->where('attendance_timetable_id', $timetable->id)
+                        ->whereDate(DB::raw("STR_TO_DATE(date_time_in, '%m/%d/%y %H:%i:%s')"), $date->format('Y-m-d'))
+                        ->whereIn('is_attend', [1, 2])
+                        ->first();
 
-                // If no attendance record exists for this date and timetable, or if it exists but is marked as not attended, consider it absent
-                if (!$attendanceRecord) {
-                    $absentAttendances[] = [
-                        'attendance_timetable_id' => $timetable->id,
-                        'student_study_session_id' => $studentStudySessionId,
-                        'is_attend' => 0, // Marked as absent
-                        'date_time_in' => $dateTimeIn, // Date of absence with day of the week
-                        'date_time_out' => null, // Not recorded
-                        'name' => $timetable->name
-                    ];
+                    // If no attendance record exists for this date and timetable, or if it exists but is marked as not attended, consider it absent
+                    if (!$attendanceRecord) {
+                        $absentAttendances[] = [
+                            'attendance_timetable_id' => $timetable->id,
+                            'student_study_session_id' => $studentStudySessionId,
+                            'is_attend' => 0, // Marked as absent
+                            'date_time_in' => $dateTimeIn, // Date of absence with day of the week
+                            'date_time_out' => null, // Not recorded
+                            'name' => $timetable->name
+                        ];
+                    }
                 }
             }
         }
-    }
 
-    // Return the list of absent attendances
-    return response()->json($absentAttendances, 200);
-}
+        // Return the list of absent attendances
+        return response()->json($absentAttendances, 200);
+    }
 
     public function recordAttendanceLeave(Request $request) {
         // Extract data from the request
@@ -652,6 +652,8 @@ class AttendanceController extends Controller
             ->orderBy('date_time_in')
             ->get();
 
+        Log::info('Retrieve all attendance records.', $attendances->toArray());
+
         // Generate all relevant dates from session start date to current date
         $sessionStartDate = Carbon::parse($currentSession->start_date);
         $currentDate = Carbon::now();
@@ -662,6 +664,9 @@ class AttendanceController extends Controller
             }
         }
 
+        Log::info('all date: ', ['date' => $allDates]);
+
+
         // Initialize arrays for tracking absences
         $continuousAbsences = [];
         $nonContinuousAbsences = [];
@@ -671,8 +676,15 @@ class AttendanceController extends Controller
         $previousDate = null;
 
         foreach ($allDates as $date) {
-            $attendance = $attendances->firstWhere('date_time_in', 'like', "%$date%");
+            Log::info('date records : ', ['date' => $date]);
+        
+            // Filter attendance records for the specific date and timetable ID
+            $attendance = $attendances->filter(function ($att) use ($date) {
+                return strpos($att->date_time_in, $date) !== false && $att->attendance_timetable_id == 1;
+            })->first();
+        
             if (!$attendance || $attendance->is_attend == 0) {
+                Log::info('jumpa : ', ['attendance' => $attendance]);
                 if ($previousDate) {
                     $daysDifference = Carbon::createFromFormat('m/d/y', $date)->diffInDays($previousDate);
                     if ($daysDifference == 1 && in_array(Carbon::createFromFormat('m/d/y', $date)->dayOfWeek, [0, 1, 2, 3, 4])) {
@@ -693,7 +705,8 @@ class AttendanceController extends Controller
                     $currentContinuousDates = [$date];
                 }
                 $allAbsentDates[] = $date;
-                $previousDate = Carbon::createFromFormat('m/d/y', $date);
+                $previousDate = $date;
+                Log::info('previous date records : ', ['date' => $previousDate]);
             } else {
                 if ($currentContinuousCount > 0) {
                     $continuousAbsences[] = [
@@ -706,13 +719,14 @@ class AttendanceController extends Controller
                 $previousDate = null;
             }
         }
-
+        
         if ($currentContinuousCount > 0) {
             $continuousAbsences[] = [
                 'count' => $currentContinuousCount,
                 'dates' => $currentContinuousDates,
             ];
         }
+
 
         // Calculate non-continuous absences by excluding continuous absence dates
         $continuousAbsentDates = array_merge(...array_column($continuousAbsences, 'dates'));
@@ -851,7 +865,11 @@ class AttendanceController extends Controller
             $previousDate = null;
 
             foreach ($allDates as $date) {
-                $attendance = $attendances->firstWhere('date_time_in', 'like', "%$date%");
+                // Filter attendance records for the specific date and timetable ID
+                $attendance = $attendances->filter(function ($att) use ($date) {
+                    return strpos($att->date_time_in, $date) !== false && $att->attendance_timetable_id == 1;
+                })->first();
+        
                 if (!$attendance || $attendance->is_attend == 0) {
                     if ($previousDate) {
                         $daysDifference = Carbon::createFromFormat('m/d/y', $date)->diffInDays($previousDate);
@@ -914,10 +932,12 @@ class AttendanceController extends Controller
             sort($allContinuousDates);
             $datesCount = count($allContinuousDates);
 
+            $totalday = $totalContinuousAbsences;
+
             // Generate warnings based on thresholds
             if ($totalContinuousAbsences >= $firstWarningThreshold) {
                 $warnings[] = '1st warning: Continuous absences from ' . $allContinuousDates[0] . ' to ' . ($allContinuousDates[min(2, $datesCount - 1)] ?? end($allContinuousDates));
-                $totalday = $totalContinuousAbsences;
+                
             }
             if ($totalContinuousAbsences >= $secondWarningThreshold) {
                 $start = min(3, $datesCount - 1);

@@ -14,8 +14,8 @@
         }
 
         img {
-            height: 50%;
-            width: 50%;
+            height: 100px; /* Adjusted height for better alignment */
+            width: auto;
         }
 
         header {
@@ -27,20 +27,23 @@
         .header-container {
             display: flex;
             align-items: center; /* Vertically align items in the center */
+            justify-content: center; /* Center horizontally */
+            text-align: center; /* Center text */
         }
 
         .logo-container {
-            margin-right: 0px; /* Add some space between the logo and the text */
+            margin-right: 20px; /* Space between logo and text */
         }
 
         .text-container {
             display: flex;
             flex-direction: column;
+            align-items: center; /* Center text within the container */
         }
 
-        .text-container h1 h2 {
-            margin: 0;
-            align-items: center;
+        .text-container h1, .text-container h2 {
+            margin: 0; /* Remove default margins */
+            line-height: 1.2; /* Adjust line height for better spacing */
         }
 
         h1 {
@@ -53,6 +56,7 @@
 
         h3 {
             margin-left: 15px;
+            margin-right: 15px;
             font-size: 17px;
             text-decoration: underline;
         }
@@ -63,14 +67,27 @@
 
         p, h4 {
             margin-left: 15px;
+            margin-right: 15px;
         }
 
         .table {
             margin-left: 15px;
+            margin-right: 15px;
         }
 
         .parentName, .street, .taman, .postal, .city {
             text-decoration: underline;
+        }
+
+        @media print {
+            @page {
+                margin: 0;  /* Removes margins from the printed page */
+            }
+            
+            /* Hides browser-generated headers and footers */
+            body::before, body::after {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -114,7 +131,7 @@
         </table>
         <br>
         <p class="bil_hari">a.   Bilangan hari tidak hadir berjumlah   : 39 HARI</p>
-        <p>2. Sila maklumi pihak sekolah dengan berhubung dengan Pengetua atau Penolong Kanan HEM dalam tempoh 7 hari dari tarikh surat ini.</p>
+        <p>2. Sila maklumkan kepada pihak sekolah dengan berhubung dengan Pengetua atau Penolong Kanan HEM dalam tempoh 7 hari dari tarikh surat ini.</p>
         <p>3. Mengikut Peraturan Sekolah, anak jagaan tuan boleh dikenakan tindakan buang sekolah jika tidak hadir tanpa apa-apa kenyataan yang munasabah daripada ibu bapa atau penjaga.</p>
         <br>
         <p>Sekian dimaklumkan, Terima Kasih.</p>
@@ -122,13 +139,14 @@
         <p>Saya yang menurut perintah,</p>
         <br><br>
         <p>_________________________</p>
+        <p>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
     </form>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Retrieve the JSON string from sessionStorage
             var storedStudentWarning = JSON.parse(sessionStorage.getItem('studentWarning'));
-            console.log("here: ", storedStudentWarning)
+            console.log("here: ", storedStudentWarning);
 
             // Extract details from the stored data
             var student_name = storedStudentWarning.student_name;
@@ -222,8 +240,6 @@
                     row.appendChild(cell);
                     tableBody.appendChild(row);
                 });
-
-              
             }
 
             populateWarnings(warnings);
