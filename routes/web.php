@@ -200,7 +200,13 @@ Route::get('/absentiesDocument', function (Illuminate\Http\Request $request) {
     return view('SMAJU.absentiesDocument', ['document_path' => $document_path]);
 });
 
+Route::get('/list-warning', function () {
+    return view('SMAJU.listWarning');
+})->name('list-warning');
 
+Route::get('/warning-letter', function () {
+    return view('SMAJU.warningLetter');
+})->name('warning-letter');
 //parent
 
 
@@ -363,6 +369,7 @@ Route::prefix('Student')->middleware(['auth:staff'])->group(function() {
     Route::put('update/{id}',[StudentController::class,'updateStudent']);
     Route::put('delete/{id}',[StudentController::class,'DeleteStudent']);
     Route::get('total-alumni', [StudentController::class, 'totalAlumni']);
+    Route::post('{id}',[StudentController::class,'getParentInfo']);
 
 });
 
@@ -404,6 +411,8 @@ Route::prefix('Attendance')->middleware(['auth:staff'])->group(function() {
     Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry']);
     Route::post('list-attend', [AttendanceController::class, 'getListAttend']);
     Route::post('recordAttendanceLeave', [AttendanceController::class, 'recordAttendanceLeave']);
+    Route::post('listOfWarning', [AttendanceController::class, 'listOfWarning']);
+
 });
 
 Route::prefix('ParentGuardianApps')->middleware(['auth:sanctum'])->group(function() {

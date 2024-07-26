@@ -603,4 +603,26 @@ class StudentController extends Controller
             ], 404);
         }
     }
+
+    public function getParentInfo($id)
+    {
+        // Retrieve the student by their ID
+        $student = Student::with('parentGuardian')->find($id);
+
+        // Check if the student and their parent exist
+        if ($student && $student->parentGuardian) {
+            $parentName = $student->parentGuardian->name;
+            $parentAddress = $student->parentGuardian->address;
+
+            return response([
+                'parent_name' => $parentName,
+                'parent_address' => $parentAddress,
+                'message' => 'Successfully retrieved parent information'
+            ], 200);
+        } else {
+            return response([
+                'message' => 'Parent information not found for the given student ID.'
+            ], 404);
+        }
+    }
 }
