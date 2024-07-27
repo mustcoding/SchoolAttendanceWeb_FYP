@@ -143,118 +143,125 @@
     </form>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Retrieve the JSON string from sessionStorage
-            var storedStudentWarning = JSON.parse(sessionStorage.getItem('studentWarning'));
-            console.log("here: ", storedStudentWarning);
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                // Retrieve the JSON string from sessionStorage
+                var storedStudentWarning = JSON.parse(sessionStorage.getItem('studentWarning'));
+                console.log("here: ", storedStudentWarning);
 
-            // Extract details from the stored data
-            var student_name = storedStudentWarning.student_name;
-            var classs = storedStudentWarning.class;
-            var totalDay = storedStudentWarning.total_day;
-            var student_id = storedStudentWarning.student_id;
-            var warnings = storedStudentWarning.warnings;
+                // Extract details from the stored data
+                var student_name = storedStudentWarning.student_name;
+                var classs = storedStudentWarning.class;
+                var totalDay = storedStudentWarning.total_day;
+                var student_id = storedStudentWarning.student_id;
+                var warnings = storedStudentWarning.warnings;
 
-            console.log("name: ", student_name);
+                console.log("name: ", student_name);
 
-            fetchParent(student_id);
-            const currentDate = getCurrentDateFormatted();
-            document.querySelector('.tarikh').textContent = `Tarikh: ${currentDate}`;
+                await fetchParent(student_id);
+                const currentDate = getCurrentDateFormatted();
+                document.querySelector('.tarikh').textContent = `Tarikh: ${currentDate}`;
 
-            document.querySelector('.main').textContent = `
-                Saya dengan ini memaklumkan bahawa anak jagaan tuan ${student_name} di tingkatan ${classs} 
-                telah tidak hadir ke sekolah seperti berikut:
-            `;
+                document.querySelector('.main').textContent = `
+                    Saya dengan ini memaklumkan bahawa anak jagaan tuan ${student_name} di tingkatan ${classs} 
+                    telah tidak hadir ke sekolah seperti berikut:
+                `;
 
-            document.querySelector('.bil_hari').textContent = `
-                a. Bilangan hari tidak hadir berjumlah : ${totalDay} HARI.
-            `;
+                document.querySelector('.bil_hari').textContent = `
+                    a. Bilangan hari tidak hadir berjumlah : ${totalDay} HARI.
+                `;
 
-            function fetchParent(student_id) {
-                const data = { id: student_id };
+                populateWarnings(warnings);
 
-                fetch('/Student/' + student_id, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    var parent_name = data.parent_name;
-                    var address = data.parent_address;
+                // Add a small delay to ensure the DOM is fully updated
+                setTimeout(() => {
+                    printData();
+                }, 500);
 
-                    document.querySelector('.parentName').textContent = parent_name;
-                    const splitData = splitAddress(address);
-                    document.querySelector('.street').textContent = splitData.part1;
-                    document.querySelector('.taman').textContent = splitData.part2;
-                    document.querySelector('.postal').textContent = splitData.part3;
-                })
-                .catch(error => {
-                    console.error('Error during fetch:', error);
-                });
-            }
-
-            function splitAddress(address) {
-                const kampungPattern = /(.*?)(KAMPUNG|TAMAN)/;
-                const postcodePattern = /(\d{5})\s*(.*)$/;
-
-                const kampungMatch = address.match(kampungPattern);
-                const part1 = kampungMatch ? kampungMatch[1].trim() : address;
-
-                const remainingAddress = address.replace(part1, '').trim();
-
-                const postcodeMatch = remainingAddress.match(postcodePattern);
-                const part3 = postcodeMatch ? postcodeMatch[1] : '';
-                const part4 = postcodeMatch ? postcodeMatch[2].trim() : '';
-
-                const remainingAddress2 = remainingAddress.replace(part3 + ' ' + part4, '').trim();
-                const part2 = remainingAddress2.split(/(?<=\d{5})\s*/)[0].trim();
-
-                return {
-                    part1: part1,
-                    part2: part2,
-                    part3: part3 + ' ' + part4,
-                };
-            }
-
-            function getCurrentDateFormatted() {
-                const months = [
-                    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-                    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-                ];
-
-                const now = new Date();
-                const day = now.getDate();
-                const month = months[now.getMonth()];
-                const year = now.getFullYear();
-
-                return `${day} ${month} ${year}`;
-            }
-
-            function populateWarnings(warnings) {
-                const tableBody = document.getElementById('warningTableBody');
-                warnings.forEach((warning, index) => {
-                    const row = document.createElement('tr');
-                    const cell = document.createElement('td');
-                    cell.textContent = `${warning}`;
-                    row.appendChild(cell);
-                    tableBody.appendChild(row);
-                });
-            }
-
-            populateWarnings(warnings);
-
-            printData();
-
-            setTimeout(() => {
-                window.location.href = "/list-warning";
-            }, 500);
-            
-            function printData() {
-                // You can add additional styling or logic here if needed
-                window.print();
+                // Redirect after printing
+                setTimeout(() => {
+                    window.location.href = "/list-warning";
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error:', error);
             }
         });
+
+        async function fetchParent(student_id) {
+            const data = { id: student_id };
+
+            const response = await fetch('/Student/' + student_id, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const parentData = await response.json();
+            var parent_name = parentData.parent_name;
+            var address = parentData.parent_address;
+
+            console.log("parent_name : ", parent_name);
+            console.log("address : ", address);
+            document.querySelector('.parentName').textContent = parent_name;
+            const splitData = splitAddress(address);
+            document.querySelector('.street').textContent = splitData.part1;
+            document.querySelector('.taman').textContent = splitData.part2;
+            document.querySelector('.postal').textContent = splitData.part3;
+        }
+
+        function splitAddress(address) {
+            const kampungPattern = /(.*?)(KAMPUNG|TAMAN)/;
+            const postcodePattern = /(\d{5})\s*(.*)$/;
+
+            const kampungMatch = address.match(kampungPattern);
+            const part1 = kampungMatch ? kampungMatch[1].trim() : address;
+
+            const remainingAddress = address.replace(part1, '').trim();
+
+            const postcodeMatch = remainingAddress.match(postcodePattern);
+            const part3 = postcodeMatch ? postcodeMatch[1] : '';
+            const part4 = postcodeMatch ? postcodeMatch[2].trim() : '';
+
+            const remainingAddress2 = remainingAddress.replace(part3 + ' ' + part4, '').trim();
+            const part2 = remainingAddress2.split(/(?<=\d{5})\s*/)[0].trim();
+
+            return {
+                part1: part1,
+                part2: part2,
+                part3: part3 + ' ' + part4,
+            };
+        }
+
+        function getCurrentDateFormatted() {
+            const months = [
+                "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+            ];
+
+            const now = new Date();
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+
+            return `${day} ${month} ${year}`;
+        }
+
+        function populateWarnings(warnings) {
+            const tableBody = document.getElementById('warningTableBody');
+            warnings.forEach((warning, index) => {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.textContent = `${warning}`;
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+            });
+        }
+
+        function printData() {
+             // You can add additional styling or logic here if needed
+             window.print();
+        }
     </script>
 </body>
 </html>
