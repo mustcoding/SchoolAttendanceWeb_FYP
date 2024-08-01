@@ -207,6 +207,10 @@ Route::get('/list-warning', function () {
 Route::get('/warning-letter', function () {
     return view('SMAJU.warningLetter');
 })->name('warning-letter');
+
+Route::get('/autoMessage', function () {
+    return view('SMAJU.autoMessage');
+})->name('autoMessage');
 //parent
 
 
@@ -238,6 +242,7 @@ Route::post('attendanceWarning',[AttendanceController::class, 'getAttendanceWarn
 
 Route::post('register',[StaffController::class,'registerStaff']);
 
+Route::post('sendMessage',[AttendanceController::class,'sendMessage']);
 
 
 // Protected routes
