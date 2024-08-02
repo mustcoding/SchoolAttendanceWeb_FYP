@@ -936,37 +936,37 @@ class AttendanceController extends Controller
 
                 // Generate warnings based on thresholds
                 if ($totalContinuousAbsences >= $firstWarningThreshold) {
-                    $warnings[] = '1st warning: Continuous absences from ' . $allContinuousDates[0] . ' to ' . ($allContinuousDates[min(2, $datesCount - 1)] ?? end($allContinuousDates));
+                    $warnings[] = 'Amaran Pertama : Tidak hadir secara berturut-turut bermula ' . $allContinuousDates[0] . ' sehingga ' . ($allContinuousDates[min(2, $datesCount - 1)] ?? end($allContinuousDates));
                     
                 }
                 if ($totalContinuousAbsences >= $secondWarningThreshold) {
                     $start = min(3, $datesCount - 1);
                     $end = min(9, $datesCount - 1);
-                    $warnings[] = '2nd warning: Continuous absences from ' . $allContinuousDates[$start] . ' to ' . ($allContinuousDates[$end] ?? end($allContinuousDates));
+                    $warnings[] = 'Amaran Kedua :  Tidak hadir secara berturut-turut bermula ' . $allContinuousDates[$start] . ' sehingga ' . ($allContinuousDates[$end] ?? end($allContinuousDates));
                 }
                 if ($totalContinuousAbsences >= $thirdWarningThreshold) {
                     $start = min(10, $datesCount - 1);
                     $end = min(17, $datesCount - 1);
-                    $warnings[] = '3rd warning: Continuous absences from ' . $allContinuousDates[$start] . ' to ' . ($allContinuousDates[$end] ?? end($allContinuousDates));
+                    $warnings[] = 'Amaran Ketiga : Tidak hadir secara berturut-turut bermula ' . $allContinuousDates[$start] . ' sehingga ' . ($allContinuousDates[$end] ?? end($allContinuousDates));
                 }
                 if ($totalContinuousAbsences >= $suspensionThreshold) {
-                    $warnings[] = 'Student can be suspended due to continuous absences exceeding 31 days.';
+                    $warnings[] = 'Student boleh digantung/dibuang sekolah kerana tidak hadir ke sekolah melebihi 31 hari waktu persekolahan.';
                 }
 
                 // Determine warnings based on non-continuous absences
                 $totalNonContinuousAbsences = count($filteredNonContinuousAbsences);
                 
                 if ($totalNonContinuousAbsences >= $firstWarningUncontinuous) {
-                    $warnings[] = '1st warning: Non-continuous absences on ' . implode(', ', array_slice($filteredNonContinuousAbsences, 0, $firstWarningUncontinuous));
+                    $warnings[] = 'Amaran Pertama : Tidak hadir secara berkala pada ' . implode(', ', array_slice($filteredNonContinuousAbsences, 0, $firstWarningUncontinuous));
                 }
                 if ($totalNonContinuousAbsences >= $secondWarningUncontinuous) {
-                    $warnings[] = '2nd warning: Non-continuous absences on ' . implode(', ', array_slice($filteredNonContinuousAbsences, $firstWarningUncontinuous, $secondWarningUncontinuous - $firstWarningUncontinuous));
+                    $warnings[] = 'Amaran Kedua : Tidak hadir secara berkala pada ' . implode(', ', array_slice($filteredNonContinuousAbsences, $firstWarningUncontinuous, $secondWarningUncontinuous - $firstWarningUncontinuous));
                 }
                 if ($totalNonContinuousAbsences >= $thirdWarningUncontinuous) {
-                    $warnings[] = '3rd warning: Non-continuous absences on ' . implode(', ', array_slice($filteredNonContinuousAbsences, $secondWarningUncontinuous, $thirdWarningUncontinuous - $secondWarningUncontinuous));
+                    $warnings[] = 'Amaran Ketiga : Tidak hadir secara berkala pada ' . implode(', ', array_slice($filteredNonContinuousAbsences, $secondWarningUncontinuous, $thirdWarningUncontinuous - $secondWarningUncontinuous));
                 }
                 if ($totalNonContinuousAbsences >= $suspensionUncontinuous) {
-                    $warnings[] = 'Student can be suspended due to non-continuous absences exceeding 60 days.';
+                    $warnings[] = 'Student boleh digantung/dibuang sekolah kerana tidak hadir ke sekolah melebihi 60 hari waktu persekolahan.';
                 }
 
                 // Combine form number and class name
