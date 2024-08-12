@@ -70,6 +70,21 @@
             const seconds = String(date.getSeconds()).padStart(2, '0');
 
             const formattedDate = `${dayName} ${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+           // Truncate table at specific time
+            const timeTruncate = `${hours}:${minutes}:${seconds}`;
+            if (timeTruncate >= '00:48:00' && timeTruncate <= '00:48:30') {
+                try {
+                    const response = fetch('/truncateTable', { method: 'POST' });
+                    if (response.ok) {
+                        console.log("Table truncated successfully.");
+                    } else {
+                        console.error("Failed to truncate table:", response.status, response.statusText);
+                    }
+                } catch (error) {
+                    console.error("Error connecting to the truncation endpoint:", error);
+                }
+            }
             
             document.getElementById('date-time').textContent = formattedDate;
         }
@@ -91,29 +106,29 @@
         // }
 
         async function fetchAttendanceType() {
-    try {
-        const response = await fetch('/attendanceType');
-        const data = await response.json();
-        console.log('Attendance type data:', data);
+            try {
+                const response = await fetch('/attendanceType');
+                const data = await response.json();
+                console.log('Attendance type data:', data);
 
-        // Iterate over the keys in the response object
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                const attendanceType = data[key];
-                const name = attendanceType.name;
-                const start_time = attendanceType.start_time;
-                const end_time = attendanceType.end_time;
+                // Iterate over the keys in the response object
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        const attendanceType = data[key];
+                        const name = attendanceType.name;
+                        const start_time = attendanceType.start_time;
+                        const end_time = attendanceType.end_time;
 
-                const timeFormatted = `${name} (${start_time} - ${end_time})`;
-                document.getElementById('attendanceType').textContent = timeFormatted;
-                break; // Assuming you only want to display the first entry found
+                        const timeFormatted = `${name} (${start_time} - ${end_time})`;
+                        document.getElementById('attendanceType').textContent = timeFormatted;
+                        break; // Assuming you only want to display the first entry found
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
         }
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
 
 
         async function fetchData() {

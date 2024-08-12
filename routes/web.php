@@ -16,6 +16,7 @@ use App\Http\Controllers\StudentImageController;
 use App\Http\Controllers\SchoolSessionClassController;
 use App\Http\Controllers\StudentStudySessionController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\TemporaryAttendanceController;
 use Illuminate\Http\Request;
 
 //------------------ WEB PAGE ------------------------------------
@@ -445,3 +446,4 @@ Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceB
 
 Route::get('studentId', [StudentController::class, 'checkImages']);
 Route::post('findStudents', [StudentController::class, 'getStudentStudySessionByName']);
+Route::post('truncateTable', [TemporaryAttendanceController::class, 'truncateTable']);

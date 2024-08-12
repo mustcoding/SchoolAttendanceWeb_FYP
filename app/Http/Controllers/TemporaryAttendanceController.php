@@ -11,9 +11,10 @@ class TemporaryAttendanceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function truncateTable()
     {
-        //
+        
+        temporary_attendance::truncate();
     }
 
     /**
