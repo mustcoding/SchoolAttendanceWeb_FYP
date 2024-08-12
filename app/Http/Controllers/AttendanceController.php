@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Student;
 use App\Models\SchoolSession;
+use App\Models\temporary_attendance;
 use App\Models\StudentStudySession;
 use App\Models\AttendanceTimetable;
 use App\Models\AbsentSupportingDocument;
@@ -90,15 +91,76 @@ class AttendanceController extends Controller
                 ], 404);
             }
 
-            // If the student is not a DAILY STUDENT or if the occurrence type is not 'SUNDAY TO THURSDAY', proceed to record the attendance
-            $attendance = Attendance::create([
-                'date_time_in' => $request->input('date_time_in'),
-                'date_time_out' => $request->input('date_time_out'),
-                'is_attend' => $request->input('is_attend'),
-                'checkpoint_id' => $request->input('checkpoint_id'),
-                'attendance_timetable_id' => $request->input('attendance_timetable_id'),
-                'student_study_session_id' => $request->input('student_study_session_id'),
-            ]);
+            //record attendance when using data entry
+            if($request->input('checkpoint_id') == 1){
+                // If the student is not a DAILY STUDENT or if the occurrence type is not 'SUNDAY TO THURSDAY', proceed to record the attendance
+                $attendance = Attendance::create([
+                    'date_time_in' => $request->input('date_time_in'),
+                    'date_time_out' => $request->input('date_time_out'),
+                    'is_attend' => $request->input('is_attend'),
+                    'checkpoint_id' => $request->input('checkpoint_id'),
+                    'attendance_timetable_id' => $request->input('attendance_timetable_id'),
+                    'student_study_session_id' => $request->input('student_study_session_id'),
+                ]);
+            }
+            else{
+               
+                if ($request->input('attendance_timetable_id') == 1) {
+                    // Extract the date part from date_time_in
+                    $datePart = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'))->format('m/d/y');
+                
+                    // Check if a record with the same date part already exists in the temporary_attendance table
+                    $existingTemporaryAttendance = temporary_attendance::where('attendance_timetable_id', $request->input('attendance_timetable_id'))
+                        ->where('student_study_session_id', $request->input('student_study_session_id'))
+                        ->where('checkpoint_id', $request->input('checkpoint_id'))
+                        ->whereRaw('DATE(date_time_in) = ?', [$datePart])
+                        ->first();
+                
+                    if ($existingTemporaryAttendance) {
+                        // Check if the platform is different before adding to the Attendance table
+                        if ($existingTemporaryAttendance->platform !== $request->input('platform')) {
+                            // If the platform is different, proceed to record the attendance
+                            $attendance = Attendance::create([
+                                'date_time_in' => $request->input('date_time_in'),
+                                'date_time_out' => $request->input('date_time_out'),
+                                'is_attend' => $request->input('is_attend'),
+                                'checkpoint_id' => $request->input('checkpoint_id'),
+                                'attendance_timetable_id' => $request->input('attendance_timetable_id'),
+                                'student_study_session_id' => $request->input('student_study_session_id'),
+                            ]);
+                        }
+                        else{
+                            // Return success response with 200 status code
+                            return response()->json([
+                                'message' => 'Waiting For Another Method',
+                            ], 407);
+                        }
+                    } else {
+                        // If no record exists with the same date, proceed to create the new record in temporary_attendance
+                        $attendance = temporary_attendance::create([
+                            'date_time_in' => $request->input('date_time_in'),
+                            'date_time_out' => $request->input('date_time_out'),
+                            'is_attend' => $request->input('is_attend'),
+                            'checkpoint_id' => $request->input('checkpoint_id'),
+                            'attendance_timetable_id' => $request->input('attendance_timetable_id'),
+                            'student_study_session_id' => $request->input('student_study_session_id'),
+                            'platform' => $request->input('platform'),
+                        ]);
+                    }
+                }
+                else{
+                    // If the student is not a DAILY STUDENT or if the occurrence type is not 'SUNDAY TO THURSDAY', proceed to record the attendance
+                    $attendance = Attendance::create([
+                        'date_time_in' => $request->input('date_time_in'),
+                        'date_time_out' => $request->input('date_time_out'),
+                        'is_attend' => $request->input('is_attend'),
+                        'checkpoint_id' => $request->input('checkpoint_id'),
+                        'attendance_timetable_id' => $request->input('attendance_timetable_id'),
+                        'student_study_session_id' => $request->input('student_study_session_id'),
+                    ]);
+                }
+            }
+            
 
             // Return success response with 200 status code
             return response()->json([

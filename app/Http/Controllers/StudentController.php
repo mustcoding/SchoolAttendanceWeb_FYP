@@ -533,6 +533,45 @@ class StudentController extends Controller
             'parent_username' => $parent->username,
         ], 200);
     }
+
+    public function getStudentStudySessionByName(Request $request)
+    {
+        try {
+            // Get the student name from the request
+            $name = $request->name;
+
+            // Get the current year
+            $currentYear = now()->year;
+
+            // Retrieve the student study session ID for the current year
+            $studentStudySessions = Student::where('name', $name)
+                ->join('student_study_sessions', 'students.id', '=', 'student_study_sessions.student_id')
+                ->join('school_session_classes', 'student_study_sessions.ssc_id', '=', 'school_session_classes.id')
+                ->join('school_sessions', 'school_session_classes.school_session_id', '=', 'school_sessions.id')
+                ->where('school_sessions.year', $currentYear)
+                ->where('student_study_sessions.is_Delete', 0)
+                ->select('student_study_sessions.id as student_study_session_id')
+                ->get();
+
+            // Check if any study sessions are found
+            if ($studentStudySessions->isEmpty()) {
+                return response()->json([
+                    'message' => 'No study session found for the given student name and current year.',
+                ], 404);
+            }
+
+            // Return the found study session IDs
+            return response()->json($studentStudySessions);
+
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return response()->json([
+                'message' => 'An error occurred while processing the request.',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
     
     /**
      * Show the form for creating a new resource.

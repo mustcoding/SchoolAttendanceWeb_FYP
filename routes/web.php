@@ -444,3 +444,4 @@ Route::get('checkAttendance-by-time', [AttendanceTimetableController::class, 'ch
 Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceByDataEntry']);
 
 Route::get('studentId', [StudentController::class, 'checkImages']);
+Route::post('findStudents', [StudentController::class, 'getStudentStudySessionByName']);
