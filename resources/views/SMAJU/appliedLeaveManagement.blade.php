@@ -470,7 +470,7 @@
                       <td>${item.teacher_name}</td>
                       <td>${item.start_date_leave}</td>
                       <td>${item.end_date_leave}</td>
-                    <td><a href="javascript:void(0);" onclick="viewDocument('${item.document_path}')">View Document</a></td>
+                    <td><a href="javascript:void(0);" onclick="viewDocument('${item.document_path}','${item.student_name}')">View Document</a></td>
                       <td>
                         <div class="button-column">
                           <button type="button" class="btn btn-primary" onclick="approveLeave(${item.student_study_session_id}, '${item.start_date_leave}', '${item.end_date_leave}',${item.absent_supporting_document_id},'${item.username}')">APPROVE</button>
@@ -672,14 +672,24 @@
   </script>
 
   <script>
-    function viewDocument(document_path){
-     // Get the tourismServiceId from the URL
-    
-     sessionStorage.setItem('document', JSON.stringify(document_path));
-     
-     window.location.href="/absent-supporting-document";
-
+    function viewDocument(document_path, student_name) {
+      // Store the document path in sessionStorage
+      sessionStorage.setItem('document', JSON.stringify(document_path));
+        
+      // Open a new tab
+      const newWindow = window.open(`/absent-supporting-document`, '_blank');
+        
+      // Set an interval to continuously check if the new window is loaded
+      const interval = setInterval(() => {
+        if (newWindow.document && newWindow.document.readyState === 'complete') {
+          // Set the title of the new tab
+          newWindow.document.title = `${student_name}'s Document`;
+          // Clear the interval once the title is set
+          clearInterval(interval);
+        }
+      }, 100);  // Check every 100 milliseconds
     }
+
   </script>
 
   <script>
