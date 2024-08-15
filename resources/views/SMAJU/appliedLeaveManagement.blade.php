@@ -470,7 +470,7 @@
                       <td>${item.teacher_name}</td>
                       <td>${item.start_date_leave}</td>
                       <td>${item.end_date_leave}</td>
-                    <td><a href="absentiesDocument?document_path=${item.document_path}" onclick="viewDocument('${item.document_path}')">View Document</a></td>
+                    <td><a href="javascript:void(0);" onclick="viewDocument('${item.document_path}')">View Document</a></td>
                       <td>
                         <div class="button-column">
                           <button type="button" class="btn btn-primary" onclick="approveLeave(${item.student_study_session_id}, '${item.start_date_leave}', '${item.end_date_leave}',${item.absent_supporting_document_id},'${item.username}')">APPROVE</button>
@@ -676,7 +676,8 @@
      // Get the tourismServiceId from the URL
     
      sessionStorage.setItem('document', JSON.stringify(document_path));
-     window.open(`absentiesDocument`,'_self');
+     
+     window.location.href="/absent-supporting-document";
 
     }
   </script>

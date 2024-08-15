@@ -192,14 +192,11 @@ Route::get('/applied-leave-management', function () {
     return view('SMAJU.appliedLeaveManagement');
 })->name('appliedLeaveManagement');
 
-Route::get('/pdf/{documentPath}', function(){
+Route::get('/absent-supporting-document', function(){
     return view('SMAJU.absentiesDocument');
 });
 
-Route::get('/absentiesDocument', function (Illuminate\Http\Request $request) {
-    $document_path = $request->query('document_pth');
-    return view('SMAJU.absentiesDocument', ['document_path' => $document_path]);
-});
+
 
 Route::get('/list-warning', function () {
     return view('SMAJU.listWarning');
