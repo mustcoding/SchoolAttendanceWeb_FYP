@@ -1012,7 +1012,7 @@ class AttendanceController extends Controller
                     $warnings[] = 'Amaran Ketiga : Tidak hadir secara berturut-turut bermula ' . $allContinuousDates[$start] . ' sehingga ' . ($allContinuousDates[$end] ?? end($allContinuousDates));
                 }
                 if ($totalContinuousAbsences >= $suspensionThreshold) {
-                    $warnings[] = 'Student boleh digantung/dibuang sekolah kerana tidak hadir ke sekolah melebihi 31 hari waktu persekolahan.';
+                    $warnings[] = 'Pelajar boleh digantung/dibuang sekolah kerana tidak hadir ke sekolah melebihi 31 hari waktu persekolahan.';
                 }
 
                 // Determine warnings based on non-continuous absences
@@ -1028,7 +1028,7 @@ class AttendanceController extends Controller
                     $warnings[] = 'Amaran Ketiga : Tidak hadir secara berkala pada ' . implode(', ', array_slice($filteredNonContinuousAbsences, $secondWarningUncontinuous, $thirdWarningUncontinuous - $secondWarningUncontinuous));
                 }
                 if ($totalNonContinuousAbsences >= $suspensionUncontinuous) {
-                    $warnings[] = 'Student boleh digantung/dibuang sekolah kerana tidak hadir ke sekolah melebihi 60 hari waktu persekolahan.';
+                    $warnings[] = 'Pelajar boleh digantung/dibuang sekolah kerana tidak hadir ke sekolah melebihi 60 hari waktu persekolahan.';
                 }
 
                 // Combine form number and class name

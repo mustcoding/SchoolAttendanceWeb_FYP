@@ -234,6 +234,11 @@
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
+        <li>
+          <a href="{{route('list-warning')}}">
+            <i class="bi bi-circle"></i><span>LIST WARNING</span>
+          </a>
+        </li>
      
   </ul>
 </li><!-- End Components Nav -->
