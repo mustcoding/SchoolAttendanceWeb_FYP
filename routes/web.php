@@ -359,6 +359,7 @@ Route::prefix('ADS')->middleware(['auth:staff'])->group(function() {
     Route::get('applied-leave', [AbsentSupportingDocumentController::class, 'getAppliedLeave']);
     Route::get('/documents/{id}',[AbsentSupportingDocumentController::class, 'viewDocument'])->name('documents.show');
     Route::put('updateStatus',[AbsentSupportingDocumentController::class,'updateStatus']);
+    Route::put('delete',[AbsentSupportingDocumentController::class,'DeleteLeave']);
 });
 
 Route::prefix('Student')->middleware(['auth:staff'])->group(function() {
@@ -368,7 +369,7 @@ Route::prefix('Student')->middleware(['auth:staff'])->group(function() {
     Route::post('add-image/{id}',[StudentImageController::class,'addImage']);
     Route::post('get-by-birthYear',[StudentController::class,'getStudentByBirthYear']);
     Route::get('all-data', [StudentController::class, 'getAllStudents']);
-    Route::post('{id}',[StudentController::class,'studentById']);
+    Route::post('findStudent',[StudentController::class,'studentById']);
     Route::put('update/{id}',[StudentController::class,'updateStudent']);
     Route::put('delete/{id}',[StudentController::class,'DeleteStudent']);
     Route::get('total-alumni', [StudentController::class, 'totalAlumni']);
@@ -431,8 +432,8 @@ Route::prefix('ParentGuardianApps')->middleware(['auth:sanctum'])->group(functio
     Route::post('ListPresent', [AttendanceController::class, 'ListPresent']);
     Route::post('ListLeave', [AttendanceController::class, 'ListLeave']);
     Route::post('ListAbsent', [AttendanceController::class, 'ListAbsent']);
-});
 
+});
 //record attendance by arduino
 
 Route::post('retrieve-rfid-id',[RfidController::class,'getRFIDid']);

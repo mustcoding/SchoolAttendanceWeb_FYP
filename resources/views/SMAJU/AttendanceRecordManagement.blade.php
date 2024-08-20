@@ -249,7 +249,7 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Record Student Attendance</h1>
+    <h1 id="attendanceTitle">Record Student Attendance</h1>
     </div><!-- End Page Title -->
 
     <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
@@ -387,7 +387,7 @@
   
     // Function to fetch data from the server
     function fetchData() {
-      fetch('/Student/all-data')
+      fetch('/student-data/all-data')
         .then(response => response.json())
         .then(data => {
           // Call a function to update the table with the fetched data
@@ -513,6 +513,58 @@
         var staffId = storedStaffProfile.staffId;
         var token = storedToken;
         console.log("Staff Token: ",token);
+
+        // Get current time and day
+        var currentDate = new Date();
+        var days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        var day = days[currentDate.getDay()];
+
+        var hours = currentDate.getHours().toString().padStart(2, '0');
+        var minutes = currentDate.getMinutes();
+
+        var currentTime = hours+":"+minutes;
+
+        console.log("day: ",day);
+        console.log("current time: ",currentTime);
+
+        const data = {
+          day: day,
+          currentTime: currentTime,
+        };
+
+        fetch('/AttendanceTimetable/attendanceDisplay', {
+            method: 'POST', // Use the POST method
+            headers: {
+                'Content-Type': 'application/json' // Set the content type to JSON
+            },
+            body: JSON.stringify(data) // Convert the data object to a JSON string
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
+                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
+                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alertNoTime"]').style.display = 'block';
+      
+            }
+        })
+        .then(data => {
+          var currentDate = new Date(); // Create a new Date object
+          var date = currentDate.getDate() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getFullYear(); // Format the date as 'dd-mm-yyyy'
+  
+          var name = "Record Attendance For "+data.attendanceTimetable.name+" --> "+day+" ("+ date+")";
+
+          // Update the HTML content with the retrieved value
+          document.getElementById("attendanceTitle").textContent = name;
+
+
+
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+
 
         fetchData();
         fetchUser(staffId);

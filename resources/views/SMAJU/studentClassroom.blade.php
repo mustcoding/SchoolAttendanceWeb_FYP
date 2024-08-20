@@ -259,7 +259,7 @@
     </div>
 
     <div class="pagetitle">
-      <h1>Add New School Session</h1>
+      <h1>Add New Classroom By Session</h1>
     </div><!-- End Page Title -->
 
     <section class="section">
@@ -268,7 +268,7 @@
 
           <div class="card">
               <div class="card-body">
-                <h5 class="card-title">School Session Details</h5>
+                <h5 class="card-title">Classroom By Session Details</h5>
 
                 <!-- Custom Styled Validation -->
                 <form id="schoolSessionForm" class="row g-3 needs-validation" validate>
@@ -468,7 +468,7 @@
       }
 
     function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      window.location.href = '/indexAdmin';
     }
 </script>
 
@@ -635,7 +635,7 @@ function fetchUser(staffId)
       // Iterate over the data and create dropdown options
       data.forEach((item) => {
           const option = document.createElement('option');
-          option.textContent = "Name: "+ item.name + " , Form: "+item.form_number+ ", Max Capacity: "+item.max_capacity;
+          option.textContent = "Name: "+ item.name + " , Form: "+item.form_number+ ", Max Capacity: "+item.max_capacity+ ", Available Size: "+item.available_size;
           option.value = item.id+"/"+item.available_size;
           classroom.appendChild(option);
       });

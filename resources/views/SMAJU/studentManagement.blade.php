@@ -540,34 +540,38 @@
 
   function deleteStudent(student_id)
   {
-    var is_Delete=1;
-    //Create an object to hold the data you want to send
-    const data = {
-      id : student_id,
-      is_Delete:is_Delete,
-    };
 
-    fetch('/Student/delete/'+student_id, {
-            method: 'PUT', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-    })
-      .then(response => response.json())
-      .then(data => {
-            // Handle the response from the server
-            console.log("Student Successfully deleted ", data);
-            deleteCardRFID(data);
-            deleteTagRFID(data);
-            deleteStudentStudySession(data);
-            
-        })
-      .catch(error => {
-            console.error('Error fetching data:', error);
-      });
+    if (confirm('Are you sure you want to delete this student?')) {
+      var is_Delete=1;
+      //Create an object to hold the data you want to send
+      const data = {
+        id : student_id,
+        is_Delete:is_Delete,
+      };
+
+      fetch('/Student/delete/'+student_id, {
+              method: 'PUT', // Use the POST method
+              headers: {
+              'Content-Type': 'application/json' // Set the content type to JSON
+              },
+              body: JSON.stringify(data) // Convert the data object to a JSON string
+      })
+        .then(response => response.json())
+        .then(data => {
+              // Handle the response from the server
+              console.log("Student Successfully deleted ", data);
+              deleteCardRFID(data);
+              deleteTagRFID(data);
+              deleteStudentStudySession(data);
+              
+          })
+        .catch(error => {
+              console.error('Error fetching data:', error);
+        });
         
     }
+    
+  }
     
   </script>
   <script>

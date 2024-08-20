@@ -109,6 +109,7 @@ class StudentController extends Controller
     {
         // Retrieve the current school session
         $currentSession = SchoolSession::where('is_Delete', 0)->whereYear('start_date', '<=', now())->whereYear('end_date', '>=', now())->first();
+        Log::info('This is an informational message.', $currentSession->toArray());
 
         if (!$currentSession) {
             // If there is no current session, return an empty array or appropriate response
@@ -210,6 +211,7 @@ class StudentController extends Controller
             'card_rfid_number' => $student->cardRfid->number,
             'tag_rfid_number' => $student->tagRfid->number,
             'parent_id' => $student->parentGuardian->id,
+            'type_student' => $student->type_student,
         ];
 
         return response()->json($formattedData);
@@ -324,7 +326,7 @@ class StudentController extends Controller
             $classroomId = $request->classroomId;
 
             // Query to retrieve student data with related parent's name and phone number
-            $students = Student::select('students.*', 'parent_guardians.name as parent_name', 'parent_guardians.phone_number as parent_phone_number')
+            $students = Student::select('students.*', 'parent_guardians.name as parent_name', 'parent_guardians.phone_number as parent_phone_number', 'school_session_classes.id as school_session_class_id')
                 ->join('parent_guardians', 'students.parent_guardian_id', '=', 'parent_guardians.id')
                 ->join('student_study_sessions', 'students.id', '=', 'student_study_sessions.student_id')
                 ->join('school_session_classes', 'student_study_sessions.ssc_id', '=', 'school_session_classes.id')

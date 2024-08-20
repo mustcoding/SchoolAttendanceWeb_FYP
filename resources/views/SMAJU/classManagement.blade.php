@@ -529,32 +529,36 @@
 
   function deleteClassroom(classroom_id)
   {
-    var is_Delete=1;
-    //Create an object to hold the data you want to send
-    const data = {
-      id : classroom_id,
-      is_Delete:is_Delete,
-    };
 
-    fetch('/classroom/delete/'+classroom_id, {
-            method: 'PUT', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-    })
+    if (confirm('Are you sure you want to delete this classroom?')) {
+      var is_Delete=1;
+      //Create an object to hold the data you want to send
+      const data = {
+        id : classroom_id,
+        is_Delete:is_Delete,
+      };
+
+      fetch('/classroom/delete/'+classroom_id, {
+              method: 'PUT', // Use the POST method
+              headers: {
+              'Content-Type': 'application/json' // Set the content type to JSON
+              },
+              body: JSON.stringify(data) // Convert the data object to a JSON string
+      })
       .then(response => response.json())
       .then(data => {
-            // Handle the response from the server
-            console.log("Student Successfully deleted ", data);
-            window.location.href = "/classroomManagement";
-            
-        })
+              // Handle the response from the server
+              console.log("Student Successfully deleted ", data);
+              window.location.href = "/classroomManagement";
+              
+      })
       .catch(error => {
-            console.error('Error fetching data:', error);
+              console.error('Error fetching data:', error);
       });
-        
     }
+   
+        
+  }
     
 
   </script>

@@ -528,30 +528,34 @@
 
   function deleteActivityOccurrence(occurrence_id)
   {
-    var is_Delete=1;
-    //Create an object to hold the data you want to send
-    const data = {
-      id : occurrence_id,
-      is_Delete:is_Delete,
-    };
 
-    fetch('/OccurrenceType/delete/'+occurrence_id, {
-            method: 'PUT', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-    })
-      .then(response => response.json())
-      .then(data => {
-            // Handle the response from the server
-            console.log("Activity Occurrences Successfully deleted ", data);
-            window.location.href = "/activityOccurrenceManagement";
-            
-        })
-      .catch(error => {
-            console.error('Error fetching data:', error);
-      });
+    if (confirm('Are you sure you want to delete this activity occurrences?')) {
+      var is_Delete=1;
+      //Create an object to hold the data you want to send
+      const data = {
+        id : occurrence_id,
+        is_Delete:is_Delete,
+      };
+
+      fetch('/OccurrenceType/delete/'+occurrence_id, {
+              method: 'PUT', // Use the POST method
+              headers: {
+              'Content-Type': 'application/json' // Set the content type to JSON
+              },
+              body: JSON.stringify(data) // Convert the data object to a JSON string
+      })
+        .then(response => response.json())
+        .then(data => {
+              // Handle the response from the server
+              console.log("Activity Occurrences Successfully deleted ", data);
+              window.location.href = "/activityOccurrenceManagement";
+              
+          })
+        .catch(error => {
+              console.error('Error fetching data:', error);
+        });
+    }
+    
         
     }
     

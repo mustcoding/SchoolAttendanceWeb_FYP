@@ -445,8 +445,8 @@
         console.log('Profile dropdown link not found.');
       }
 
-    function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      function returnToIndex(){
+      window.location.href = '/indexAdmin'
     }
 </script>
 

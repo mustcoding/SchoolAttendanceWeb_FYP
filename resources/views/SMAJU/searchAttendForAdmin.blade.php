@@ -226,7 +226,7 @@
         </a>
     </li>
     <li>
-          <a href="{{route('attendance-to-school')}}">
+          <a href="{{route('attend-to-school')}}">
             <i class="bi bi-circle"></i><span>LIST ATTENDANCE</span>
           </a>
         </li>
@@ -454,7 +454,7 @@ function searchForClassSession() {
       }
 
     function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      window.location.href='/indexAdmin';
     }
 </script>
 

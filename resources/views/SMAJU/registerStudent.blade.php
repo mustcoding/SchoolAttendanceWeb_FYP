@@ -555,7 +555,7 @@
     }
 
     function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      window.location.href = '/indexAdmin'
     }
 </script>
 

@@ -356,6 +356,9 @@
         var schoolSessionId = document.getElementById('SchoolSessionId').value;
         var classroomId = document.getElementById('classroomId').value;
 
+        console.log("selected ssc_id : ", schoolSessionId);
+        console.log("selected classroomId : ", classroomId);
+
 
         if (schoolSessionId === '' || classroomId === '')
         {
@@ -410,7 +413,7 @@
       }
 
     function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      window.location.href = '/indexAdmin'
     }
 </script>
 
@@ -550,7 +553,7 @@ function fetchUser(staffId)
   <!--fetch classroom-->
   <script>
       function fetchClassroom(){
-          fetch('/classroom/all-data')
+          fetch('/classroom/list-classroom')
               .then(response => response.json())
               .then(data => {
                 updateClassroomData(data);
@@ -562,7 +565,7 @@ function fetchUser(staffId)
   </script>
 
   <script>
-      function updateClassroomData(data){
+    function updateClassroomData(data){
       const classroom = document.getElementById('classroomId');
       const currentValue = classroom.value; // Store the current selected value
       classroom.innerHTML='';
@@ -586,7 +589,7 @@ function fetchUser(staffId)
       if (currentValue) {
           id.value = currentValue;
       }
-  }
+    }
   </script>
 
 

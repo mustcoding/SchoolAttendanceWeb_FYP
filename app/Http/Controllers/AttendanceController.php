@@ -323,13 +323,13 @@ class AttendanceController extends Controller
     $studentStudySessionId = $request->input('student_study_session_id');
     Log::info('studentStudySessionId: ' . $studentStudySessionId);
 
-    // Retrieve the start date and end date of the school session
     $schoolSessionDates = DB::table('student_study_sessions')
-        ->join('school_sessions', 'student_study_sessions.ssc_id', '=', 'school_sessions.id')
-        ->select('start_date', 'end_date')
-        ->where('student_study_sessions.id', $studentStudySessionId)
-        ->first();
-
+    ->join('school_session_classes', 'student_study_sessions.ssc_id', '=', 'school_session_classes.id')
+    ->join('school_sessions', 'school_session_classes.school_session_id', '=', 'school_sessions.id')
+    ->select('school_sessions.start_date', 'school_sessions.end_date')
+    ->where('student_study_sessions.id', $studentStudySessionId)
+    ->first();
+        
     if (!$schoolSessionDates) {
         // Handle if school session not found for the provided student_study_session_id
         return response()->json(['error' => 'School session not found'], 404);
@@ -550,9 +550,10 @@ class AttendanceController extends Controller
         Log::info('studentStudySessionId: ' . $studentStudySessionId);
 
         // Retrieve the start date and end date of the school session
-        $schoolSessionDates = DB::table('student_study_sessions')
-            ->join('school_sessions', 'student_study_sessions.ssc_id', '=', 'school_sessions.id')
-            ->select('start_date', 'end_date')
+            $schoolSessionDates = DB::table('student_study_sessions')
+            ->join('school_session_classes', 'student_study_sessions.ssc_id', '=', 'school_session_classes.id')
+            ->join('school_sessions', 'school_session_classes.school_session_id', '=', 'school_sessions.id')
+            ->select('school_sessions.start_date', 'school_sessions.end_date')
             ->where('student_study_sessions.id', $studentStudySessionId)
             ->first();
 

@@ -259,7 +259,7 @@
     </div>
 
     <div class="pagetitle">
-      <h1>Add New School Session</h1>
+      <h1>Add New Attendance Timetable</h1>
     </div><!-- End Page Title -->
 
     <section class="section">
@@ -268,7 +268,7 @@
 
           <div class="card">
               <div class="card-body">
-                <h5 class="card-title">School Session Details</h5>
+                <h5 class="card-title">Attendance Timetable Details</h5>
 
                 <!-- Custom Styled Validation -->
                 <form id="schoolSessionForm" class="row g-3 needs-validation" validate>
@@ -468,7 +468,7 @@
       }
 
     function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      window.location.href = '/indexAdmin'
     }
 </script>
 

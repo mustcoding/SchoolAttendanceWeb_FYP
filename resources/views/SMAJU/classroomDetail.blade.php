@@ -358,11 +358,6 @@
       // You can add additional styling or logic here if needed
       window.print();
     }
-
-    function displayAddServicesPage(){
-      window.open('tourismserviceadd.html','_self');
-    }
-
   
     // Function to fetch data from the server
     function fetchData(schoolSessionId, classroomId) {
@@ -502,7 +497,7 @@
                       <td>${item.parent_phone_number}</td>
                       <td>
                         <div class="button-column">
-                          <button type="button" class="btn btn-danger" onclick="deleteStudent(${item.id},${schoolSessionId})">Delete </button>
+                          <button type="button" class="btn btn-danger" onclick="deleteStudent(${item.id},${item.school_session_class_id})">Delete </button>
                         </div>
                       </td>
                     </tr>`;
@@ -528,8 +523,6 @@
         var values = classroom.split("/");
         var classroomId = values[0];
         var classroomName = values[1];
-
-        console.log("Classroom Name: ",classroomName);
 
         // Update the card title with the classroom name
         document.querySelector('div.pagetitle h1').textContent = `Classroom Details Management - ${classroomName}`;
@@ -581,39 +574,44 @@
     }
 
 
-  function deleteStudent(student_id, schoolSessionId)
+  function deleteStudent(student_id, school_session_class_id)
   {
-    console.log("Student ID: ", student_id);
-    console.log("School Session ID: ", schoolSessionId);
-    var is_Delete=1;
-    //Create an object to hold the data you want to send
-    const data = {
-      student_id: student_id,
-      ssc_id: schoolSessionId,
-    };
 
-    fetch('/StudentStudySession/delete-student',{
-            method: 'PUT', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-    })
+    console.log("student_id : ", student_id);
+    console.log("schoolsession_id : ",school_session_class_id)
+    if (confirm('Are you sure you want to remove the student from this classroom?')) {
+      var is_Delete=1;
+      //Create an object to hold the data you want to send
+      const data = {
+        student_id: student_id,
+        ssc_id: school_session_class_id,
+      };
+
+      fetch('/StudentStudySession/delete-student',{
+        method: 'PUT', // Use the POST method
+        headers: {
+          'Content-Type': 'application/json' // Set the content type to JSON
+        },
+        body: JSON.stringify(data) // Convert the data object to a JSON string
+      })
       .then(response => response.json())
       .then(data => {
-            // Handle the response from the server
-            console.log("Student Successfully deleted ", data);
-            document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alertDelete"]').style.display = 'block';
-            setTimeout(function() 
-            {
-                window.location.href = "{{route('Student-In-Class-Detail')}}";
-            }, 2000);
-        })
+        // Handle the response from the server
+        console.log("Student Successfully deleted ", data);
+        document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alertDelete"]').style.display = 'block';
+        setTimeout(function() 
+        {
+          window.location.href = "{{route('Student-In-Class-Detail')}}";
+        }, 2000);
+      })
       .catch(error => {
-            console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error);
       });
         
     }
+  
+    
+  }
     
 
   </script>

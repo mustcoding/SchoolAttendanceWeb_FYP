@@ -24,6 +24,10 @@ class Staff extends Authenticatable implements AuthenticatableContract
         'is_Delete',
     ];
 
+    public function schoolSessionClasses() {
+        return $this->hasMany(SchoolSessionClass::class, 'staff_id');
+    }
+
      /**
      * Indicates if the model should be timestamped.
      *

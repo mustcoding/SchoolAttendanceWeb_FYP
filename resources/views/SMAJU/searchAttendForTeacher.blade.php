@@ -354,7 +354,7 @@ function searchForClassSession() {
       }
 
     function returnToIndex(){
-      window.open('indexTeacher.html','_self');
+      window.location.href = '/indexTeacher';
     }
 </script>
 

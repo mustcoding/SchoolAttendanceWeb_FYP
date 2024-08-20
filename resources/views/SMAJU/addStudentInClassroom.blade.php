@@ -336,7 +336,7 @@
         }
 
         function returnToIndex(){
-        window.open("{{route('indexAdmin')}}",'_self');
+          window.location.href = '/indexAdmin';
         }
     </script>
 

@@ -130,6 +130,7 @@ class AbsentSupportingDocumentController extends Controller
         ->join('classrooms', 'school_session_classes.class_id', '=', 'classrooms.id')
         ->join('staff', 'school_session_classes.staff_id', '=', 'staff.id')
         ->where('absent_supporting_documents.verification_status', 'PENDING')
+        ->where('absent_supporting_documents.is_Delete',0)
         ->get();
 
         return response()->json($results, 200);
@@ -170,6 +171,27 @@ class AbsentSupportingDocumentController extends Controller
 
         // Return a success response
         return response()->json(['message' => 'Verification status updated successfully'], 200);
+    }
+
+    public function DeleteLeave(Request $request)
+    {
+        // Extract the request ID
+        $requestId = $request->input('id');
+
+        // Find the absent_supporting_document record by ID
+        $document = AbsentSupportingDocument::find($requestId);
+
+        // Check if the document exists
+        if (!$document) {
+            return response()->json(['error' => 'Absent supporting document not found'], 404);
+        }
+
+        // Update the verification_status to "APPROVED"
+        $document->is_Delete = '1';
+        $document->save();
+
+        // Return a success response
+        return response()->json(['message' => 'Application Deleted successfully'], 200);
     }
 
     /**

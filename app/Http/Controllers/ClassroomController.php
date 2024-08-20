@@ -23,19 +23,32 @@ class ClassroomController extends Controller
             'max_capacity' => 'required|integer',
             'is_Delete' => 'required|integer',
         ]);
-///
-        // Create user
-        $class = Classroom::create([
-            'name' => $attrs['name'],
-            'form_number' => $attrs['form_number'],
-            'max_capacity' => $attrs['max_capacity'],
-            'is_Delete' => $attrs['is_Delete'],
-        ]);
 
-        // Return user & token in response
-        return response([
-            'class' => $class
-        ], 200);
+        $exist = Classroom::Where('name',$request->input('name'))
+        ->where('form_number', $request->input('form_number'))
+        ->exists();
+    
+        if($exist){
+            // Return user & token in response
+            return response([
+                'exist' => $exist 
+            ], 400);
+        }
+        else{
+            $class = Classroom::create([
+                'name' => $attrs['name'],
+                'form_number' => $attrs['form_number'],
+                'max_capacity' => $attrs['max_capacity'],
+                'is_Delete' => $attrs['is_Delete'],
+            ]);
+    
+            // Return user & token in response
+            return response([
+                'class' => $class
+            ], 200);
+        }
+        
+       
     }
 
     public function totalClassroom()

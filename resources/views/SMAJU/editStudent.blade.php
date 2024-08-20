@@ -288,8 +288,8 @@
                         </div>
                     </div>
                     <div class="col-6">
-                        <label for="startDate" class="form-label">RFID Number<span style="color: red;"> *</label>
-                        <input type="text" class="form-control" id="rfidNumber" readonly>
+                        <label for="startDate" class="form-label">Type Of Student<span style="color: red;"> *</label>
+                        <input type="text" class="form-control" id="typeStudent" readonly>
                         <div class="valid-feedback">
                             Looks good!
                         </div>
@@ -344,7 +344,7 @@
                       event,
                       document.getElementById('studentName').value,
                       document.getElementById('dateOfBirth').value, 
-                      document.getElementById('rfidNumber').value,
+                      document.getElementById('typeStudent').value,
                       document.getElementById('parentName').value,
                       document.getElementById('phoneNumber').value,
                       document.getElementById('nickName').value,
@@ -397,7 +397,7 @@
 
   <script>
     function returnToIndex(){
-      window.open('searchServices.html','_self');
+      window.location.href = '/indexAdmin';
     }
   </script>
 
@@ -411,7 +411,7 @@
 
   <script>
     function editStudent(event, student_name, date_of_birth,
-    rfid_number, parent_name, phone_number, nickname, address)
+    type_student, parent_name, phone_number, nickname, address)
    {
 
       event.preventDefault();
@@ -424,7 +424,7 @@
       if (
         student_name.trim() === '' ||
         date_of_birth.trim()=== '' ||
-        rfid_number=== '' ||
+        type_student=== '' ||
         parent_name.trim() === '' ||
         phone_number.trim() === '' ||
         nickname.trim() === '' ||
@@ -520,7 +520,7 @@
               id: student_id,
             };
 
-            fetch(`/Student/${student_id}`,
+            fetch(`/Student/findStudent`,
             {
                 method: 'POST', // Use the POST method
                 headers: 
@@ -549,7 +549,7 @@
             // Access the input fields
             const student_name = document.getElementById('studentName');
             const date_of_birth = document.getElementById('dateOfBirth');
-            const rfid_number = document.getElementById('rfidNumber');                
+            const type_student = document.getElementById('typeStudent');                
             const parent_name = document.getElementById('parentName');
             const phone_number = document.getElementById('phoneNumber');
             const nickname = document.getElementById('nickName');
@@ -559,7 +559,7 @@
             // Set the values of the input fields
             student_name.value = data.name;
             date_of_birth.value = data.date_of_birth;                
-            rfid_number.value = data.rfid_number;
+            type_student.value = data.type_student;
             parent_name.value = data.parent_name;
             phone_number.value = data.phone_number;
             nickname.value = data.nickname;

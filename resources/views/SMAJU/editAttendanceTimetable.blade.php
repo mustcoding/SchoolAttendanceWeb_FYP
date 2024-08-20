@@ -368,7 +368,7 @@
 
   <script>
     function returnToIndex(){
-      window.open('searchServices.html','_self');
+      window.location.href = '/indexAdmin';
     }
   </script>
 

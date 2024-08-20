@@ -190,7 +190,8 @@ class StaffController extends Controller
     }
 
     public function getAllTeachers() {
-        $teachers = Staff::where('position', 'TEACHER')->get();
+        $teachers = Staff::where('position', 'TEACHER')
+        ->get();
         return response()->json($teachers); // Return as JSON, adjust as needed
     }
 

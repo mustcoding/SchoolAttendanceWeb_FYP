@@ -259,8 +259,13 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-    <div class="alert alert-success alert-dismissible fade show" role="delete" style="display: none;">
-      Student Successfully Being Deleted.
+    <div id="approvedSuccess" class="alert alert-success alert-dismissible fade show" role="delete" style="display: none;">
+      Leave application has been approved
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div id="deleteSuccess" class="alert alert-success alert-dismissible fade show" role="delete" style="display: none;">
+      Leave application has been deleted
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
@@ -474,7 +479,7 @@
                       <td>
                         <div class="button-column">
                           <button type="button" class="btn btn-primary" onclick="approveLeave(${item.student_study_session_id}, '${item.start_date_leave}', '${item.end_date_leave}',${item.absent_supporting_document_id},'${item.username}')">APPROVE</button>
-                          <button type="button" class="btn btn-danger" onclick="deleteStudent(${item.student_id})">Delete </button>
+                          <button type="button" class="btn btn-danger" onclick="deleteLeave(${item.absent_supporting_document_id})">Delete </button>
                         </div>
                       </td>
                     </tr>`;
@@ -534,36 +539,44 @@
   }
 
 
-  function deleteStudent(student_id)
+  function deleteLeave(absent_supporting_document_id)
   {
-    var is_Delete=1;
-    //Create an object to hold the data you want to send
-    const data = {
-      id : student_id,
-      is_Delete:is_Delete,
-    };
 
-    fetch('/Student/delete/'+student_id, {
-            method: 'PUT', // Use the POST method
-            headers: {
-            'Content-Type': 'application/json' // Set the content type to JSON
-            },
-            body: JSON.stringify(data) // Convert the data object to a JSON string
-    })
-      .then(response => response.json())
-      .then(data => {
-            // Handle the response from the server
-            console.log("Student Successfully deleted ", data);
-            deleteCardRFID(data);
-            deleteTagRFID(data);
-            deleteStudentStudySession(data);
-            
+    if (confirm('Are you sure you want to delete this application?')) {
+
+      var is_Delete=1;
+      //Create an object to hold the data you want to send
+      const data = {
+        id : absent_supporting_document_id,
+        is_Delete:is_Delete,
+      };
+
+      fetch('/ADS/delete', {
+              method: 'PUT', // Use the POST method
+              headers: {
+              'Content-Type': 'application/json' // Set the content type to JSON
+              },
+              body: JSON.stringify(data) // Convert the data object to a JSON string
+      })
+        .then(response => response.json())
+        .then(data => {
+
+          // Handle the response from the server
+          console.log("Student Successfully deleted ", data);
+
+          document.getElementById('deleteSuccess').style.display = 'block';
+          setTimeout(function() {
+            window.location.href = "/applied-leave-management";
+          }, 2000);
+              
         })
-      .catch(error => {
-            console.error('Error fetching data:', error);
-      });
-        
+        .catch(error => {
+              console.error('Error fetching data:', error);
+        });
     }
+   
+        
+  }
     
   </script>
   <script>
@@ -573,102 +586,6 @@
         alertElement.style.display = shouldDisplay ? 'block' : 'none';
       }
     }
-  </script>
-
-  <script>
-    function deleteCardRFID(studentdata)
-    {
-      var is_Delete=1;
-      //Create an object to hold the data you want to send
-      const data = {
-        id : studentdata.student.card_rfid,
-        is_Delete:is_Delete,
-      };
-
-      fetch('/rfid/delete/'+studentdata.student.card_rfid, {
-        method: 'PUT', // Use the POST method
-        headers: {
-          'Content-Type': 'application/json' // Set the content type to JSON
-        },
-        body: JSON.stringify(data) // Convert the data object to a JSON string
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Handle the response from the server
-        console.log("RFID Successfully deleted ", data);
-              
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-          
-    }
-
-    function deleteTagRFID(studentdata)
-    {
-      var is_Delete=1;
-      //Create an object to hold the data you want to send
-      const data = {
-        id : studentdata.student.tag_rfid,
-        is_Delete:is_Delete,
-      };
-
-      fetch('/rfid/delete/'+studentdata.student.tag_rfid, {
-              method: 'PUT', // Use the POST method
-              headers: {
-              'Content-Type': 'application/json' // Set the content type to JSON
-              },
-              body: JSON.stringify(data) // Convert the data object to a JSON string
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Handle the response from the server
-        console.log("RFID Successfully deleted ", data);
-        
-              
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-          
-    }
-
-    function deleteStudentStudySession(studentdata)
-    {
-
-      var is_Delete=1;
-      //Create an object to hold the data you want to send
-      const data = {
-        student_id : studentdata.student.id,
-        is_Delete:is_Delete,
-      };
-
-      fetch('/StudentStudySession/delete', {
-        method: 'PUT', // Use the POST method
-        headers: {
-          'Content-Type': 'application/json' // Set the content type to JSON
-        },
-        body: JSON.stringify(data) // Convert the data object to a JSON string
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Handle the response from the server
-        console.log("Student Seccessfully Being Deleted ", data);
-
-        toggleAlert('delete', true);
-
-        setTimeout(function() {
-          window.location.href = "/studentManagement";
-        }, 2000);
-        
-              
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-          
-    }
-    
   </script>
 
   <script>
@@ -759,6 +676,9 @@ function getDatesInRangeWithTime(startDate, endDate, time) {
 
 
   function approveLeave(student_study_session_id, start_date_leave, end_date_leave, absent_supporting_document_id, username) {
+
+    if (confirm('Are you sure you want to approve this application?')) {
+
       try {
         
         const time = getCurrentTime();
@@ -806,6 +726,10 @@ function getDatesInRangeWithTime(startDate, endDate, time) {
       } catch (error) {
         console.error(error.message);
       }
+
+    }
+
+      
   }
 
   function updateStatus(absent_supporting_document_id){
@@ -823,6 +747,8 @@ function getDatesInRangeWithTime(startDate, endDate, time) {
     .then(response => response.json())
     .then(data => {
       console.log('Response:', data);
+
+      document.getElementById('approvedSuccess').style.display = 'block';
                   
       setTimeout(function() {
         window.location.href = "/applied-leave-management";

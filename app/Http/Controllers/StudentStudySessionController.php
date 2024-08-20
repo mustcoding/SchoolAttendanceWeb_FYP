@@ -100,6 +100,7 @@ class StudentStudySessionController extends Controller
         // Find the student_study_session entry
         $studentStudySession = StudentStudySession::where('student_id', $student_id)
                                 ->where('ssc_id', $ssc_id)
+                                ->where('is_Delete',0)
                                 ->first();
 
         // Check if the student_study_session entry exists

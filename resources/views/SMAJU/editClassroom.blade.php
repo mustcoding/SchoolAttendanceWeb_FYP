@@ -254,7 +254,7 @@
     </div>
 
     <div class="pagetitle">
-      <h1>Edit RFID</h1>
+      <h1>Edit Classroom</h1>
     </div><!-- End Page Title -->
     
     <section class="section">
@@ -263,7 +263,7 @@
 
           <div class="card">
               <div class="card-body">
-                <h5 class="card-title">RFID Details</h5>
+                <h5 class="card-title">Classroom Details</h5>
 
                 <!-- Custom Styled Validation -->
                 <form id="classroomForm" class="row g-3 needs-validation" novalidate>
@@ -364,7 +364,7 @@
 
   <script>
     function returnToIndex(){
-      window.open('searchServices.html','_self');
+      window.location.href = '/indexAdmin';
     }
   </script>
 

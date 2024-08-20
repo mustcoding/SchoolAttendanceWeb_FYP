@@ -241,18 +241,13 @@
 
   <main id="main" class="main">
 
-    <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
-      Staff has successfully being saved.
+    <div id="alert1" class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
+      Classroom has successfully being saved.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-    <div class="alert alert-danger alert-dismissible fade show" role="alert2" style="display: none;">
-      Houston....Staff Already Exist.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="alert alert-danger alert-dismissible fade show" role="alert3" style="display: none;">
-      Houston....Please select atleast 1 image.
+    <div id="alert2" class="alert alert-danger alert-dismissible fade show" role="alert2" style="display: none;">
+      Houston....Classroom Already Exist.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
@@ -388,26 +383,38 @@
         })
             .then(response => 
             {
-            if (response.ok){
-                return response.json();
-            }
-            else{
-                document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
-                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
+              if (response.ok){
+                  return response.json();
+              }
+              else{
                 
-                setTimeout(function() {
-                    window.location.href = '/add-class';
-                }, 2000);
-            }
+                document.getElementById('alert1').style.display ='none';
+                document.getElementById('alert2').style.display ='block';
+                 
+                  setTimeout(function() {
+                      window.location.href = '/add-class';
+                  }, 2000);
+              }
             })
             .then(data => {
-               
+
+              if (data.exist) {
+                document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'none';
+                document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'block';
+
+                 
+                  setTimeout(function() {
+                      window.location.href = '/add-class';
+                  }, 2000);
+              }
+              else{
                 document.querySelector('.alert.alert-success.alert-dismissible.fade.show[role="alert1"]').style.display = 'block';
                 document.querySelector('.alert.alert-danger.alert-dismissible.fade.show[role="alert2"]').style.display = 'none';
 
                 setTimeout(function() {
                 window.location.href = '/add-class';
                 }, 2000); // 4000 milliseconds = 4 seconds
+              }
 
             })
             .catch(error => {
@@ -451,8 +458,8 @@
         console.log('Profile dropdown link not found.');
       }
 
-    function returnToIndex(){
-      window.open('indexAdmin.html','_self');
+      function returnToIndex(){
+      window.location.href = '/indexAdmin'
     }
   </script>
 
