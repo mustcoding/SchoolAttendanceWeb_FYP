@@ -149,42 +149,55 @@ class StudentController extends Controller
 
 
     public function getAllStudentsManagement()
-    {
-        // Retrieve the current school session
-        $currentSession = SchoolSession::where('is_Delete', 0)->whereYear('start_date', '<=', now())->whereYear('end_date', '>=', now())->first();
+{
+    // Retrieve the current school session
+    $currentSession = SchoolSession::where('is_Delete', 0)
+                                    ->whereYear('start_date', '<=', now())
+                                    ->whereYear('end_date', '>=', now())
+                                    ->first();
 
-        if (!$currentSession) {
-            // If there is no current session, return an empty array or appropriate response
-            return response()->json([]);
-        }
-
-        // Retrieve all students enrolled in the current school session
-        $data = Student::with(['parentGuardian', 'tagRfid', 'cardRfid', 'classrooms'])
-                        ->where('is_Delete', 0)
-                        ->get();
-
-        // Transform the data as needed, for example, extract required fields
-        $formattedData = $data->map(function ($student) {
-            $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
-            $card_rfid = $student->cardRfid ? $student->cardRfid->number : "null";
-            $tag_rfid = $student->tagRfid ? $student->tagRfid->number : "null";
-            $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
-            $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
-
-            return [
-                'student_id' => $student->id,
-                'name' => $student->name,
-                'date_of_birth' => $student->date_of_birth,
-                'parent_name' => $parentName,
-                'card_rfid' => $card_rfid,
-                'tag_rfid' => $tag_rfid,
-                'class_name' => $className,
-                'form_number' => $formNumber,
-            ];
-        });
-
-        return response()->json($formattedData);
+    if (!$currentSession) {
+        // If there is no current session, return an empty array or appropriate response
+        return response()->json([]);
     }
+
+    // Retrieve all students enrolled in the current school session
+    $data = Student::with(['parentGuardian', 'tagRfid', 'cardRfid'])
+                    ->where('is_Delete', 0)
+                    ->whereHas('studentStudySessions', function ($query) use ($currentSession) {
+                        $query->whereHas('schoolSessionClass', function ($subQuery) use ($currentSession) {
+                            $subQuery->where('school_session_id', $currentSession->id);
+                        });
+                    })
+                    ->get();
+
+    // Transform the data as needed, for example, extract required fields
+    $formattedData = $data->map(function ($student) {
+        // Assuming each student has only one entry in studentStudySessions for the current session
+        $currentStudySession = $student->studentStudySessions->first();
+        $currentClass = $currentStudySession ? $currentStudySession->schoolSessionClass->classroom : null;
+
+        $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
+        $card_rfid = $student->cardRfid ? $student->cardRfid->number : "null";
+        $tag_rfid = $student->tagRfid ? $student->tagRfid->number : "null";
+        $className = $currentClass ? $currentClass->name : "";
+        $formNumber = $currentClass ? $currentClass->form_number : "";
+
+        return [
+            'student_id' => $student->id,
+            'name' => $student->name,
+            'date_of_birth' => $student->date_of_birth,
+            'parent_name' => $parentName,
+            'card_rfid' => $card_rfid,
+            'tag_rfid' => $tag_rfid,
+            'class_name' => $className,
+            'form_number' => $formNumber,
+        ];
+    });
+
+    return response()->json($formattedData);
+}
+
 
     public function studentById(Request $request)
     {
@@ -378,54 +391,62 @@ class StudentController extends Controller
             'classroom_details' => $classroomDetails
         ]);
     }
+    
     public function getListStudentInClassroom(Request $request)
-    {
-        $classId = $request->input('id'); // Assuming classId is sent as a parameter in the request
+{
+    $classId = $request->input('id'); // Assuming classId is sent as a parameter in the request
 
-        // Retrieve the current school session
-        $currentSession = SchoolSession::where('is_Delete', 0)
-                                        ->whereYear('start_date', '<=', now())
-                                        ->whereYear('end_date', '>=', now())
-                                        ->first();
+    // Retrieve the current school session
+    $currentSession = SchoolSession::where('is_Delete', 0)
+                                    ->whereYear('start_date', '<=', now())
+                                    ->whereYear('end_date', '>=', now())
+                                    ->first();
 
-       
-        if (!$currentSession) {
-            // If there is no current session, return an empty array or appropriate response
-            return response()->json([]);
-        }
-
-        // Retrieve all students enrolled in the current school session and the specified class ID
-        $data = Student::with(['parentGuardian', 'tagRfid', 'cardRfid', 'classrooms'])
-                        ->where('is_Delete', 0)
-                        ->whereHas('classrooms.schoolSessionClasses', function ($query) use ($currentSession, $classId) {
-                            $query->where('school_session_id', $currentSession->id)
-                                ->where('class_id', $classId); // Filter by the specified class ID
-                        })
-                        
-                        ->get();
-
-        // Transform the data as needed, for example, extract required fields
-        $formattedData = $data->map(function ($student) {
-            $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
-            $card_rfid = $student->cardRfid ? $student->cardRfid->number : "null";
-            $tag_rfid = $student->tagRfid ? $student->tagRfid->number : "null";
-            $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
-            $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
-
-            return [
-                'student_id' => $student->id,
-                'name' => $student->name,
-                'date_of_birth' => $student->date_of_birth,
-                'parent_name' => $parentName,
-                'card_rfid' => $card_rfid,
-                'tag_rfid' => $tag_rfid,
-                'class_name' => $className,
-                'form_number' => $formNumber,
-            ];
-        });
-
-        return response()->json($formattedData);
+    if (!$currentSession) {
+        // If there is no current session, return an empty array or appropriate response
+        return response()->json([]);
     }
+
+    // Retrieve all students enrolled in the current school session and the specified class ID
+    $data = Student::where('is_Delete', 0)
+                    ->whereHas('studentStudySessions', function ($query) use ($currentSession, $classId) {
+                        $query->whereHas('schoolSessionClass', function ($subQuery) use ($currentSession, $classId) {
+                            $subQuery->where('school_session_id', $currentSession->id)
+                                     ->where('class_id', $classId); // Correctly filter by class_id
+                        });
+                    })
+                    ->get();
+
+    // Retrieve class information for the specified class ID
+    $classroom = SchoolSessionClass::with('classroom')
+                    ->where('school_session_id', $currentSession->id)
+                    ->where('class_id', $classId)
+                    ->first()
+                    ->classroom;
+
+    // Transform the data as needed, for example, extract required fields
+    $formattedData = $data->map(function ($student) use ($classroom) {
+        $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
+        $card_rfid = $student->cardRfid ? $student->cardRfid->number : "null";
+        $tag_rfid = $student->tagRfid ? $student->tagRfid->number : "null";
+        $className = $classroom ? $classroom->name : ""; // Use fetched class information
+        $formNumber = $classroom ? $classroom->form_number : ""; // Use fetched class information
+
+        return [
+            'student_id' => $student->id,
+            'name' => $student->name,
+            'date_of_birth' => $student->date_of_birth,
+            'parent_name' => $parentName,
+            'card_rfid' => $card_rfid,
+            'tag_rfid' => $tag_rfid,
+            'class_name' => $className,
+            'form_number' => $formNumber,
+        ];
+    });
+
+    return response()->json($formattedData);
+}
+
 
     public function TotalChildren(Request $request)
     {

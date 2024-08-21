@@ -193,7 +193,7 @@ class AttendanceController extends Controller
         }
     
         // Retrieve all attendances for the specified parameters
-        $attendances = Attendance::with(['studentStudySession.student', 'checkpoint', 'attendanceTimetable'])
+        $attendances = Attendance::with(['studentStudySession.student.parentGuardian', 'checkpoint', 'attendanceTimetable', 'studentStudySession.schoolSessionClass.classroom'])
             ->whereHas('studentStudySession', function ($query) use ($classroomId, $currentSession) {
                 $query->whereHas('schoolSessionClass', function ($subQuery) use ($classroomId, $currentSession) {
                     $subQuery->where('class_id', $classroomId)
@@ -225,13 +225,18 @@ class AttendanceController extends Controller
         $allStudents = $attendances->map(function ($attendance) use ($dateTimeIn) {
             $student = $attendance->studentStudySession->student;
             $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
-            $phone_number = $student->parentGuardian ? $student->parentGuardian-> phone_number : "";
+            $phone_number = $student->parentGuardian ? $student->parentGuardian->phone_number : "";
             $cardRfid = $student->cardRfid ? $student->cardRfid->number : "null";
             $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
-            $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
-            $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
-            $attendanceDateTime = $attendance->is_attend == 2 ? "EXCUSED" :($attendance->is_attend == 0 ? "ABSENT" : $attendance->date_time_in);
+    
+            // Get the correct classroom and form number associated with this attendance
+            $classroom = $attendance->studentStudySession->schoolSessionClass->classroom;
+            $className = $classroom ? $classroom->name : "";
+            $formNumber = $classroom ? $classroom->form_number : "";
+    
+            $attendanceDateTime = $attendance->is_attend == 2 ? "EXCUSED" : ($attendance->is_attend == 0 ? "ABSENT" : $attendance->date_time_in);
             $type_student = $student->type_student ? : "null";
+    
             return [
                 'student_id' => $student->id,
                 'name' => $student->name,
@@ -247,15 +252,18 @@ class AttendanceController extends Controller
             ];
         });
     
-        $studentsWithoutAttendance->each(function ($student) use ($allStudents) {
+        $studentsWithoutAttendance->each(function ($student) use ($allStudents, $currentSession, $classroomId) {
             $parentName = $student->parentGuardian ? $student->parentGuardian->name : "";
             $phone_number = $student->parentGuardian ? $student->parentGuardian->phone_number : "";
             $cardRfid = $student->cardRfid ? $student->cardRfid->number : "null";
             $tagRfid = $student->tagRfid ? $student->tagRfid->number : "null";
-            $className = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->name : "";
-            $formNumber = $student->classrooms->isNotEmpty() ? $student->classrooms->first()->form_number : "";
+    
+            // Ensure the correct classroom is used
+            $classroom = $student->studentStudySessions->firstWhere('schoolSessionClass.class_id', $classroomId)->schoolSessionClass->classroom;
+            $className = $classroom ? $classroom->name : "";
+            $formNumber = $classroom ? $classroom->form_number : "";
             $type_student = $student->type_student ? : "null";
-
+    
             $allStudents->push([
                 'student_id' => $student->id,
                 'name' => $student->name,
@@ -273,6 +281,7 @@ class AttendanceController extends Controller
     
         return response()->json($allStudents);
     }
+    
 
 
     public function totalPresent(Request $request){

@@ -309,7 +309,7 @@
                     <th scope="col">Parent Name</th>
                     <th scope="col">Time Attend</th>
                     <th scope="col">Class</th>
-                    
+                    <th scope="col">Type Student</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -500,6 +500,7 @@
                         <td>${item.parent_name}</td>
                         <td>${item.date_time_in}</td>
                         <td>${item.form_number} ${item.class_name}</td> 
+                        <td>${item.type_student}</td> 
                       </tr>`;
         // Append the row to the tbody
         tbody.innerHTML += row;
