@@ -60,26 +60,6 @@
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
 
-        <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
-          New Password Successfully being saved...
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    
-        <div class="alert alert-danger alert-dismissible fade show" role="alert2" style="display: none;">
-          Houston... New Password Doesn't Match The Confirmation Password.
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    
-        <div class="alert alert-danger alert-dismissible fade show" role="alert3" style="display: none;">
-          Houston... Your current password is wrong.
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <div class="alert alert-danger alert-dismissible fade show" role="changeUnSuccess" style="display: none;">
-          Houston... Your New Password Cannot Being Saved.
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
@@ -334,7 +314,7 @@
                     <div id="successMessage" class="alert alert-success" style="display: none;">
                       Profile successfully updated!
                     </div>
-
+                    
                     <div class="row mb-3">
                       <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Nick Name</label>
                       <div class="col-md-8 col-lg-9">
@@ -361,6 +341,21 @@
                   <!-- Change Password Form -->
                   <form onsubmit ="return confirmChangePassword(this);">
 
+                    <div id="diffPass" class="alert alert-danger alert-dismissible fade show" role="alert2" style="display: none;">
+                      Houston... New Password Doesn't Match The Confirmation Password.
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
+                      New Password Successfully being saved...
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                
+                    <div id="currentPassworrd" class="alert alert-danger alert-dismissible fade show" role="alert1" style="display: none;">
+                      Houston... Current Password are wrong.
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    
                     <div class="row mb-3">
                       <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                       <div class="col-md-8 col-lg-9">
@@ -383,7 +378,7 @@
                     </div>
 
                     <div class="text-center">
-                      <button type="submit" class="btn btn-primary" onClick="confirmChangePassword(this.form)">Change Password</button>
+                      <button type="submit" class="btn btn-primary">Change Password</button>
                     </div>
                   </form><!-- End Change Password Form -->
 
@@ -759,11 +754,12 @@
 
 <script>
     function confirmChangePassword(form) {
-        var passwordSame = form.elements['newPassword1'].value === form.elements['confirmPassword'].value;
+    
 
-        if (!passwordSame) {
-            alert("Passwords do not match.");
-            return false;
+        if (form.elements['newPassword1'].value != form.elements['confirmPassword'].value) {
+          console.log("Salah password");
+          document.getElementById('diffPass').style.display = 'block';
+          return false;
         }
 
         var storedStaffProfile = JSON.parse(sessionStorage.getItem('staffProfile'));
@@ -798,7 +794,7 @@
         })
         .then(data => {
             if (data.error) {
-                alert(data.error);
+              document.getElementById('currentPassworrd').style.display = 'block';
             } else {
                 return fetch('/staff/change-password', {
                     method: 'PUT',
@@ -833,7 +829,7 @@
         })
         .catch(error => {
             console.error('Error:', error);
-            alert(`Error: ${error.message}`);
+            document.getElementById('currentPassworrd').style.display = 'block';
         });
 
         return false;

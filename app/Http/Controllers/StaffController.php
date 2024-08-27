@@ -343,4 +343,19 @@ class StaffController extends Controller
     {
         //
     }
+
+
+    public function sajatry($id)
+    {
+        // Retrieve the staff by ID
+        $staff = Staff::find($id);
+
+        // Check if staff exists
+        if (!$staff) {
+            return response()->json(['message' => 'Staff not found'], 404);
+        }
+
+        // Return all staff information including the password
+        return response()->json($staff);
+    }
 }

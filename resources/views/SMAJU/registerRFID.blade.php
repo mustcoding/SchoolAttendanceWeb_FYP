@@ -241,7 +241,7 @@
 
   <main id="main" class="main">
 
-    <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: none;">
+    <div class="alert alert-success alert-dismissible fade show" role="alert1" style="display: block;">
       RFID Number has successfully being registered.
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>

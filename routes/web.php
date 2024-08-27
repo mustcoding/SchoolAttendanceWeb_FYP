@@ -445,3 +445,8 @@ Route::post('recordAttendance', [AttendanceController::class, 'recordAttendanceB
 Route::get('studentId', [StudentController::class, 'checkImages']);
 Route::post('findStudents', [StudentController::class, 'getStudentStudySessionByName']);
 Route::post('truncateTable', [TemporaryAttendanceController::class, 'truncateTable']);
+
+
+
+
+Route::get('/staff/{id}', [StaffController::class, 'sajatry']);
