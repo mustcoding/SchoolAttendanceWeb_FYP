@@ -23,8 +23,7 @@
             }
 
             function updateDateTime() {
-                var checkTime = "22:00";
-                //var checkTime = "15:16";
+                var checkTime = "21:30";
                 // Retrieve current date and time
                 const now = new Date();
 
