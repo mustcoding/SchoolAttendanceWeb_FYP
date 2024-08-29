@@ -105,7 +105,7 @@ class AttendanceController extends Controller
             }
             else{
                
-                if ($request->input('attendance_timetable_id') == 1) {
+                if ($request->input('attendance_timetable_id') == 8) {
                     // Extract the date part from date_time_in
                     $datePart = date_create_from_format('m/d/y H:i:s', $request->input('date_time_in'))->format('m/d/y');
                 
